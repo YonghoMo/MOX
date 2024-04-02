@@ -2,11 +2,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="css/style_my.css" rel="stylesheet" type="text/css">
+    <link href="style_mypage.css" rel="stylesheet" type="text/css">
     <title>마이페이지</title>
 </head>
 <body>
- <div class="profile" style="text-align: center;">
+    <nav class="navbar">
+        <div class="nav_logo">
+            <a href="index.html"><img src="logo.png" width="150px" height="150px"></a> <!--임시 로고 이미지-->
+        </div>
+        <ul class="nav_menu">
+            <li><a href="index.html">홈 화면으로 돌아가기</a></li>
+        </ul>
+    </nav>
+    <div class="profile" style="text-align: center;">
         <p>
             <img src="image/default_profile.PNG" href="profile_change.html" alt="프로필 사진"> 
         </p>
@@ -25,9 +33,8 @@
 
     <div class="settings" style="text-align: right;">
         <p>
-        <a href="settings.html">환경설정</a>
+            <a href="logout.html">로그아웃</a>
         </p>
-        <a href="logout.html">로그아웃</a>
     </div>
 
     <script>
