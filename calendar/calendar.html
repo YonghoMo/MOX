@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset='utf-8'>
+        <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+
+        <title>캘린더 페이지</title>
+        <meta name='viewport' content='width=device-width, initial-scale=1'>
+        <!-- jquery -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <!-- bootstrap 4 -->
+        <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
+        <!-- fullcalendar -->
+        <link href="../calendar/lib/main.css" rel="stylesheet" />
+        <script src="../calendar/lib/main.js"></script>
+
+        <script type="text/javascript">
+            document.addEventListener('DOMContentLoaded', function () {
+                var calendarEl = document.getElementById('calendar');   //id가 'calendar'인 요소를 찾아서 calendarE1에 할당
+                var calendar = new FullCalendar.Calendar(calendarEl, {  //FullCalendar 라이브러리를 사용해 calendarE1에 캘린더를 생성
+                    timeZone: 'UTC',    //캘린더 시간대 설정, UTC:협정 세계시
+                    initialView: 'dayGridMonth',    //캘린더 보기를 월간 그리드 형태로 설정
+                    events:[    // 일정 데이터 추가 , DB의 event를 가져오려면 JSON 형식으로 변환해 events에 넣어주면된다.
+                        {
+                            title:'캡스톤 중간 과제 발표',
+                            start:'2024-04-15T15:00:00',
+                            end:'2024-04-15T20:00:00' 
+                            // color 값을 추가해 색상도 변경 가능 자세한 내용은 하단의 사이트 참조
+                        }
+                    ], headerToolbar: {
+                        center: 'addEventButton'    // headerToolbar에 "일정 추가" 버튼을 추가
+                    }, customButtons: { //캘린더에 사용자 지정 버튼 추가
+                        addEventButton: {   // 추가한 "일정 추가" 버튼에 대한 설정
+                            text : "일정 추가", // 버튼에 표시될 텍스트
+                            click : function(){ // 버튼 클릭 시 실행될 함수
+                                $("#calendarModal").modal("show");  // modal 나타내기
+
+                                $("#addCalendar").on("click",function(){    //모달 창 안에 사용자가 입력한 내용 가져다 유효성 검사
+                                    var content = $("#calendar_content").val(); //모달 창에서 일정 내용을 입력한 input 요소의 값을 가져온다
+                                    var Date = $("#calendar_Date").val();   //모달 창에서 날짜를 입력한 input 요소의 값을 가져온다
+                                    var start_Time = Date + "T" + $("#calendar_start_Time").val();   //모달 창에서 시작 시간을 입력한 input 요소의 값을 가져온다
+                                    var end_Time = Date + "T" + $("#calendar_end_Time").val();   //모달 창에서 종료 시간을 입력한 input 요소의 값을 가져온다
+
+                                    //입력된 값의 유효성 검사
+                                    if(content == null || content == "") {
+                                        alert("내용을 입력하세요.");
+                                    }else if(Date == "") {
+                                        alert("날짜를 입력하세요.");
+                                    }else if(start_Time === "" || end_Time === "") {
+                                        alert("시간을 입력하세요.");
+                                    }else if(new Date(end_Time) <= new Date(start_Time)) { // date 타입으로 변경 후 확인
+                                        alert("종료 시간이 시작 시간보다 빠릅니다.");
+                                    }else { // 정상적인 입력 시
+                                        var obj = {
+                                            title : content,
+                                            start : start_Time,
+                                            end : end_Time
+                                        };  //전송할 객체 생성
+                                    
+                                        calendar.addEvent(obj);   //캘린더에 일정 추가
+                                        console.log(obj); // 콘솔에 객체 출력
+                                        $("#calendarModal").modal("hide");  // 모달 창 닫기
+                                    }
+                                });
+                            }
+                        }
+                    },
+                    editable: true, // 캘린더의 이벤트를 편집 가능하도록 설정, false로 변경 시 draggable 작동 x 
+                    displayEventTime: false // 이벤트의 시간을 표시하지 않도록 설정, false로 변경 시 이벤트에 시간이 표시되지 않음 
+                });
+                calendar.render();  // 캘린더를 렌더링하여 화면에 표시
+            });
+        </script>
+        <style>
+            #calendarBox{
+                width: 70%;
+                padding-left: 15%;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="calendarBox">  <!--캘린더를 감싸는 박스 역할-->
+            <div id="calendar"></div>   <!--FullCalendar 라이브러리를 통해 생성된 캘린더가 여기에 표시, js 코드에서 생성한 calendarE1과 연결됨-->
+        </div>
+
+        <!-- modal 추가 -->
+        <div class="modal fade" id="calendarModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">  <!--모달 창을 정의하는 요소, id 속성을 통해 js 코드에서 이 모달 창을 참조할 수 있음-->
+            <div class="modal-dialog" role="document">  <!--모달 창의 넓이와 마진 조정-->
+                <div class="modal-content"> <!--모달 창의 내용을 감싸는 부분-->
+                    <div class="modal-header">  <!--모달 창의 헤더 부분, 제목과 닫기 버튼을 포함-->
+                        <h5 class="modal-title" id="exampleModalLabel">일정을 입력하세요.</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">    <!--모달 창의 본문 내용, 새로운 일정을 입력하는 입력 필드들을 포함-->
+                        <div class="form-group">
+                            <!--모달 창 내에 사용자로부터 일정 관련 정보를 입력받는 부분-->
+                            <!--label: 입력 필드의 레이블-->
+                            <!--for: 해당 레이블이 어떤 입력 필드를 참조하는 지, 해당 입력 필드의 id 속성과 동일해야 함-->
+                            <!--input: 사용자의 입력을 받는 입력 필드, 여기서는 텍스트 필드와 날짜 선택 필드-->
+                            <!--class="form-control": 부트스트랩 클래스, 입력 필드의 스타일링 지정-->
+                            <!--id: js 코드에서 해당 입력 필드를 식별하는 데 사용-->
+                            <label for="calendar_content" class="col-form-label">일정 내용</label>
+                            <input type="text" class="form-control" id="calendar_content" name="calendar_content">
+                            <label for="calendar_Date" class="col-form-label">날짜</label>
+                            <input type="date" class="form-control" id="calendar_Date" name="calendar_Date">
+                            <label for="calendar_start_Time" class="col-form-label">시작 시간</label>
+                            <input type="time" class="form-control" id="calendar_start_Time" name="calendar_start_Time">
+                            <label for="calendar_end_Time" class="col-form-label">종료 시간</label>
+                            <input type="time" class="form-control" id="calendar_end_Time" name="calendar_end_Time">
+                        </div>
+                    </div>
+                    <div class="modal-footer">  <!--모달 창의 하단 영역, 추가와 취소 버튼을 포함-->
+                        <!--button: 클릭 가능한 버튼-->
+                        <!--type="button": 기본 동작을 제거하고 js 코드에서 클릭 이벤트를 처리하기 위해 사용-->
+                        <!--class="btn btn-warning"과 class="btn btn-secondary": 부트스트랩 클래스로 각각 '추가'와 '취소' 버튼 스타일 지정-->
+                        <button type="button" class="btn btn-warning" id="addCalendar">추가</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal" id="sprintSettingModalClose">취소</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
