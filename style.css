@@ -1,12 +1,22 @@
 :root { /*주요 색상 변수 선언*/
-  --accent-color: #f3ff87;
-  --text-color: #f0f4f5;
-  --background-color: #0b002b;
+  --accent-color: #007bff;
+  --text-color: #000000;
+  --background-color: #ffffff;
+  --sub-color: #f7f7f7;
     font-family: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, "Helvetica Neue", "Segoe UI", "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
 }
 
-.body {
+html, body {
   margin: 0;
+  padding: 0;
+  background-color: var(--sub-color);
+  height: 100%;
+}
+
+#wrap{
+    height : auto;
+    min-height: 100%;
+    padding-bottom: 80px;
 }
 
 a {
@@ -15,30 +25,22 @@ a {
 }
 
 .navbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background-color: var(--background-color);
-  padding: 8px 12px;
-}
-
-.nav_logo {
-    font-size: 24px;
-    color: var(--text-color);
-}
-  
-.nav_logo i {
-    color: var(--accent-color);
-}
-
-.nav_logo span {
-    color: var(--accent-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: var(--background-color);
+    padding: 8px 12px;
+    border-radius: 8px;
+    margin: 20px 20px 20px 20px;
+    height: 75px;
+    overflow: hidden;
 }
 
 .nav_menu {
     display: flex;
     list-style: none;
     padding-left: 0;
+    margin-right: 10px;
 }
 
 .nav_menu li {
@@ -72,4 +74,24 @@ a {
     position: absolute;
     right: 32px;
     font-size: 24px;
+}
+
+.ex_stat{
+    float: left;
+    padding: 8px 12px;
+    background-color: var(--background-color);
+    margin: 20px;
+    border-radius: 8px;
+}
+
+footer{
+    height: 80px;
+    position : relative;
+    transform : translateY(-100%);
+    text-align: center;
+}
+
+.center_section{
+    display: flex;
+    justify-content: center;
 }

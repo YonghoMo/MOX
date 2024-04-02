@@ -1,0 +1,37 @@
+<!--주간 운동량 통계 페이지-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.js"></script>
+
+</head>
+<body>
+    <canvas id="bar-chart" width=100% height=100%></canvas>
+    <script>
+        new Chart(document.getElementById("bar-chart"), {
+            type: 'bar',
+            data: {
+            labels: ["월", "화", "수", "목", "금", "토", "일"],
+            datasets: [
+                {
+                label: "운동량 (kcal)",
+                backgroundColor: ["#007bff"],
+                data: [2478,5267,734,784,433,844,2000]
+                }
+            ]
+            },
+            options: {
+                plugins: {
+                    title: {
+                    display: true,
+                    text: '주간 운동량'
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
