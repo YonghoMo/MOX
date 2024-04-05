@@ -14,7 +14,7 @@
         <script src='fullcalendar/dist/index.global.js'></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
-
+        
         <!-- fullcalendar -->
         <link href="../calendar/lib/main.css" rel="stylesheet" />
         <script src="../calendar/lib/main.js"></script>
@@ -50,7 +50,7 @@
                                     var Date = $("#calendar_Date").val();   //모달 창에서 날짜를 입력한 input 요소의 값을 가져온다
                                     var start_Time = Date + "T" + $("#calendar_start_Time").val();   //모달 창에서 시작 시간을 입력한 input 요소의 값을 가져온다
                                     var end_Time = Date + "T" + $("#calendar_end_Time").val();   //모달 창에서 종료 시간을 입력한 input 요소의 값을 가져온다
-
+                                    
                                     //입력된 값의 유효성 검사
                                     if(content == null || content == "") {
                                         alert("내용을 입력하세요.");
@@ -75,13 +75,28 @@
                             }
                         }
                     }, eventClick: function(info) {
-                        
+                        $("#scheduleModal").modal("show");
+                        /*
                         alert('Event: ' + info.event.title);
                         alert('Coordinates: ' + info.jsEvent.pageX + ',' + info.jsEvent.pageY);
                         alert('View: ' + info.view.type);
-
+                        
                         // change the border color just for fun
                         info.el.style.borderColor = 'red';
+                        */
+                        var schedule = $("#calendar_content").val();
+                        var date = $("calendar_Date").val();
+                        var start_Time = $("#calendar_start_Time").val();
+
+                        var outerdiv = document.getElementById("scheduleModal");
+                        var printdiv1 = document.getElementById("scheduleModal_1");
+                        var printdiv2 = document.getElementById("scheduleModal_2");
+                        var printdiv3 = document.getElementById("scheduleModal_3");
+                        
+                        var heading5 = document.createElement("h5");
+                        heading.textContent = schedule;
+
+
                     }, 
                     editable: true, // 캘린더의 이벤트를 편집 가능하도록 설정, false로 변경 시 draggable 작동 x 
                     displayEventTime: false // 이벤트의 시간을 표시하지 않도록 설정, false로 변경 시 이벤트에 시간이 표시되지 않음 
@@ -95,22 +110,6 @@
                 padding-left: 15%;
             }
         </style>
-
-        <!-- 팝업1 -->
-        <div id="pop_info_1" class="pop_wrap" style="display:none;">
-            <div class="pop_inner">
-            <p class="dsc">팝업 안내문구 입니다.</p>
-            <button type="button" class="btn_close">닫기</button>
-            </div>
-        </div>
-  
-        <!-- 팝업2 -->
-        <div id="pop_info_2" class="pop_wrap" style="display:none;">
-            <div class="pop_inner">
-            <p class="dsc">팝업 안내문구 입니다222.</p>
-            <button type="button" class="btn_close">닫기</button>
-            </div>
-        </div>
     </head>
     <body>
         <div id="calendarBox">  <!--캘린더를 감싸는 박스 역할-->
@@ -155,5 +154,48 @@
                 </div>
             </div>
         </div>
+        <div class="modal fade" id="scheduleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" id="scheduleModal_1" role="document">  <!--모달 창의 넓이와 마진 조정-->
+                <div class="modal-content" id="scheduleModal_2"> <!--모달 창의 내용을 감싸는 부분-->
+                    <div class="modal-header" id="scheduleModal_3">  <!--모달 창의 헤더 부분, 제목과 닫기 버튼을 포함-->
+                        <h5></h5>
+                    </div>
+                </div>  
+            </div>
+        </div>
+        <!--
+        <script>
+            function scheduleModal(schedule, date, start_time) {
+                // Get the modal
+                var modal = document.getElementById("myModal");
+
+                // Get the <span> element that closes the modal
+                var span = document.getElementsByClassName("close")[0];
+
+                // When the user clicks on <span> (x), close the modal
+                span.onclick = function() {
+                    modal.style.display = "none";
+                }
+
+                // Function to display modal with event details
+                function displayModal(schedule, start_time, date) {
+                    document.getElementById("modal-schedule").textContent = schedule;
+                    document.getElementById("modal-date").textContent = date;
+                    document.getElementById("modal-start_time").textContent = start_time;
+                    modal.style.display = "block";
+                }
+
+                // Attach event listeners to each event to display modal when clicked
+                var events = document.querySelectorAll('.event');
+                events.forEach(function(event) {
+                    event.addEventListener('click', function() {
+                        var schedule = event.dataset.schedule;
+                        var date = event.dataset.date;
+                        var start_time = event.dataset.start_time;
+                        displayModal(schedule, date, start_time);
+                    });
+                });
+            }
+        </script>   -->
     </body>
 </html>
