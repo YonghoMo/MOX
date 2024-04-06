@@ -94,8 +94,8 @@
                         var printdiv3 = document.getElementById("scheduleModal_3");
                         
                         var heading5 = document.createElement("h5");
-                        heading.textContent = schedule;
-
+                        heading5.textContent = "schedule";
+                        schedulemodal_3.appendChild(heading5);
 
                     }, 
                     editable: true, // 캘린더의 이벤트를 편집 가능하도록 설정, false로 변경 시 draggable 작동 x 
@@ -109,6 +109,8 @@
                 width: 70%;
                 padding-left: 15%;
             }
+
+           
         </style>
     </head>
     <body>
@@ -154,13 +156,20 @@
                 </div>
             </div>
         </div>
-        <div class="modal fade" id="scheduleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-            <div class="modal-dialog" id="scheduleModal_1" role="document">  <!--모달 창의 넓이와 마진 조정-->
-                <div class="modal-content" id="scheduleModal_2"> <!--모달 창의 내용을 감싸는 부분-->
-                    <div class="modal-header" id="scheduleModal_3">  <!--모달 창의 헤더 부분, 제목과 닫기 버튼을 포함-->
-                        <h5></h5>
+        <div class="modal fade" id="scheduleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">  <!--모달 창을 정의하는 요소, id 속성을 통해 js 코드에서 이 모달 창을 참조할 수 있음-->
+            <div class="modal-dialog" id="scheduleModal_dialog" role="document">  <!--모달 창의 넓이와 마진 조정-->
+                <div class="modal-content" id="scheduleModal_content"> <!--모달 창의 내용을 감싸는 부분-->
+                    <div class="modal-header" id="scheduleModal_header">  <!--모달 창의 헤더 부분, 제목과 닫기 버튼을 포함-->
+                        <h5 class="modal-title" id="scheduleModal_title">0000-00-00<br>"일정 이름"<br>00:00(start_time)
+                        </h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    <div class="modal-body" id="scheduleModal_body">
+                        <h3>댓글을 입력하세요</h3>
+                        <input type="text" id="commentInput" placeholder="댓글을 입력하세요">
+                        <button onclick="uploadComment()">업로드</button>
                     </div>
-                </div>  
             </div>
         </div>
         <!--
