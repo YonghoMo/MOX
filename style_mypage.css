@@ -6,6 +6,8 @@ body {
     padding: 0;
     text-align: center;
     margin: auto;
+    background-image: url('image/background_image.png');
+    background-size: cover;
 }
 
 .navbar {
@@ -20,27 +22,6 @@ body {
     overflow: hidden;
 }
 
-.nav_menu {
-    display: flex;
-    list-style: none;
-    padding-left: 0;
-    margin-right: 10px;
-}
-
-.nav_menu li {
-    padding: 8px 12px;
-}
-
-.nav_menu li:hover {
-    color: var(--background-color);
-    background-color: var(--accent-color);
-    border-radius: 4px;
-}
-
-.nav_menu li a:hover {
-    color: var(--background-color);
-}
-
 .nav_icons {
     display: flex;
     color: #7dc0ff;
@@ -48,9 +29,6 @@ body {
     padding-left: 0;
 }
 
-.nav_icons li {
-    padding: 8px 5px;
-}
 
 .navbar_toggleBtn {
     display: none;
@@ -123,4 +101,41 @@ body {
 
 .settings a:hover {
     text-decoration: underline;
+}
+
+.main {
+    width: 250px;
+    height: 300px;
+    border: 1px solid lightgrey;
+    border-radius: 5px;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.logo {
+    margin-top: 0px;
+    margin-bottom: 40px;
+}
+
+#login {
+    width: 71%;
+    background-color: skyblue;
+    border-color: transparent;
+    color: white;
+    transform: translate(20%, 0%);
+}
+
+.account {
+    display: block;
+    margin-bottom: 3px;
+    padding: 3px;
+    border: 1px solid lightgray;
+    border-radius: 3px;
+    transform: translate(20%, 0%);
+}
+
+#alert {
+    border-color: transparent;
 }
