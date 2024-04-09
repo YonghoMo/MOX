@@ -128,7 +128,7 @@ footer {
 }
 
 .section_lib {
-  width: 50%;
+  width: 40%;
   margin: 20px auto;
   padding: 20px;
   background-color: #ffffff;
@@ -137,7 +137,7 @@ footer {
 
 .section_lib details {
   margin: 20px;
-  font-size: 25px;
+  font-size: 20px;
 }
 
 .section_lib a:hover {
