@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MOX</title>
+    <link rel="stylesheet" href="style.css" />
+    <!--웹 폰트(pretendard) 적용하기 위한 문단-->
+    <link
+      rel="stylesheet"
+      as="style"
+      crossorigin
+      href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css"
+    />
+  </head>
+  <body>
+    <div id="wrap">
+      <nav class="navbar">
+        <div class="nav_logo">
+          <a href="index.html"
+            ><img src="image/logo.png" width="150px" height="150px"
+          /></a>
+          <!--임시 로고 이미지-->
+        </div>
+        <ul class="nav_menu">
+          <li><a href="index.html">홈</a></li>
+          <li><a href="calendar/calendar.html">캘린더</a></li>
+          <li><a href="challenge.html">챌린지</a></li>
+          <li><a href="ex_library.html">라이브러리</a></li>
+          <li><a href="login.html">로그아웃</a></li>
+          <li><a href="mypage.html">마이페이지</a></li>
+          <!--나중에 이미지로 대체 가능-->
+        </ul>
+        <a href="#" class="navbar_toggleBtn">
+          <img src="icons/8666802_menu_navigation.svg" />
+        </a>
+      </nav>
+      <section class="center_section">
+        <article>
+          <button
+            class="ex_today"
+            onclick="location.href='calendar/calendar.html'"
+          >
+            오늘의 운동 일정 추가
+          </button>
+        </article>
+        <article class="ex_stat">
+          <iframe
+            src="ex_stat.html"
+            frameborder="0"
+            width="380"
+            height="380"
+          ></iframe>
+        </article>
+      </section>
+    </div>
+
+    <footer>
+      <p>Copyright 2024 Team Mox</p>
+      <p>All right reserved</p>
+    </footer>
+  </body>
+</html>
