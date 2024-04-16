@@ -1,0 +1,25 @@
+#calendarBox{
+    width: 90%;
+    padding-top: 2%;
+    max-width: 100%;
+    margin: 0 auto;
+}
+.btn {
+    padding: 0.9rem 0.8rem; /* 버튼 패딩 조절 */
+}
+
+@media screen and (max-width: 768px) {
+    #calendarBox{
+        width: 100%;
+        padding: 5% 5%;
+        max-width: none;
+        
+    }
+    .fc-event-title {
+        font-size: 10px; /* obj 객체 크기 조절 */
+    }
+    .btn {
+        padding: 0.5rem 0.35rem; /* 모바일 버튼 패딩 조절 */
+        font-size: 0.9rem; /* 모바일 버튼 크기 조절 */
+    }
+}
