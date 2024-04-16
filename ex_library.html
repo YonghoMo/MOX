@@ -5,12 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>라이브러리</title>
     <link rel="stylesheet" href="style.css" />
+    <script src="script.js"></script>
   </head>
   <body>
     <nav class="navbar">
-      <div class="nav_logo">
+      <div>
         <a href="index.html"
-          ><img src="image/logo.png" width="150px" height="150px"
+          ><img
+            src="image/logo.png"
+            class="nav_logo"
+            width="150px"
+            height="150px"
         /></a>
         <!--임시 로고 이미지-->
       </div>
@@ -23,7 +28,7 @@
         <li><a href="mypage.html">마이페이지</a></li>
         <!--나중에 이미지로 대체 가능-->
       </ul>
-      <a href="#" class="navbar_toggleBtn">
+      <a href="#" class="navbar_toggleBtn" onclick="toggleMenu();">
         <img src="icons/8666802_menu_navigation.svg" />
       </a>
     </nav>
