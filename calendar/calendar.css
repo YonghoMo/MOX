@@ -18,6 +18,7 @@ body {
 }
 
 #calendarBox{
+    display: block;
     background-color: var(--background-color);
     width: 90%;
     padding: 5% 5%;
@@ -30,6 +31,7 @@ body {
 
 #calendarBox_cont {
     position: relative;
+    min-height: 200px;
 }
 
 .move-down {
@@ -40,67 +42,9 @@ body {
     padding: 0.9rem 0.8rem; /* 버튼 패딩 조절 */
 }
 
-.navbar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background-color: var(--background-color);
-    padding: 8px 12px;
-    border-radius: 8px;
-    margin: 20px 20px 20px 20px;
-    height: 75px;
-}
-
-.nav_menu {
-    border: solid 2px;
-
-    background-color: var(--background-color);
-    display: flex;
-    list-style: none;
-    text-align: center;
-    padding-left: 0;
-}
-
-.nav_menu.active {
-    display: flex;
-}
-
-.nav_menu.active {
-    display: flex;
-}
-
-.nav_menu li {
-    padding: 8px 12px;
-}
-
-.nav_menu li:hover {
-    color: var(--background-color);
-    background-color: var(--accent-color);
-    border-radius: 4px;
-    transition: 0.5s;
-}
-
-.nav_menu li a:hover {
-    color: var(--background-color);
-    transition: 0.5s;
-}
-
-.navbar_toggleBtn {
-    display: none;
-    color: var(--text-color);
-    position: absolute;
-    right: 32px;
-    font-size: 24px;
-}
-
-a {
-    text-decoration: none;
-    color: var(--text-color);
-}
-
 footer {
     height: 80px;
-    bottom: 0;
+    width: 100%;
     text-align: center;
     margin: 63px 25px 0px 0px;
 }
@@ -120,27 +64,5 @@ footer {
         padding: 0.5rem 0.35rem; /* 모바일 버튼 패딩 조절 */
         font-size: 0.9rem; /* 모바일 버튼 크기 조절 */
     }
-    .navbar {
-        display: block;
-        flex-direction: column;
-        align-items: flex-start;
-        padding: 8px 24px;
-        height: 80px;
-    }
-    .nav_menu {
-        display: none;
-        flex-direction: column;
-        align-items: center;
-        text-align: center;
-        width: 100%;
-    }
-    .navbar_toggleBtn {
-        display: block;
-        right: 15px;
-        top: 10px;
-    }
-    .nav_logo img {
-        width: 60px;
-        height: auto;
-    }
+    
 }
