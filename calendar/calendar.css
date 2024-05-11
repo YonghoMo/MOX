@@ -10,6 +10,7 @@
     "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
 }
 
+
 body {
     background-image: url("../image/background_image.png");
     background-size: cover;
@@ -24,6 +25,15 @@ body {
     margin: 14px;
     border-radius: 12px;
     text-align: center;
+    transition: top 0.5s ease;
+}
+
+#calendarBox_cont {
+    position: relative;
+}
+
+.move-down {
+    transform: translateY(250px);
 }
 
 .btn {
@@ -42,11 +52,13 @@ body {
 }
 
 .nav_menu {
+    border: solid 2px;
+
+    background-color: var(--background-color);
     display: flex;
     list-style: none;
-    background-color: var(--background-color);
+    text-align: center;
     padding-left: 0;
-    margin-right: 10px;
 }
 
 .nav_menu.active {
@@ -73,17 +85,6 @@ body {
     transition: 0.5s;
 }
 
-.navbar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background-color: var(--background-color);
-    padding: 8px 12px;
-    border-radius: 8px;
-    margin: 20px 20px 20px 20px;
-    height: 75px;
-}
-
 .navbar_toggleBtn {
     display: none;
     color: var(--text-color);
@@ -92,12 +93,17 @@ body {
     font-size: 24px;
 }
 
+a {
+    text-decoration: none;
+    color: var(--text-color);
+}
+
 footer {
     height: 80px;
-    position: relative;
+    bottom: 0;
     text-align: center;
     margin: 63px 25px 0px 0px;
-  }
+}
 
 @media screen and (max-width: 768px) {
     #calendarBox{
@@ -105,6 +111,7 @@ footer {
         padding: 15px 10px;
         max-width: none;
         text-align: center;
+        padding-top: 10px;
     }
     .fc-event-title {
         font-size: 10px; /* obj 객체 크기 조절 */
@@ -114,6 +121,7 @@ footer {
         font-size: 0.9rem; /* 모바일 버튼 크기 조절 */
     }
     .navbar {
+        display: block;
         flex-direction: column;
         align-items: flex-start;
         padding: 8px 24px;
@@ -121,7 +129,6 @@ footer {
     }
     .nav_menu {
         display: none;
-        list-style: none;
         flex-direction: column;
         align-items: center;
         text-align: center;
@@ -135,8 +142,5 @@ footer {
     .nav_logo img {
         width: 60px;
         height: auto;
-    }
-    #calendarBox {
-        padding-top: 6px;
     }
 }
