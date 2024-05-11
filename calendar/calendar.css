@@ -1,19 +1,110 @@
-#calendarBox{
-    width: 90%;
-    padding-top: 2%;
-    max-width: 100%;
-    margin: 0 auto;
+:root {
+    /*주요 색상 변수 선언*/
+    --accent-color: #007bff;
+    --text-color: #000000;
+    --background-color: #ffffff;
+    --sub-color: #f7f7f7;
+    font-family: "Pretendard Variable", Pretendard, -apple-system,
+    BlinkMacSystemFont, system-ui, Roboto, "Helvetica Neue", "Segoe UI",
+    "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", "Apple Color Emoji",
+    "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
 }
+
+body {
+    background-image: url("../image/background_image.png");
+    background-size: cover;
+    background-attachment: fixed;
+}
+
+#calendarBox{
+    background-color: var(--background-color);
+    width: 90%;
+    padding: 5% 5%;
+    max-width: 100%;
+    margin: 14px;
+    border-radius: 12px;
+    text-align: center;
+}
+
 .btn {
     padding: 0.9rem 0.8rem; /* 버튼 패딩 조절 */
 }
 
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: var(--background-color);
+    padding: 8px 12px;
+    border-radius: 8px;
+    margin: 20px 20px 20px 20px;
+    height: 75px;
+}
+
+.nav_menu {
+    display: flex;
+    list-style: none;
+    background-color: var(--background-color);
+    padding-left: 0;
+    margin-right: 10px;
+}
+
+.nav_menu.active {
+    display: flex;
+}
+
+.nav_menu.active {
+    display: flex;
+}
+
+.nav_menu li {
+    padding: 8px 12px;
+}
+
+.nav_menu li:hover {
+    color: var(--background-color);
+    background-color: var(--accent-color);
+    border-radius: 4px;
+    transition: 0.5s;
+}
+
+.nav_menu li a:hover {
+    color: var(--background-color);
+    transition: 0.5s;
+}
+
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: var(--background-color);
+    padding: 8px 12px;
+    border-radius: 8px;
+    margin: 20px 20px 20px 20px;
+    height: 75px;
+}
+
+.navbar_toggleBtn {
+    display: none;
+    color: var(--text-color);
+    position: absolute;
+    right: 32px;
+    font-size: 24px;
+}
+
+footer {
+    height: 80px;
+    position: relative;
+    text-align: center;
+    margin: 63px 25px 0px 0px;
+  }
+
 @media screen and (max-width: 768px) {
     #calendarBox{
-        width: 100%;
-        padding: 5% 5%;
+        width: 94%;
+        padding: 15px 10px;
         max-width: none;
-        
+        text-align: center;
     }
     .fc-event-title {
         font-size: 10px; /* obj 객체 크기 조절 */
@@ -21,5 +112,31 @@
     .btn {
         padding: 0.5rem 0.35rem; /* 모바일 버튼 패딩 조절 */
         font-size: 0.9rem; /* 모바일 버튼 크기 조절 */
+    }
+    .navbar {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 8px 24px;
+        height: 80px;
+    }
+    .nav_menu {
+        display: none;
+        list-style: none;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        width: 100%;
+    }
+    .navbar_toggleBtn {
+        display: block;
+        right: 15px;
+        top: 10px;
+    }
+    .nav_logo img {
+        width: 60px;
+        height: auto;
+    }
+    #calendarBox {
+        padding-top: 6px;
     }
 }
