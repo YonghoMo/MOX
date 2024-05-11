@@ -11,7 +11,7 @@
             <a href="index.html"><img src="image/logo.png" width="150px" height="150px"></a> <!--임시 로고 이미지-->
         </div>
         <ul class="nav_menu">
-            <li><a href="index.html">홈 화면으로 돌아가기</a></li>
+            <a href="index.html" style="text-decoration: none; color: black;"><strong>홈 화면으로 돌아가기</strong></a>
         </ul>
     </nav>
     <div class="profile" style="text-align: center;">
@@ -28,7 +28,25 @@
 
     <div class="group-management">
         <h2>그룹원 관리</h2>
-        <iframe src="group_management.html" width="100%" height="400px" frameborder="0"></iframe>
+            <button id="group-button" onClick="location.href='#'" style="float: inline-start;">그룹원 추가</button>
+            <button id="group-button" onClick="location.href='#'" style="float: inline-start;">그룹원 삭제</button>
+            <br>
+            <p>
+                <img src="image/default_profile.PNG" 
+                width="35px" height="35px" alt="프로필 사진">그룹원 1 
+                <button><img src="image/see_more_button.PNG" width="20px" height="20px" style="text-align: right;"></button>
+            </p>
+                
+            <p>
+                <img src="image/default_profile.PNG" 
+                width="35px" height="35px" alt="프로필 사진">그룹원 2
+                <button><img src="image/see_more_button.PNG" width="20px" height="20px" style="text-align: right;"></button>
+            </p>
+            <p>
+                <img src="image/default_profile.PNG" 
+                width="35px" height="35px" alt="프로필 사진">그룹원 3
+                <button><img src="image/see_more_button.PNG" width="20px" height="20px" style="text-align: right;"></button>
+            </p>
     </div>
 
     <div class="settings" style="text-align: right;">
@@ -39,7 +57,7 @@
 
     <script>
         function openUserInfo() {
-            // 회원정보 변경 창을 여는 코드를 추가할 수 있습니다.
+            // 회원정보 변경 창을 여는 코드를 추가
             // 예: window.location.href = "user_info.html";
         }
     </script>       
