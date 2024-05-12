@@ -14,10 +14,31 @@ body {
   background-attachment: fixed;
 }
 
-#wrap {
-  height: auto;
-  min-height: 100vh;
-  padding-bottom: 80px;
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: var(--background-color);
+  padding: 8px 12px;
+  border-radius: 8px;
+  margin: 20px 20px 20px 20px;
+  height: 75px;
+  overflow: hidden;
+}
+
+.nav_icons {
+  display: flex;
+  color: #7dc0ff;
+  list-style: none;
+  padding-left: 0;
+}
+
+.navbar_toggleBtn {
+  display: none;
+  color: var(--text-color);
+  position: absolute;
+  right: 32px;
+  font-size: 24px;
 }
 
 .profile {
@@ -137,28 +158,4 @@ body {
 
 #alert {
   border-color: transparent;
-}
-
-@media screen and (max-width: 768px) {
-  .navbar {
-    flex-direction: column;
-    align-items: flex-start;
-    padding: 8px 24px;
-    height: auto;
-  }
-  .nav_menu {
-    display: none;
-    flex-direction: column;
-    align-items: center;
-    width: 100%;
-  }
-  .navbar_toggleBtn {
-    display: block;
-    right: 35px;
-    top: 40px;
-  }
-  .nav_logo img {
-    width: 60px;
-    height: auto;
-  }
 }
