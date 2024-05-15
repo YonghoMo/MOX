@@ -93,7 +93,7 @@ body {
 .main {
   width: 250px;
   height: 300px;
-  border: 1px solid lightgrey;
+  border: 2px solid lightgrey;
   border-radius: 5px;
   position: absolute;
   left: 50%;
@@ -106,12 +106,27 @@ body {
   margin-bottom: 40px;
 }
 
-#login {
+#loginBtn {
   width: 71%;
-  background-color: skyblue;
+  background-color: #007bff;
   border-color: transparent;
   color: white;
   transform: translate(20%, 0%);
+}
+
+#login:hover{
+  background-color: #0056b3;
+}
+
+#id{
+  display: flex;
+  justify-content: center;
+  width: 169px;
+}
+#password {
+  display: flex;
+  justify-content: center;
+  width: 169px;
 }
 
 #group-button {

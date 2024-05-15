@@ -7,16 +7,23 @@
     <title>로그인</title>
 </head>
 <body>
-<body>
     <div class="main">
         <div class="container">
             <a class="logo"><img src="image/logo.png" width="200px" height="200px"></a>
             <input type="text" placeholder="ID" id="id" class="account">
-            <input type="password" placeholder="Password" id="password" class="account">
-            <button id="login" class="account" style="text-align: center;">login</button>
-            <p id="alert" class="account"> </p>
+            <input type="password" placeholder="PASSWORD" id="password" class="account" onkeypress="enterkey(event)">
+            <button id="loginBtn" class="account" style="text-align: center;" onclick="alert('로그인 실패')">login</button>
+            <p id="alert" class="account" style="text-align: center;"> </p>
         </div>
-    </div>   
-</body>
+    </div>
+    <script type="text/javascript">
+        function enterkey(e) {
+            if (e.keyCode == 13) {
+
+            // 엔터키가 눌렸을 때 실행할 내용
+                document.getElementById("loginBtn").click();
+            }
+        }
+    </script>   
 </body>
 </html>
