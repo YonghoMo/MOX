@@ -128,7 +128,7 @@
         <nav class="navbar navbar-expand-lg navbar-light bg-light">
             <div class="container-fluid">
                 <a class="navbar-brand" href="../index.html">
-                    <img src="../image/logo.png" alt="" width="80" height="80" />
+                    <img src="../image/logo.png" alt="" width="80" height="80"/>
                 </a>
                 <button
                     class="navbar-toggler"
@@ -164,24 +164,25 @@
                 </div>
             </div>
         </nav>
+        
         <div id="calendarBox_cont">
             <div id="calendarBox">  <!--캘린더를 감싸는 박스 역할-->
                 <div id="calendar"></div>   <!--FullCalendar 라이브러리를 통해 생성된 캘린더가 여기에 표시, js 코드에서 생성한 calendarE1과 연결됨-->
             </div>
         </div>
+    
         <footer id="footer">
             <p>Copyright 2024 Team Mox</p>
             <p>All right reserved</p>
         </footer>
         
         <!-- 일정 추가 -->
-        <div class="modal fade" id="calendarModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">  <!--모달 창을 정의하는 요소, id 속성을 통해 js 코드에서 이 모달 창을 참조할 수 있음-->
+        <div class="modal" id="calendarModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">  <!--모달 창을 정의하는 요소, id 속성을 통해 js 코드에서 이 모달 창을 참조할 수 있음-->
             <div class="modal-dialog" role="document">  <!--모달 창의 넓이와 마진 조정-->
                 <div class="modal-content"> <!--모달 창의 내용을 감싸는 부분-->
                     <div class="modal-header">  <!--모달 창의 헤더 부분, 제목과 닫기 버튼을 포함-->
                         <h5 class="modal-title" id="exampleModalLabel">일정을 입력하세요.</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
+                        <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close">
                         </button>
                     </div>
                     <div class="modal-body">    <!--모달 창의 본문 내용, 새로운 일정을 입력하는 입력 필드들을 포함-->
@@ -206,35 +207,47 @@
                         <!--button: 클릭 가능한 버튼-->
                         <!--type="button": 기본 동작을 제거하고 js 코드에서 클릭 이벤트를 처리하기 위해 사용-->
                         <!--class="btn btn-warning"과 class="btn btn-secondary": 부트스트랩 클래스로 각각 '추가'와 '취소' 버튼 스타일 지정-->
-                        <button type="button" class="btn btn-warning" id="addCalendar">추가</button>
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal" id="sprintSettingModalClose">취소</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="addCalendar">추가</button>
+                        <button type="button" class="btn btn-primary" id="modalClose">취소</button>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="modal fade" id="scheduleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">  <!--모달 창을 정의하는 요소, id 속성을 통해 js 코드에서 이 모달 창을 참조할 수 있음-->
-            <div class="modal-dialog" id="scheduleModal_dialog" role="document">  <!--모달 창의 넓이와 마진 조정-->
+        <div class="modal fade" id="scheduleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-labelledby="exampleModalLabel" aria-hidden="true">  <!--모달 창을 정의하는 요소, id 속성을 통해 js 코드에서 이 모달 창을 참조할 수 있음-->
+            <div class="modal-dialog" id="scheduleModal_dialog">  <!--모달 창의 넓이와 마진 조정-->
                 <div class="modal-content" id="scheduleModal_content"> <!--모달 창의 내용을 감싸는 부분-->
                     <div class="modal-header" id="scheduleModal_header">  <!--모달 창의 헤더 부분, 제목과 닫기 버튼을 포함-->
-                        <h5 class="modal-title" id="scheduleModal_title">"일정 이름"(comment)</h5>
+                        <h1 class="modal-title fs-5" id="scheduleModalLabel">"일정 이름"(comment)</h5>
                         <h7>0000-00-00(date)
                             00:00(start_time)</h7>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                         </button>
                     </div>
                     <div class="modal-body" id="scheduleModal_body">
+                        <form>
+                            <div class="mb-3">
+                                <label for="recipient-name" class="col-form-label">Recipient:</label>
+                                <input type="text" class="form-control" id="recipient-name">
+                            </div>
+                            <div class="mb-3">
+                                <label for="message-text" class="col-form-label">Message:</label>
+                                <textarea class="form-control" id="message-text"></textarea>
+                            </div>
+                        </form>
                         <a>댓글을 입력하세요</a><br>
                         <input type="text" id="commentInput" placeholder="댓글을 입력하세요">
                         <button onclick="uploadComment()">업로드</button>
                         <hr>
                     </div>
-                    <div class="modal-body" id="commentHistory">
-                        <!--댓글 이력 출력해서 보여주기 위한 공간-->
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary">Send message</button>
                     </div>
+                </div>
             </div>
         </div>
-        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+        
         <!--
         <script>
             function scheduleModal(schedule, date, start_time) {
