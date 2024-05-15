@@ -1,5 +1,4 @@
 body {
-  width: 480px;
   font-family: "Pretendard Variable", Pretendard, -apple-system,
     BlinkMacSystemFont, system-ui, Roboto, "Helvetica Neue", "Segoe UI",
     "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", "Apple Color Emoji",
@@ -21,12 +20,14 @@ body {
 }
 
 .profile {
+  max-width: 480px;
   background-color: #fff;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   padding: 20px;
   margin-bottom: 20px;
   text-align: center;
+  margin: 0 auto;
 }
 
 .profile img {
@@ -56,11 +57,13 @@ body {
 }
 
 .group-management {
+  max-width: 480px;
   background-color: #fff;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   padding: 20px;
   margin-bottom: 20px;
+  margin: 0 auto;
 }
 
 .group-management h2 {
@@ -69,10 +72,12 @@ body {
 }
 
 .settings {
+  max-width: 480px;
   background-color: #fff;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   padding: 20px;
+  margin: 0 auto;
 }
 
 .settings a {
