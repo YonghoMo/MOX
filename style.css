@@ -68,47 +68,6 @@ footer {
   text-align: center;
 }
 
-.section_lib {
-  width: 40%;
-  margin: 20px auto;
+.lib_header {
   padding: 20px;
-  background-color: #ffffff;
-  border-radius: 16px;
-}
-
-.section_lib details {
-  margin: 20px;
-  font-size: 20px;
-}
-
-.section_lib a:hover {
-  padding: 8px 12px;
-  color: #ffffff;
-  background-color: var(--accent-color);
-  transition: 0.5s;
-  border-radius: 8px;
-}
-
-@media screen and (max-width: 768px) {
-  .navbar {
-    flex-direction: column;
-    align-items: flex-start;
-    padding: 8px 24px;
-    height: auto;
-  }
-  .nav_menu {
-    display: none;
-    flex-direction: column;
-    align-items: center;
-    width: 100%;
-  }
-  .navbar_toggleBtn {
-    display: block;
-    right: 35px;
-    top: 40px;
-  }
-  .nav_logo img {
-    width: 60px;
-    height: auto;
-  }
 }

@@ -4,111 +4,505 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>라이브러리</title>
+    <!--웹 폰트(pretendard) 적용하기 위한 문단-->
+    <link
+      rel="stylesheet"
+      as="style"
+      crossorigin
+      href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css"
+    />
+    <!--BootStrab 5.3.3-->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+      crossorigin="anonymous"
+    />
     <link rel="stylesheet" href="style.css" />
-    <script src="script.js"></script>
   </head>
   <body>
-    <nav class="navbar">
-      <div class="nav_logo">
-        <a href="index.html"
-          ><img src="image/logo.png" width="150px" height="150px"
-        /></a>
-        <!--임시 로고 이미지-->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="index.html">
+          <img src="image/logo.png" alt="" width="80" height="80" />
+        </a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarSupportedContent"
+          aria-controls="navbarSupportedContent"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav ms-auto mb-2 mb-lg-0 text-end">
+            <li class="nav-item">
+              <a class="nav-link" href="index.html">홈</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="calendar/calendar.html">캘린더</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="challenge.html">챌린지</a>
+            </li>
+            <li class="nav-item">
+              <a
+                class="nav-link active"
+                aria-current="page"
+                href="ex_library.html"
+                >라이브러리</a
+              >
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="mypage.html">마이페이지</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">로그아웃</a>
+            </li>
+          </ul>
+        </div>
       </div>
-      <ul class="nav_menu">
-        <li><a href="index.html">홈</a></li>
-        <li><a href="calendar/calendar.html">캘린더</a></li>
-        <li><a href="challenge.html">챌린지</a></li>
-        <li><a href="ex_library.html">라이브러리</a></li>
-        <li><a href="login.html">로그아웃</a></li>
-        <li><a href="mypage.html">마이페이지</a></li>
-        <!--나중에 이미지로 대체 가능-->
-      </ul>
-      <a href="#" class="navbar_toggleBtn" onclick="toggleMenu();">
-        <img src="icons/8666802_menu_navigation.svg" />
-      </a>
     </nav>
     <header>
-      <h1>운동 라이브러리</h1>
-      <form action="#">
-        <input
-          type="search"
-          id="search_input"
-          placeholder="검색할 운동을 입력하세요"
-        />
-        <input type="submit" value="검색" />
-      </form>
+      <div class="lib_header">
+        <h1>운동 라이브러리</h1>
+        <form action="#">
+          <input
+            type="search"
+            id="search_input"
+            placeholder="검색할 운동을 입력하세요"
+          />
+          <input type="submit" value="검색" />
+        </form>
+      </div>
     </header>
-    <section class="section_lib">
-      <details>
-        <summary>등</summary>
-        <p><a href="#">데드리프트</a></p>
-        <p><a href="#">렛 풀 다운</a></p>
-        <p><a href="#">풀 업</a></p>
-        <p><a href="#">바벨 로우</a></p>
-        <p><a href="#">케이블 로우</a></p>
-        <p><a href="#">바벨 풀 오버</a></p>
-      </details>
-      <hr />
-      <details>
-        <summary>가슴</summary>
-        <p><a href="#">벤치 프레스</a></p>
-        <p><a href="#">딥스</a></p>
-        <p><a href="#">플라이</a></p>
-        <p><a href="#">팔굽혀펴기</a></p>
-        <p><a href="#">덤벨 풀오버</a></p>
-      </details>
-      <hr />
-      <details>
-        <summary>어깨</summary>
-        <p><a href="#">밀리터리 프레스</a></p>
-        <p><a href="#">레터럴 레이즈</a></p>
-        <p><a href="#">업라이트 로우</a></p>
-      </details>
-      <hr />
-      <details>
-        <summary>삼두</summary>
-        <p><a href="#">팔굽혀펴기</a></p>
-        <p><a href="#">딥스</a></p>
-        <p><a href="#">스컬 크러셔</a></p>
-        <p><a href="#">트라이셉스 푸시 다운</a></p>
-      </details>
-      <hr />
-      <details>
-        <summary>이두</summary>
-        <p><a href="#">바벨 컬</a></p>
-        <p><a href="#">덤벨 컬</a></p>
-      </details>
-      <hr />
-      <details>
-        <summary>하체</summary>
-        <p><a href="#">스쿼트</a></p>
-        <p><a href="#">레그 프레스</a></p>
-        <p><a href="#">카프레이즈</a></p>
-      </details>
-      <hr />
-      <details>
-        <summary>복근</summary>
-        <p><a href="#">크런치</a></p>
-        <p><a href="#">AB 롤아웃</a></p>
-        <p><a href="#">윗몸 일으키기</a></p>
-        <p><a href="#">바이시클 메뉴버</a></p>
-      </details>
-      <hr />
-      <details>
-        <summary>전신</summary>
-        <p><a href="#">클린</a></p>
-        <p><a href="#">스내치</a></p>
-      </details>
-      <hr />
-      <details>
-        <summary>유산소 운동</summary>
-        <p><a href="#">걷기</a></p>
-        <p><a href="#">달리기</a></p>
-        <p><a href="#">트레드밀</a></p>
-        <p><a href="#">스텝밀</a></p>
-        <p><a href="#">싸이클</a></p>
-      </details>
-    </section>
+    <div class="accordion" id="accordionExample">
+      <!--아코디언 전체 시작지점-->
+      <div class="accordion-item">
+        <!--1번 아코디언-->
+        <h2 class="accordion-header">
+          <!--아코디언 헤더-->
+          <button
+            class="accordion-button collapsed"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#collapseOne"
+            aria-expanded="true"
+            aria-controls="collapseOne"
+          >
+            복근
+          </button>
+        </h2>
+        <div
+          id="collapseOne"
+          class="accordion-collapse collapse"
+          data-bs-parent="#accordionExample"
+        >
+          <div class="accordion-body">
+            <!--아코디언 바디-->
+            <div class="accordion" id="accordionAbs">
+              <!--세부사항 시작지점-->
+              <div class="accordion" id="accordionSitup">
+                <div class="accordion-item">
+                  <h2 class="accordion-header">
+                    <button
+                      class="accordion-button"
+                      type="button"
+                      data-bs-toggle="collapse"
+                      data-bs-target="#collapseSitup"
+                      aria-expanded="true"
+                      aria-controls="collapseSitup"
+                    >
+                      윗몸 일으키기
+                    </button>
+                  </h2>
+                  <div
+                    id="collapseSitup"
+                    class="accordion-collapse collapse"
+                    data-bs-parent="#accordionSitup"
+                  >
+                    <div class="accordion-body">
+                      <p>
+                        1. 무릎을 구부리고 바닥에 누워서, 발이 바닥과 떨어지지
+                        않게 합니다.
+                      </p>
+                      <p>2. 배의 근육을 이용해 상체를 들어올립니다.</p>
+                      <p>3. 복근에 힘을 유지하면서 시작 자세로 돌아갑니다.</p>
+                      <iframe
+                        width="560"
+                        height="315"
+                        src="https://www.youtube.com/embed/UMaZGY6CbC4?si=HnCrRxh3BMRTC2Bu"
+                        title="YouTube video player"
+                        frameborder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                        referrerpolicy="strict-origin-when-cross-origin"
+                        allowfullscreen
+                      >
+                      </iframe>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="accordion" id="accordionCrunch">
+                <div class="accordion-item">
+                  <h2 class="accordion-header">
+                    <button
+                      class="accordion-button"
+                      type="button"
+                      data-bs-toggle="collapse"
+                      data-bs-target="#collapseCrunch"
+                      aria-expanded="true"
+                      aria-controls="collapseCrunch"
+                    >
+                      크런치
+                    </button>
+                  </h2>
+                  <div
+                    id="collapseCrunch"
+                    class="accordion-collapse collapse"
+                    data-bs-parent="#accordionAbs"
+                  >
+                    <div class="accordion-body">
+                      <p>
+                        1. 무릎을 굽히고 바닥에 누워, 양손은 가슴 앞이나 머리
+                        뒤로 올려 고정합니다.
+                      </p>
+                      <p>
+                        2. 등 전체가 아닌 상체 윗부분만 서서히 들어올려, 복근의
+                        윗 부분의 수축감을 느낀다. (이때 가슴을 펴서 척추의
+                        자극을 최소화합니다.)
+                      </p>
+                      <p>3. 윗 복근의 긴장감을 느끼면서 천천히 내려옵니다.</p>
+                      <iframe
+                        width="560"
+                        height="315"
+                        src="https://www.youtube.com/embed/5ER5Of4MOPI?si=wYwdVShQGs49QDlU"
+                        title="YouTube video player"
+                        frameborder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                        referrerpolicy="strict-origin-when-cross-origin"
+                        allowfullscreen
+                      ></iframe>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="accordion" id="accordionLegRaise">
+                <div class="accordion-item">
+                  <h2 class="accordion-header">
+                    <button
+                      class="accordion-button"
+                      type="button"
+                      data-bs-toggle="collapse"
+                      data-bs-target="#collapseLegRaise"
+                      aria-expanded="true"
+                      aria-controls="collapseLegRaise"
+                    >
+                      레그 레이즈
+                    </button>
+                  </h2>
+                  <div
+                    id="collapseLegRaise"
+                    class="accordion-collapse collapse"
+                    data-bs-parent="#accordionAbs"
+                  >
+                    <div class="accordion-body">
+                      <p>
+                        1. 바닥에 똑바로 누운 상태에서, 팔을 골반옆에 위치시켜
+                        바닥을 지지할 수 있도록 합니다.
+                      </p>
+                      <p>
+                        2. 등을 바닥에 밀착시킨 상태로, 무릎을 최대한 피면서
+                        다리를 들어올립니다.
+                      </p>
+                      <p>
+                        3. 허리가 뜨지 않도록 복근에 힘을 주면서 천천히 다리를
+                        내려줍니다.
+                      </p>
+                      <iframe
+                        width="560"
+                        height="315"
+                        src="https://www.youtube.com/embed/l4kQd9eWclE?si=RH65M67rx3zdT4S9"
+                        title="YouTube video player"
+                        frameborder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                        referrerpolicy="strict-origin-when-cross-origin"
+                        allowfullscreen
+                      >
+                      </iframe>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="accordion" id="accordionPlank">
+                <div class="accordion-item">
+                  <h2 class="accordion-header">
+                    <button
+                      class="accordion-button"
+                      type="button"
+                      data-bs-toggle="collapse"
+                      data-bs-target="#collapsePlank"
+                      aria-expanded="true"
+                      aria-controls="collapsePlank"
+                    >
+                      플랭크
+                    </button>
+                  </h2>
+                  <div
+                    id="collapsePlank"
+                    class="accordion-collapse collapse"
+                    data-bs-parent="#accordionAbs"
+                  >
+                    <div class="accordion-body">
+                      <p>
+                        1. 손목과 팔꿈치를 바닥에 댄 상태로 바닥에 엎드립니다.
+                      </p>
+                      <p>
+                        2. 팔꿈치와 어깨를 동일선상에 놓은 상태에서, 복부와
+                        엉덩이에 힘을 주며 몸을 밀어 올립니다.
+                      </p>
+                      <p>
+                        3. 등을 평평하게 만든다는 생각으로 팔꿈치로 바닥을 밀며
+                        자세를 유지합니다.
+                      </p>
+                      <iframe
+                        width="560"
+                        height="315"
+                        src="https://www.youtube.com/embed/u6ZelKyUM6g?si=SB_Y1OxXnLmiDAmf"
+                        title="YouTube video player"
+                        frameborder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                        referrerpolicy="strict-origin-when-cross-origin"
+                        allowfullscreen
+                      ></iframe>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="accordion-item">
+        <!--2번 아코디언-->
+        <h2 class="accordion-header">
+          <!--아코디언 헤더-->
+          <button
+            class="accordion-button collapsed"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#collapseTwo"
+            aria-expanded="true"
+            aria-controls="collapseTwo"
+          >
+            하체
+          </button>
+        </h2>
+        <div
+          id="collapseTwo"
+          class="accordion-collapse collapse"
+          data-bs-parent="#accordionExample"
+        >
+          <div class="accordion-body">
+            <!--아코디언 바디-->
+            <div class="accordion" id="accordionLeg">
+              <!--세부사항 시작지점-->
+              <div class="accordion" id="accordionAirSquat">
+                <div class="accordion-item">
+                  <h2 class="accordion-header">
+                    <button
+                      class="accordion-button"
+                      type="button"
+                      data-bs-toggle="collapse"
+                      data-bs-target="#collapseAirSquat"
+                      aria-expanded="true"
+                      aria-controls="collapseAirSquat"
+                    >
+                      에어 스쿼트
+                    </button>
+                  </h2>
+                  <div
+                    id="collapseAirSquat"
+                    class="accordion-collapse collapse"
+                    data-bs-parent="#accordionLeg"
+                  >
+                    <div class="accordion-body">
+                      <p>
+                        1. 다리를 어깨너비만큼 벌리고 허리를 펴고 곧게 섭니다.
+                      </p>
+                      <p>
+                        2. 가슴을 편 상태로 엉덩이를 뒤로 빼며 앉습니다. (이때
+                        양팔을 앞으로 벌려주면 균형을 잡기 쉽습니다.)
+                      </p>
+                      <p>
+                        3. 발바닥으로 지면을 밀고 일어나면서 시작 자세로
+                        돌아옵니다.
+                      </p>
+                      <iframe
+                        width="560"
+                        height="315"
+                        src="https://www.youtube.com/embed/4KmY44Xsg2w?si=Nj1Eefp3zfjdfzwJ"
+                        title="YouTube video player"
+                        frameborder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                        referrerpolicy="strict-origin-when-cross-origin"
+                        allowfullscreen
+                      ></iframe>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="accordion" id="accordionBarbellBackSquat">
+                <div class="accordion-item">
+                  <h2 class="accordion-header">
+                    <button
+                      class="accordion-button"
+                      type="button"
+                      data-bs-toggle="collapse"
+                      data-bs-target="#collapseBarbellBackSquat"
+                      aria-expanded="true"
+                      aria-controls="collapseBarbellBackSquat"
+                    >
+                      바벨 백 스쿼트
+                    </button>
+                  </h2>
+                  <div
+                    id="collapseBarbellBackSquat"
+                    class="accordion-collapse collapse"
+                    data-bs-parent="#accordionLeg"
+                  >
+                    <div class="accordion-body">
+                      <p>
+                        1. 다리를 어깨너비만큼 벌리고, 바벨을 등 뒤 어깨 위에
+                        올려줍니다.
+                      </p>
+                      <p>
+                        2. 상체가 앞으로 숙여지지 않도록 코어에 힘을 준 상태로
+                        엉덩이를 뒤로 빼며 앉습니다.
+                      </p>
+                      <p>
+                        3. 상체의 자세를 유지하면서, 발바닥으로 지면을 밀고
+                        일어납니다.
+                      </p>
+                      <iframe
+                        width="560"
+                        height="315"
+                        src="https://www.youtube.com/embed/VZ90qWlfQUE?si=oSvC2xqTHZWkfFJX"
+                        title="YouTube video player"
+                        frameborder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                        referrerpolicy="strict-origin-when-cross-origin"
+                        allowfullscreen
+                      ></iframe>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="accordion" id="accordionLegRaise">
+                <div class="accordion-item">
+                  <h2 class="accordion-header">
+                    <button
+                      class="accordion-button"
+                      type="button"
+                      data-bs-toggle="collapse"
+                      data-bs-target="#collapseLegRaise"
+                      aria-expanded="true"
+                      aria-controls="collapseLegRaise"
+                    >
+                      레그 레이즈
+                    </button>
+                  </h2>
+                  <div
+                    id="collapseLegRaise"
+                    class="accordion-collapse collapse"
+                    data-bs-parent="#accordionAbs"
+                  >
+                    <div class="accordion-body">
+                      <p>
+                        1. 바닥에 똑바로 누운 상태에서, 팔을 골반옆에 위치시켜
+                        바닥을 지지할 수 있도록 합니다.
+                      </p>
+                      <p>
+                        2. 등을 바닥에 밀착시킨 상태로, 무릎을 최대한 피면서
+                        다리를 들어올립니다.
+                      </p>
+                      <p>
+                        3. 허리가 뜨지 않도록 복근에 힘을 주면서 천천히 다리를
+                        내려줍니다.
+                      </p>
+                      <iframe
+                        width="560"
+                        height="315"
+                        src="https://www.youtube.com/embed/l4kQd9eWclE?si=RH65M67rx3zdT4S9"
+                        title="YouTube video player"
+                        frameborder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                        referrerpolicy="strict-origin-when-cross-origin"
+                        allowfullscreen
+                      >
+                      </iframe>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="accordion" id="accordionPlank">
+                <div class="accordion-item">
+                  <h2 class="accordion-header">
+                    <button
+                      class="accordion-button"
+                      type="button"
+                      data-bs-toggle="collapse"
+                      data-bs-target="#collapsePlank"
+                      aria-expanded="true"
+                      aria-controls="collapsePlank"
+                    >
+                      플랭크
+                    </button>
+                  </h2>
+                  <div
+                    id="collapsePlank"
+                    class="accordion-collapse collapse"
+                    data-bs-parent="#accordionAbs"
+                  >
+                    <div class="accordion-body">
+                      <p>
+                        1. 손목과 팔꿈치를 바닥에 댄 상태로 바닥에 엎드립니다.
+                      </p>
+                      <p>
+                        2. 팔꿈치와 어깨를 동일선상에 놓은 상태에서, 복부와
+                        엉덩이에 힘을 주며 몸을 밀어 올립니다.
+                      </p>
+                      <p>
+                        3. 등을 평평하게 만든다는 생각으로 팔꿈치로 바닥을 밀며
+                        자세를 유지합니다.
+                      </p>
+                      <iframe
+                        width="560"
+                        height="315"
+                        src="https://www.youtube.com/embed/u6ZelKyUM6g?si=SB_Y1OxXnLmiDAmf"
+                        title="YouTube video player"
+                        frameborder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                        referrerpolicy="strict-origin-when-cross-origin"
+                        allowfullscreen
+                      ></iframe>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+      crossorigin="anonymous"
+    ></script>
   </body>
 </html>
