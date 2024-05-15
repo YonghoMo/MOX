@@ -42,7 +42,9 @@
                         {
                             title:'캡스톤 중간 과제 발표',
                             start:'2024-04-15T15:00:00',
-                            end:'2024-04-15T20:00:00',
+                            end:'2024-04-15T20:00:00'
+                        },
+                        {
                             // color 값을 추가해 색상도 변경 가능 자세한 내용은 하단의 사이트 참조
                             title: '캡스톤 기말 과제 발표',
                             start: '2024-06-03T00:00:00',
@@ -52,7 +54,6 @@
                         left: 'prev,next',
                         center: 'title',
                         right: 'today,addEventButton'
-                        
                         //center: 'addEventButton'    // headerToolbar에 "일정 추가" 버튼을 추가
                     }, customButtons: { //캘린더에 사용자 지정 버튼 추가
                         addEventButton: {   // 추가한 "일정 추가" 버튼에 대한 설정
@@ -62,26 +63,25 @@
 
                                 $("#addCalendar").on("click",function(){    //모달 창 안에 사용자가 입력한 내용 가져다 유효성 검사
                                     var content = $("#calendar_content").val(); //모달 창에서 일정 내용을 입력한 input 요소의 값을 가져온다
-                                    var Date = $("#calendar_Date").val();   //모달 창에서 날짜를 입력한 input 요소의 값을 가져온다
-                                    var start_Time = Date + "T" + $("#calendar_start_Time").val();   //모달 창에서 시작 시간을 입력한 input 요소의 값을 가져온다
-                                    var end_Time = Date + "T" + $("#calendar_end_Time").val();   //모달 창에서 종료 시간을 입력한 input 요소의 값을 가져온다
+                                    var date = $("#calendar_date").val();   //모달 창에서 날짜를 입력한 input 요소의 값을 가져온다
+                                    var startTime = date + "T" + $("#calendar_startTime").val();   //모달 창에서 시작 시간을 입력한 input 요소의 값을 가져온다
+                                    var endTime = date + "T" + $("#calendar_endTime").val();   //모달 창에서 종료 시간을 입력한 input 요소의 값을 가져온다
                                     
                                     //입력된 값의 유효성 검사
                                     if(content == null || content == "") {
                                         alert("내용을 입력하세요.");
-                                    }else if(Date == "") {
+                                    } else if(date == "") {
                                         alert("날짜를 입력하세요.");
-                                    }else if(start_Time === "" || end_Time === "") {
+                                    } else if(startTime === "" || endTime === "") {
                                         alert("시간을 입력하세요.");
-                                    }else if(new Date(end_Time) <= new Date(start_Time)) { // date 타입으로 변경 후 확인
+                                    } else if(new Date(endTime) <= new Date(startTime)) { // date 타입으로 변경 후 확인
                                         alert("종료 시간이 시작 시간보다 빠릅니다.");
-                                    }else { // 정상적인 입력 시
+                                    } else { // 정상적인 입력 시
                                         var obj = {
                                             title : content,
-                                            start : start_Time,
-                                            end : end_Time
-                                        };  //전송할 객체 생성
-                                    
+                                            start : startTime,
+                                            end : endTime
+                                        };  /*전송할 객체 생성*/
                                         calendar.addEvent(obj);   //캘린더에 일정 추가
                                         console.log(obj); // 콘솔에 객체 출력
                                         $("#calendarModal").modal("hide");  // 모달 창 닫기
@@ -100,8 +100,8 @@
                         info.el.style.borderColor = 'red';
                         */
                         var schedule = $("#calendar_content").val();
-                        var date = $("calendar_Date").val();
-                        var start_Time = $("#calendar_start_Time").val();
+                        var date = $("calendar_date").val();
+                        var start_Time = $("#calendar_startTime").val();
 
                         var outerdiv = document.getElementById("scheduleModal");
                         var printdiv1 = document.getElementById("scheduleModal_1");
@@ -164,11 +164,9 @@
                 </div>
             </div>
         </nav>
-        
-        <div id="calendarBox_cont">
-            <div id="calendarBox">  <!--캘린더를 감싸는 박스 역할-->
-                <div id="calendar"></div>   <!--FullCalendar 라이브러리를 통해 생성된 캘린더가 여기에 표시, js 코드에서 생성한 calendarE1과 연결됨-->
-            </div>
+
+        <div id="calendarBox">  <!--캘린더를 감싸는 박스 역할-->
+            <div id="calendar"></div>   <!--FullCalendar 라이브러리를 통해 생성된 캘린더가 여기에 표시, js 코드에서 생성한 calendarE1과 연결됨-->
         </div>
     
         <footer id="footer">
@@ -196,11 +194,11 @@
                             <label for="calendar_content" class="col-form-label">일정 내용</label>
                             <input type="text" class="form-control" id="calendar_content" name="calendar_content">
                             <label for="calendar_Date" class="col-form-label">날짜</label>
-                            <input type="date" class="form-control" id="calendar_Date" name="calendar_Date">
+                            <input type="date" class="form-control" id="calendar_date" name="calendar_date">
                             <label for="calendar_start_Time" class="col-form-label">시작 시간</label>
-                            <input type="time" class="form-control" id="calendar_start_Time" name="calendar_start_Time">
+                            <input type="time" class="form-control" id="calendar_startTime" name="calendar_startTime">
                             <label for="calendar_end_Time" class="col-form-label">종료 시간</label>
-                            <input type="time" class="form-control" id="calendar_end_Time" name="calendar_end_Time">
+                            <input type="time" class="form-control" id="calendar_endTime" name="calendar_endTime">
                         </div>
                     </div>
                     <div class="modal-footer">  <!--모달 창의 하단 영역, 추가와 취소 버튼을 포함-->
@@ -208,11 +206,12 @@
                         <!--type="button": 기본 동작을 제거하고 js 코드에서 클릭 이벤트를 처리하기 위해 사용-->
                         <!--class="btn btn-warning"과 class="btn btn-secondary": 부트스트랩 클래스로 각각 '추가'와 '취소' 버튼 스타일 지정-->
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="addCalendar">추가</button>
-                        <button type="button" class="btn btn-primary" id="modalClose">취소</button>
+                        <button type="button" class="btn btn-primary" id="modalClose">닫기</button>
                     </div>
                 </div>
             </div>
         </div>
+        <!--댓글 모달-->
         <div class="modal fade" id="scheduleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-labelledby="exampleModalLabel" aria-hidden="true">  <!--모달 창을 정의하는 요소, id 속성을 통해 js 코드에서 이 모달 창을 참조할 수 있음-->
             <div class="modal-dialog" id="scheduleModal_dialog">  <!--모달 창의 넓이와 마진 조정-->
                 <div class="modal-content" id="scheduleModal_content"> <!--모달 창의 내용을 감싸는 부분-->
@@ -224,24 +223,17 @@
                         </button>
                     </div>
                     <div class="modal-body" id="scheduleModal_body">
-                        <form>
-                            <div class="mb-3">
-                                <label for="recipient-name" class="col-form-label">Recipient:</label>
-                                <input type="text" class="form-control" id="recipient-name">
-                            </div>
-                            <div class="mb-3">
-                                <label for="message-text" class="col-form-label">Message:</label>
-                                <textarea class="form-control" id="message-text"></textarea>
-                            </div>
-                        </form>
-                        <a>댓글을 입력하세요</a><br>
-                        <input type="text" id="commentInput" placeholder="댓글을 입력하세요">
-                        <button onclick="uploadComment()">업로드</button>
-                        <hr>
-                    </div>
+                        <div class="mb-3">
+                            <label for="recipient-name" class="col-form-label">의견 나누기</label>
+                            <ul id="commentList" class="list-group">
+                                <!--댓글 추가될 공간-->
+                            </ul>
+                        </div>
+                    </div>    
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-primary">Send message</button>
+                        <input type="text" id="commentInput" style="width: 100%;" placeholder="댓글을 입력하세요">
+                        <button type="button" class="btn btn-primary" id="modalClose">닫기</button>
+                        <button type="button" class="btn btn-primary" id="addComment" onclick="uploadComment()">업로드</button>
                     </div>
                 </div>
             </div>

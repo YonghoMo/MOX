@@ -29,15 +29,6 @@ body {
     transition: top 0.5s ease;
 }
 
-#calendarBox_cont {
-    position: relative;
-    min-height: 200px;
-}
-
-.move-down {
-    transform: translateY(250px);
-}
-
 .btn {
     padding: 0.9rem 0.8rem; /* 버튼 패딩 조절 */
 }
