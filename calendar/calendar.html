@@ -91,22 +91,24 @@
                         }
                     }, eventClick: function(info) {
                         $("#scheduleModal").modal("show");
-                        /*
-                        alert('Event: ' + info.event.title);
-                        alert('Coordinates: ' + info.jsEvent.pageX + ',' + info.jsEvent.pageY);
-                        alert('View: ' + info.view.type);
-                        
-                        // change the border color just for fun
-                        info.el.style.borderColor = 'red';
-                        */
-                        var schedule = $("#calendar_content").val();
-                        var date = $("calendar_date").val();
-                        var start_Time = $("#calendar_startTime").val();
 
-                        var outerdiv = document.getElementById("scheduleModal");
-                        var printdiv1 = document.getElementById("scheduleModal_1");
-                        var printdiv2 = document.getElementById("scheduleModal_2");
-                        var printdiv3 = document.getElementById("scheduleModal_3");
+                        var scheduleTitle = $("#scheduleModalLabel");
+                        var scheduleDate = $("#scheduleModal_date");
+                        var scheduleStartTime = $("#scheduleModal_startTime");
+                        var commentList = $("#commentList");
+
+                        //일정 정보 설정
+                        scheduleTitle.text(info.event.title);
+                        scheduleDate.text(info.event.start.toLocaleDateString());
+                        scheduleStartTime.text(info.event.start.toLocaleTimeString());
+
+                        //댓글 목록 초기화
+                        commentList.empty();
+
+                        for (var i = 0; i < 5; i++) { // 가상의 댓글 5개 추가
+                            var commentItem = $("<li>").addClass("list-group-item").text("댓글 " + (i+1));
+                            commentList.append(commentItem);
+                        }
                         
                         var heading5 = document.createElement("h5");
                         heading5.textContent = "schedule";
@@ -122,6 +124,16 @@
                 });
                 calendar.render();  // 캘린더를 렌더링하여 화면에 표시
             });
+            function uploadComment() {
+                var commentText = $("#commentInput").val();
+                if (commentText.trim() === "") {
+                    alert("댓글을 입력하세요.");
+                    return;
+                }
+                var commentItem = $("<li>").addClass("list-group-item").text(commentText);
+                $("#commentList").append(commentItem);
+                $("#commentInput").val("");
+            }
         </script>
     </head>
     <body>
@@ -205,25 +217,25 @@
                         <!--button: 클릭 가능한 버튼-->
                         <!--type="button": 기본 동작을 제거하고 js 코드에서 클릭 이벤트를 처리하기 위해 사용-->
                         <!--class="btn btn-warning"과 class="btn btn-secondary": 부트스트랩 클래스로 각각 '추가'와 '취소' 버튼 스타일 지정-->
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="addCalendar">추가</button>
-                        <button type="button" class="btn btn-primary" id="modalClose">닫기</button>
+                        <button type="button" class="btn btn-primary" id="addCalendar">추가</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="modalClose">닫기</button>
                     </div>
                 </div>
             </div>
         </div>
         <!--댓글 모달-->
-        <div class="modal fade" id="scheduleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-labelledby="exampleModalLabel" aria-hidden="true">  <!--모달 창을 정의하는 요소, id 속성을 통해 js 코드에서 이 모달 창을 참조할 수 있음-->
+        <div class="modal" id="scheduleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">  <!--모달 창을 정의하는 요소, id 속성을 통해 js 코드에서 이 모달 창을 참조할 수 있음-->
             <div class="modal-dialog" id="scheduleModal_dialog">  <!--모달 창의 넓이와 마진 조정-->
                 <div class="modal-content" id="scheduleModal_content"> <!--모달 창의 내용을 감싸는 부분-->
                     <div class="modal-header" id="scheduleModal_header">  <!--모달 창의 헤더 부분, 제목과 닫기 버튼을 포함-->
-                        <h1 class="modal-title fs-5" id="scheduleModalLabel">"일정 이름"(comment)</h5>
-                        <h7>0000-00-00(date)
-                            00:00(start_time)</h7>
+                        <h5 class="modal-title" id="scheduleModalLabel">"일정 이름"(comment)</h5><br>
+                        <p>0000-00-00(date)
+                        00:00(start_time)</p>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                         </button>
                     </div>
                     <div class="modal-body" id="scheduleModal_body">
-                        <div class="mb-3">
+                        <div class="form-group">
                             <label for="recipient-name" class="col-form-label">의견 나누기</label>
                             <ul id="commentList" class="list-group">
                                 <!--댓글 추가될 공간-->
@@ -232,7 +244,7 @@
                     </div>    
                     <div class="modal-footer">
                         <input type="text" id="commentInput" style="width: 100%;" placeholder="댓글을 입력하세요">
-                        <button type="button" class="btn btn-primary" id="modalClose">닫기</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="modalClose">닫기</button>
                         <button type="button" class="btn btn-primary" id="addComment" onclick="uploadComment()">업로드</button>
                     </div>
                 </div>
