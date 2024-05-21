@@ -95,6 +95,7 @@
                         var scheduleTitle = $("#scheduleModalLabel");
                         var scheduleDate = $("#scheduleModal_date");
                         var scheduleStartTime = $("#scheduleModal_startTime");
+                        var scheduleEndTime = $("#scheduleModal_endTime");
                         var commentList = $("#commentList");
 
                         //일정 정보 설정
@@ -229,8 +230,10 @@
                 <div class="modal-content" id="scheduleModal_content"> <!--모달 창의 내용을 감싸는 부분-->
                     <div class="modal-header" id="scheduleModal_header">  <!--모달 창의 헤더 부분, 제목과 닫기 버튼을 포함-->
                         <h5 class="modal-title" id="scheduleModalLabel">"일정 이름"(comment)</h5><br>
-                        <p>0000-00-00(date)
-                        00:00(start_time)</p>
+                        <div id="scheduleModal_dateTime">
+                            <span id="scheduleModal_date">0000-00-00(date)</span>
+                            <span id="scheduleModal_startTime">00:00(start_time)</span>
+                        </div>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                         </button>
                     </div>

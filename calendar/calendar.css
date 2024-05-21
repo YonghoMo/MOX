@@ -29,6 +29,30 @@ body {
     transition: top 0.5s ease;
 }
 
+#schedulModal_dateTime {
+    margin-top: 5px;
+    font-size: 0.9em;
+    display: flex;
+    flex-direction: column;
+}
+
+#scheduleModal_dateTime span {
+    margin: 2px 0;
+}
+
+#scheduleModal_header {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+#scheduleModal_header .btn-close {
+    align-self: flex-end;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+}
+
 .btn {
     padding: 0.9rem 0.8rem; /* 버튼 패딩 조절 */
 }
