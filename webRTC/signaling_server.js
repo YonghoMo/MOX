@@ -35,7 +35,7 @@ io.on("connection", (socket) => {
 
     socket.on("disconnect", () => {
       roomCounts[roomid]--;
-      console.log("disconnect, count:" + roomcounts[roomid]);
+      console.log("disconnect, count:" + roomCounts[roomid]);
     });
   });
 
