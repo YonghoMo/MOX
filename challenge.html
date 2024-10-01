@@ -1,198 +1,61 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="UTF-8" />
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>화상통화 챌린지</title>
+    <!-- 부트스트랩 CSS 로드 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <!-- 메인 컨테이너 -->
+    <div class="container mt-5">
+        <h1 class="text-center mb-4">화상통화 방 만들기</h1>
+        
+        <!-- 방 만들기 섹션 -->
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <form id="createRoomForm" class="mb-3">
+                    <div class="mb-3">
+                        <label for="roomTitle" class="form-label">방 제목</label>
+                        <input type="text" class="form-control" id="roomTitle" placeholder="방 제목을 입력하세요" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">방 만들기</button>
+                </form>
+            </div>
+        </div>
+        
+        <!-- 활성화된 방 목록 -->
+        <h2 class="text-center mb-4">활성화된 방 목록</h2>
+        <div id="roomList" class="row justify-content-center">
+            <!-- 동적으로 생성된 방 목록이 여기에 표시됩니다 -->
+        </div>
 
-    <title>Web RTC</title>
-    <link
-      href="
-https://cdn.jsdelivr.net/npm/sweetalert2@11.11.0/dist/sweetalert2.min.css
-"
-      rel="stylesheet"
-    />
-  </head>
-  <body>
-    <h1>실시간 P2P 통신을 해보자</h1>
-    <button onclick="createOffer();">Connection</button><br />
-    <div>나</div>
-    <video id="myFace" playsinline autoplay width="300" height="300"></video>
-    <br />
-    <div>상대</div>
-    <div
-      id="peerZone"
-      style="width: 1280px; height: 720px; margin: 0px; padding: 0px"
-    >
-      <video
-        id="peerVideo"
-        playsinline
-        autoplay
-        width="1280"
-        height="720"
-      ></video>
+        <!-- 화상통화 화면 -->
+        <div id="videoSection" class="d-none">
+            <div class="row">
+                <div class="col-12 mb-2">
+                    <h3 class="text-center">화상통화 중...</h3>
+                </div>
+                <div class="col-md-12 text-center mb-4">
+                    <video id="remoteVideo" class="w-100 mb-2 border" autoplay playsinline></video>
+                    <video id="localVideo" class="w-50 border" autoplay muted playsinline></video>
+                </div>
+                <div class="col-md-12 text-center">
+                    <button id="leaveRoom" class="btn btn-danger">방 나가기</button>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script
-      src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/3.0.4/socket.io.js"
-      crossorigin="anonymous"
-    ></script>
-    <script>
-      var socket;
-      var room;
+    <!-- 부트스트랩 JS 로드 -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Socket.IO 클라이언트 라이브러리 로드 -->
+    <script src="/socket.io/socket.io.js"></script>
 
-      // 미디어와 관련된 변수를 선언
-      var myFace = document.getElementById("myFace");
-      var myStream; //영상 스트림
-
-      // ICE 정보를 가져올 STUN 서버 사용
-      var iceServerConfig = {
-        iceServers: [
-          {
-            url: "stun:stun.l.google.com:19302",
-          },
-        ],
-      };
-      // RTCPeerConnection : P2P 연결을 설정하고 관리하는 객체
-      var myPeerConnection = new RTCPeerConnection(iceServerConfig);
-
-      window.onload = () => {
-        room = (async () => {
-          const { value: getName } = await Swal.fire({
-            title: "접속하려는 방 번호를 입력하세요",
-            text: "상대방과 같은 방 번호를 입력해야 연결됩니다.",
-            input: "text",
-            inputPlaceholder: "숫자를 입력...",
-          });
-        })();
-        if (room.trim().length == 0) {
-          location.reload(true);
-        }
-
-        // 시그널링 서버 -> 만든 Socket.io 서버 사용
-        socket = io.connect("http://localhost:5004"); // Your Signaling Server.
-        socket.emit("join", room); // 시그널링 서버 접속
-
-        // Room Join -> 이미 접속한 Master 존재
-        socket.on("room-full", async (message) => {
-          alert("입장 인원 초과");
-          location.reload(true);
-        });
-
-        socket.on("rtc-message", async (message) => {
-          var content = JSON.parse(message);
-          // Offer 수신 : 누군가가 오퍼를 받음
-          if (content.event == "offer") {
-            console.log("Receive Offer", content.data);
-            var offer = content.data;
-            myPeerConnection.setRemoteDescription(offer); //받은 Offer SDP -> 상대 피어에 대한 원격 설정으로 저장
-
-            await getMedia();
-            // 상대 Peer와 공유할 미디어 트랙을 추가
-            myStream
-              .getTracks()
-              .forEach((track) => myPeerConnection.addTrack(track, myStream));
-
-            var answer = await myPeerConnection.createAnswer();
-
-            //Answer로 자신의 SDP를 보냄
-            console.log("Send Answer");
-            send({
-              event: "answer",
-              data: answer,
-            });
-
-            //자신의 Local ICE Candidate를 Stun Server로부터 얻어와 등록-> onicecandidate 트리거 -> Candidate를 Socket에 Answer로 보냄
-            myPeerConnection.setLocalDescription(answer);
-          }
-
-          // Answer 수신 : 오퍼를 보내고 나서 응답이 옴
-          else if (content.event == "answer") {
-            console.log("Receive Answer");
-            answer = content.data;
-            myPeerConnection.setRemoteDescription(answer); //받은 Offer SDP -> 상대 피어에 대한 원격 설정으로 저장
-          }
-
-          // Candidate 수신
-          else if (content.event == "candidate") {
-            console.log("Receive Candidate");
-            myPeerConnection.addIceCandidate(content.data); //// Remote Description에 설정되어있는 Peer와의 연결방식을 결정
-          }
-        });
-      };
-
-      // Signaling Server에 메세지를 보내는 Function
-      async function send(message) {
-        const data = {
-          roomId: room,
-          ...message,
-        };
-        socket.emit("rtc-message", JSON.stringify(data));
-      }
-
-      // 자신의 Local ICE Candidate를 Stun Server로부터 얻어와 등록되었을 때 자동으로 트리거된다. 상대에게 Candidate를 보낸다.
-      // (Local Description 설정하면 작동)
-      myPeerConnection.onicecandidate = function (event) {
-        console.log("Send Candidate");
-        send({
-          event: "candidate",
-          data: event.candidate,
-        });
-      };
-
-      // Connection이 이루어져 피어의 스트림이 내 RTC에 등록되면 시작되는 메서드
-      myPeerConnection.addEventListener("addstream", handleAddStream);
-
-      function handleAddStream(data) {
-        console.log("Receive Streaming Data!");
-
-        var peerVideo = document.getElementById("peerVideo");
-        peerVideo.srcObject = data.stream;
-      }
-
-      // Offer를 먼저 전송하는 버튼을 클릭했을 때 실행
-      async function createOffer() {
-        await getMedia();
-        // 상대 Peer와 공유할 미디어 트랙을 추가
-        myStream
-          .getTracks()
-          .forEach((track) => myPeerConnection.addTrack(track, myStream));
-
-        // 상대 Peer에게 보낼 SDP Offer 생성
-        var offer = await myPeerConnection.createOffer();
-
-        // 시그널링 서버로 Offer 전송
-        await send({
-          event: "offer",
-          data: offer,
-        });
-        console.log("Send Offer");
-
-        //자신의 Local ICE Candidate를 Stun Server로부터 얻어와 등록-> onicecandidate 트리거 -> Candidate를 Socket에 Answer로 보냄
-        myPeerConnection.setLocalDescription(offer);
-      }
-
-      // Browser의 미디어 Stream을 얻어낸다.
-      async function getMedia() {
-        try {
-          myStream = await navigator.mediaDevices.getUserMedia({
-            audio: true,
-            video: true,
-          });
-
-          // 화면을 받고 싶은 경우
-          // myStream = await navigator.mediaDevices.getDisplayMedia({
-          //     video: {
-          //         displaySurface: 'window'
-          //     }
-          // })
-          myFace.srcObject = myStream;
-        } catch (e) {
-          console.log("미디어 스트림 에러");
-        }
-      }
-    </script>
-    <script src="
-    https://cdn.jsdelivr.net/npm/sweetalert2@11.11.0/dist/sweetalert2.all.min.js
-    "></script>
-  </body>
+    <!-- WebRTC와 방 관리 JS -->
+    <script src="js/app.js"></script>
+</body>
 </html>
