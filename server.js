@@ -1,6 +1,7 @@
 const express = require('express');
 const http = require('http');
 const socketIO = require('socket.io');
+const helmet = require('helmet'); // Helmet 패키지 불러오기
 
 const app = express();
 const server = http.createServer(app);
@@ -9,20 +10,26 @@ const io = socketIO(server);
 // helmet을 사용하여 기본 보안 헤더 적용
 app.use(helmet());
 
-// CSP 설정
+// Content-Security-Policy 설정
 app.use(
     helmet.contentSecurityPolicy({
         directives: {
             defaultSrc: ["'self'"],
-            imgSrc: ["'self'", "data:"],
-            scriptSrc: ["'self'", "'unsafe-inline'"], // 필요한 경우, 스크립트를 허용
-            styleSrc: ["'self'", "'unsafe-inline'"],  // 스타일 허용
-            // 추가적인 리소스 지시자는 필요에 따라 설정
+            scriptSrc: ["'self'", "'unsafe-inline'", "https://cdn.jsdelivr.net"],  // 인라인 스크립트 및 CDN 스크립트 허용
+            scriptSrcElem: ["'self'", "'unsafe-inline'", "https://cdn.jsdelivr.net"], // 스크립트 요소 허용
+            scriptSrcAttr: ["'self'", "'unsafe-inline'"],  // 이벤트 핸들러 허용
+            styleSrc: ["'self'", "'unsafe-inline'", "https://cdn.jsdelivr.net"], // 스타일 허용
+            styleSrcElem: ["'self'", "'unsafe-inline'", "https://cdn.jsdelivr.net"], // 스타일 요소 허용
+            imgSrc: ["'self'", "data:"], // 이미지 허용
+            connectSrc: ["'self'"], // Ajax 연결 설정
+            fontSrc: ["'self'", "https://cdn.jsdelivr.net"], // 폰트 허용
+            frameAncestors: ["'self'"], // 프레임 허용 설정
         },
     })
 );
 
-app.use(express.static('__dirname'));
+// 정적 파일 제공
+app.use(express.static(__dirname));
 
 io.on('connection', (socket) => {
     console.log('New user connected:', socket.id);
