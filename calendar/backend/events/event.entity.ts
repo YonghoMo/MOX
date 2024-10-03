@@ -9,17 +9,17 @@ import { Comment } from '../comments/comment.entity';
 @Entity()
 export class Event {
   @PrimaryGeneratedColumn()
-  id: number;
+  id: number; // 기본 키 (자동 생성)
 
   @Column()
-  title: string;
+  title: string;  // 일정 제목
 
   @Column()
-  start: string;
+  start: string;  // 시작 날짜, 시간
 
   @Column()
-  end: string;
+  end: string;  // 종료 날짜, 시간
 
   @OneToMany(() => Comment, (comment) => comment.event)
-  comments: Comment[];
+  comments: Comment[];  //// 하나의 일정에 여러 개의 댓글이 달릴 수 있음
 }

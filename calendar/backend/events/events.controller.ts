@@ -10,13 +10,13 @@ import { CreateEventDto } from './create-event.dto.ts';
 export class EventsController {
   constructor(private readonly eventsService: EventsService) {}
 
-  // 일정 생성
+  // Post 요청으로 일정 생성
   @Post()
   async createEvent(@Body() createEventDto: CreateEventDto) {
     return this.eventsService.create(createEventDto);
   }
 
-  // 저장된 일정 조회
+  // GET 요청으로 모든 저장된 일정 조회
   @Get()
   async getAllEvents() {
     return this.eventsService.findAll();

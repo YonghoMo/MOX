@@ -18,12 +18,15 @@ export class EventsService {
 
   // 일정 생성
   async create(createEventDto: CreateEventDto): Promise<Event> {
+    // DTO를 엔티티로 변환
     const event = this.eventsRepository.create(createEventDto);
+    // 데이터베이스에 저장
     return this.eventsRepository.save(event);
   }
 
   // 모든 일정 조회
   async findAll(): Promise<Event[]> {
+    // 모든 일정 조회
     return this.eventsRepository.find();
   }
 }
