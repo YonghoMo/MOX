@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign Up Page</title>
+  <link href="style_mypage.css" rel="stylesheet" type="text/css">
+  <style>
+    #id,
+    #password,
+    #confirm-password,
+    #email {
+      display: flex;
+      justify-content: center;
+      width: 169px;
+      margin-bottom: 10px;
+    }
+
+    #signup-group-button {
+      background-color: #007bff;
+      color: #fff;
+      border: none;
+      padding-top: 2px;
+      padding-bottom: 2px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+      text-align: center;
+      display: inline-block;
+    }
+
+    #signup-group-button:hover {
+      background-color: #0056b3;
+    }
+
+    .account {
+      display: block;
+      margin-bottom: 3px;
+      padding: 3px;
+      border: 1px solid lightgray;
+      border-radius: 3px;
+      transform: translate(20%, 0%);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="main">
+    <div class="logo">
+      <h2>Sign Up</h2>
+    </div>
+
+    <div id="id">
+      <input type="text" placeholder="ID" class="account" />
+    </div>
+
+    <div id="password">
+      <input type="password" placeholder="PASSWORD" class="account" />
+    </div>
+
+    <div id="confirm-password">
+      <input type="password" placeholder="CONFIRM-PASSWORD" class="account" />
+    </div>
+
+    <div id="email">
+      <input type="email" placeholder="EMAIL" class="account" />
+    </div>
+
+    <div>
+      <button id="signupBtn" style="text-align: center;">Sign Up</button>
+    </div>
+  </div>
+  <script type="text/javascript">
+    document.getElementById("signupBtn").addEventListener("click", () => {
+      const username = document.querySelector("#id input").value;
+      const password = document.querySelector("#password input").value;
+      const confirmPassword = document.querySelector("#confirm-password input").value;
+      const email = document.querySelector("#email input").value;
+  
+      fetch('/signup', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ username, password, confirmPassword, email }),
+      })
+      .then(response => response.json())
+      .then(data => {
+        alert(data.message);
+        if (data.message === '회원가입 성공!') {
+          window.location.href = '/login'; // 회원가입 성공 후 로그인 페이지로 이동
+        }
+      })
+      .catch(error => console.error('Error:', error));
+    });
+  </script>
+</body>
+</html>
