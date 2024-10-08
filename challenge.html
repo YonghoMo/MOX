@@ -1,21 +1,244 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>1:1 Video Chat</title>
-  <link rel="stylesheet" href="/css/styles.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>챌린지</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #FFFFFF;
+            color: #202632;
+        }
+        h1 {
+            color: #0064FF;
+            margin-bottom: 40px;
+        }
+        .container {
+            max-width: 600px;
+            margin-top: 50px;
+        }
+        button, input {
+            font-size: 18px;
+            margin: 10px;
+        }
+        #status {
+            font-size: 24px;
+            margin: 20px 0;
+        }
+        /* 처음에는 로비 화면을 보이도록 설정 */
+        #lobby {
+            display: block;
+        }
+        /* 처음에는 게임 화면은 숨김 */
+        #game {
+            display: none;
+        }
+        #leaveRoomButton {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: none;
+            border: none;
+            font-size: 30px;
+            color: #0064FF;
+            cursor: pointer;
+        }
+        #leaveRoomButton:hover {
+            color: #202632;
+        }
+        .room-list-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 10px 0;
+            padding: 10px;
+            background-color: #F8F9FA;
+            border-radius: 5px;
+            border: 1px solid #E0E0E0;
+        }
+        .join-btn {
+            background-color: #0064FF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 5px 10px;
+        }
+        .join-btn:hover {
+            background-color: #202632;
+        }
+        .full-btn {
+            background-color: gray;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 5px 10px;
+            cursor: not-allowed;
+        }
+        #refreshRoomsButton {
+            font-size: 25px;
+            background: none;
+            border: none;
+            color: #0064FF;
+            cursor: pointer;
+        }
+        #refreshRoomsButton:hover {
+            color: #202632;
+        }
+    </style>
 </head>
 <body>
-  <h1>1:1 Video Chat</h1>
-  <input type="text" id="roomInput" placeholder="Enter room name" />
-  <button id="joinBtn">Join Room</button>
-  <div id="status"></div>
+    <div class="container text-center">
+        <h1>챌린지</h1>
 
-  <video id="localVideo" autoplay muted></video>
-  <video id="remoteVideo" autoplay></video>
+        <!-- 로비 영역 -->
+        <div id="lobby">
+            <input type="text" id="roomNameInput" class="form-control" placeholder="방 제목을 입력해주세요...">
+            <button id="createRoomButton" class="btn btn-primary">방 만들기</button>
 
-  <script src="/socket.io/socket.io.js"></script>
-  <script src="/js/webrtc.js"></script>
+            <div class="d-flex justify-content-between align-items-center mt-4">
+                <h2>방 리스트</h2>
+                <!-- 새로고침 버튼 -->
+                <button id="refreshRoomsButton">🔄</button>
+            </div>
+
+            <ul id="roomList" class="list-unstyled"></ul>
+        </div>
+
+        <!-- 게임 영역 -->
+        <div id="game">
+            <button id="leaveRoomButton">←</button>
+            <h2 id="roomTitle"></h2>
+            <div id="status">상대방의 턴입니다!</div>
+            <button id="turnButton" class="btn btn-success" disabled>턴 넘기기</button>
+        </div>
+    </div>
+
+    <!-- Socket.io 클라이언트 라이브러리 로드 -->
+    <script src="https://cdn.socket.io/4.5.0/socket.io.min.js"></script>
+    
+    <script>
+        const statusElement = document.getElementById('status');
+        const roomNameInput = document.getElementById('roomNameInput');
+        const createRoomButton = document.getElementById('createRoomButton');
+        const roomListElement = document.getElementById('roomList');
+        const turnButton = document.getElementById('turnButton');
+        const leaveRoomButton = document.getElementById('leaveRoomButton');
+        const lobbyDiv = document.getElementById('lobby');
+        const gameDiv = document.getElementById('game');
+        const roomTitle = document.getElementById('roomTitle'); 
+        const refreshRoomsButton = document.getElementById('refreshRoomsButton'); 
+
+        const socket = io();
+        let currentRoom = null;
+        let createdRoom = null;
+
+        // 방 만들기
+        createRoomButton.addEventListener('click', () => {
+            const roomName = roomNameInput.value;
+            if (roomName) {
+                if (!createdRoom) {  
+                    socket.emit('create_room', roomName);
+                    roomNameInput.value = '';
+                    createdRoom = roomName;  
+                } else {
+                    alert('이미 만든 방이 있습니다.');
+                }
+            }
+        });
+
+        // 새로고침 버튼 클릭 시 방 목록 요청
+        refreshRoomsButton.addEventListener('click', () => {
+            socket.emit('get_rooms');
+        });
+
+        // 방 목록 업데이트
+        socket.on('room_list', (rooms) => {
+            roomListElement.innerHTML = '';
+            for (let roomName in rooms) {
+                const listItem = document.createElement('li');
+                listItem.classList.add('room-list-item');
+                
+                const isFull = rooms[roomName].length >= 2;
+                const joinButtonHTML = isFull
+                    ? `<button class="full-btn">가득 참</button>`
+                    : `<button class="join-btn">참가</button>`;
+                
+                listItem.innerHTML = `
+                    ${roomName} (${rooms[roomName].length}/2)
+                    ${joinButtonHTML}
+                `;
+
+                if (!isFull) {
+                    listItem.querySelector('.join-btn').onclick = () => {
+                        socket.emit('join_room', roomName);
+                    };
+                }
+
+                roomListElement.appendChild(listItem);
+            }
+        });
+
+        // 방 참가 성공
+        socket.on('joined_room', (roomName) => {
+            currentRoom = roomName;
+            lobbyDiv.style.display = 'none';
+            gameDiv.style.display = 'block';
+            roomTitle.textContent = `방: ${roomName}`; 
+            statusElement.textContent = `"${roomName}"방에 입장했습니다. 턴을 기다려주세요!`;
+        });
+
+        // 방에서 나가기
+        leaveRoomButton.addEventListener('click', () => {
+            if (currentRoom) {
+                socket.emit('leave_room', currentRoom);
+            }
+        });
+
+        // 방 나가기 처리 후 로비로 돌아가기
+        socket.on('left_room', () => {
+            currentRoom = null;
+            gameDiv.style.display = 'none';
+            lobbyDiv.style.display = 'block';
+            statusElement.textContent = '방을 떠났습니다.';
+        });
+
+        // 다른 사용자가 방에 입장했을 때 처리
+        socket.on('player_joined', ({ roomName, playerCount }) => {
+            statusElement.textContent = `플레이어가 "${roomName}" 방에 입장했습니다. 인원: ${playerCount}/2`;
+        });
+
+        // 방에서 사용자가 나갔을 때 처리
+        socket.on('player_left', ({ roomName, playerCount }) => {
+            statusElement.textContent = `플레이어가 "${roomName}" 방을 떠났습니다. 인원: ${playerCount}/2`;
+        });
+
+        // 방이 가득 찼을 때 처리
+        socket.on('error_message', (message) => {
+            alert(message);
+        });
+
+        // 턴 시작
+        socket.on('your_turn', () => {
+            statusElement.textContent = '당신의 턴입니다!';
+            turnButton.disabled = false;  // 턴 넘기기 버튼 활성화
+        });
+
+        // 턴 넘기기
+        turnButton.addEventListener('click', () => {
+            if (currentRoom) {
+                socket.emit('pass_turn', currentRoom);
+                turnButton.disabled = true;
+                statusElement.textContent = '상대방의 턴입니다...';
+            }
+        });
+
+        // 페이지가 로드될 때 방 목록 요청
+        socket.emit('get_rooms');
+    </script>
 </body>
 </html>
