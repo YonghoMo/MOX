@@ -1,3 +1,4 @@
+/*
 let isMoved = false;
 
 function toggleBtn_menu() {
@@ -14,9 +15,8 @@ function toggleBtn_menu() {
 }
 
 
-/*
-      일정 추가 기능
-*/
+
+//  일정추가 기능
 
 // 기존 코드 내 일정 추가 버튼 클릭 이벤트 처리 부분에 아래 코드를 추가
 $("#addCalendar").on("click", function() {
@@ -64,9 +64,8 @@ function addEventToDB(eventData) {
 }
 
 
-/*
-      댓글 추가 기능
-*/
+
+//   댓글 추가 기능
 
 // 댓글 업로드 버튼 클릭 시
 function uploadComment() {
@@ -76,7 +75,7 @@ function uploadComment() {
       return;
   }
 
-  var eventId = /* 해당하는 이벤트의 ID 값을 설정해야 합니다 (예: info.event.id) */;
+  var eventId = ;// 해당하는 이벤트의 ID 값을 설정해야 합니다 (예: info.event.id)
   
   // AJAX를 통해 댓글을 백엔드로 전송
   addCommentToDB(eventId, commentText);
@@ -106,7 +105,9 @@ function addCommentToDB(eventId, commentText) {
   });
 }
 
-/*  일정 데이터 불러오기  */
+
+//  일정 데이터 불러오기
+
 document.addEventListener('DOMContentLoaded', function() {
   var calendarEl = document.getElementById('calendar');
 
@@ -293,7 +294,9 @@ document.addEventListener('DOMContentLoaded', function() {
   calendar.render();
 });
 
-/*  댓글 데이터 가져오기  */
+
+// 댓글 데이터 가져오기 
+
 function fetchComments(eventId) {
   $.ajax({
     url: `/comments/${eventId}`,  // 댓글 데이터를 제공하는 백엔드 API
@@ -311,7 +314,9 @@ function fetchComments(eventId) {
   });
 }
 
-/*  댓글 추가 */
+
+// 댓글 추가
+
 // 댓글 업로드 버튼 클릭 시
 function uploadComment() {
   var commentText = $("#commentInput").val();
@@ -320,7 +325,7 @@ function uploadComment() {
     return;
   }
 
-  var eventId = /* 일정 ID를 가져와야 합니다 (info.event.id 사용) */;
+  var eventId = ;// 일정 ID를 가져와야 합니다 (info.event.id 사용)
   
   // AJAX를 통해 댓글을 백엔드로 전송
   addCommentToDB(eventId, commentText);
@@ -350,4 +355,173 @@ function addCommentToDB(eventId, commentText) {
     }
   });
 }
+*/
+let isMoved = false;
 
+function toggleBtn_menu() {
+  const menu = document.querySelector(".nav_menu");
+  menu.classList.toggle("active");
+
+  const calendarBox = document.getElementById("calendarBox");
+  if (!isMoved) {
+    calendarBox.classList.add("move-down");
+  } else {
+    calendarBox.classList.remove("move-down");
+  }
+  isMoved = !isMoved;
+}
+
+// 일정 추가 기능
+function addEventToDB(eventData) {
+  $.ajax({
+    url: '/events',  // 백엔드에 맞는 엔드포인트로 변경
+    type: 'POST',
+    data: JSON.stringify(eventData),
+    contentType: 'application/json',
+    success: function(response) {
+      console.log('Event saved successfully', response);
+    },
+    error: function(error) {
+      console.log('Error saving event', error);
+    }
+  });
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  var calendarEl = document.getElementById('calendar');
+
+  var calendar = new FullCalendar.Calendar(calendarEl, {
+    themeSystem: 'bootstrap5',
+    timeZone: 'UTC',
+    initialView: 'dayGridMonth',
+
+    // 일정 데이터를 백엔드에서 가져옴
+    events: function(fetchInfo, successCallback, failureCallback) {
+      $.ajax({
+        url: '/events',  // 일정 데이터를 제공하는 백엔드 API
+        type: 'GET',
+        success: function(data) {
+          // FullCalendar 형식으로 변환하여 일정 추가
+          const events = data.map(event => ({
+            title: event.title,
+            start: event.startDate,
+            end: event.endDate
+          }));
+          successCallback(events);
+        },
+        error: function(error) {
+          console.error('Error fetching events:', error);
+          failureCallback(error);
+        }
+      });
+    },
+
+    eventClick: function(info) {
+      $("#scheduleModal").modal("show");
+
+      // 모달에 클릭된 일정 정보 표시
+      $("#scheduleModalLabel").text(info.event.title);
+      $("#scheduleModal_date").text(info.event.start.toLocaleDateString());
+      $("#scheduleModal_startTime").text(info.event.start.toLocaleTimeString());
+
+      // 댓글 목록 초기화 후 댓글 가져오기
+      $("#commentList").empty();
+      fetchComments(info.event.id);
+
+      // 댓글 업로드 버튼에 이벤트 ID 설정
+      $("#comment-submit").off("click").on("click", function() {
+        uploadComment(info.event.id);
+      });
+    },
+
+    customButtons: {
+      addEventButton: {
+        text: "일정 추가",
+        click: function() {
+          $("#calendarModal").modal("show");
+
+          // 일정 추가 버튼 클릭 이벤트 처리
+          $("#addCalendar").off("click").on("click", function() {
+            var content = $("#calendar_content").val();
+            var date = $("#calendar_date").val();
+            var startTime = date + "T" + $("#calendar_startTime").val();
+            var endTime = date + "T" + $("#calendar_endTime").val();
+
+            // 유효성 검사
+            if (content && date && startTime && endTime) {
+              var eventData = {
+                title: content,
+                start: startTime,
+                end: endTime
+              };
+
+              // FullCalendar에 일정 추가 및 백엔드로 전송
+              calendar.addEvent(eventData);
+              addEventToDB(eventData);
+              $("#calendarModal").modal("hide");
+            } else {
+              alert("모든 필드를 입력하세요.");
+            }
+          });
+        }
+      }
+    }
+  });
+
+  calendar.render();
+});
+
+// 댓글 데이터 가져오기
+function fetchComments(eventId) {
+  $.ajax({
+    url: `/comments/${eventId}`,  // 댓글 데이터를 제공하는 백엔드 API
+    type: 'GET',
+    success: function(comments) {
+      var commentList = $("#commentList");
+      comments.forEach(comment => {
+        var commentItem = $("<li>").addClass("list-group-item").text(`${comment.userName}: ${comment.commentText}`);
+        commentList.append(commentItem);
+      });
+    },
+    error: function(error) {
+      console.error('Error fetching comments:', error);
+    }
+  });
+}
+
+// 댓글 추가 기능
+function uploadComment(eventId) {
+  var commentText = $("#commentInput").val();
+  if (commentText.trim() === "") {
+    alert("댓글을 입력하세요.");
+    return;
+  }
+
+  // 댓글을 백엔드로 전송
+  addCommentToDB(eventId, commentText);
+
+  // 댓글을 화면에 추가
+  var commentItem = $("<li>").addClass("list-group-item").text(commentText);
+  $("#commentList").append(commentItem);
+  $("#commentInput").val("");
+}
+
+// 댓글을 백엔드로 전송하는 AJAX 요청
+function addCommentToDB(eventId, commentText) {
+  $.ajax({
+    url: '/comments',  // 백엔드 댓글 추가 API
+    type: 'POST',
+    data: JSON.stringify({
+      eventId: eventId,
+      userName: 'wooseong', 
+      commentText: commentText
+    }),
+    contentType: 'application/json',
+    success: function(response) {
+      console.log('Comment saved successfully', response);
+    },
+    error: function(error) {
+      console.log('Error saving comment', error);
+    }
+  });
+}

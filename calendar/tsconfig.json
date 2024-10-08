@@ -1,8 +1,5 @@
-/*
-    위치: 프로젝트 루트 디렉토리
-    TypeScript 프로젝트에서 
-    TypeScript 컴파일러의 설정을 정의하는 파일
-*/
+    //  위치: 프로젝트 루트 디렉토리
+    //  TypeScript 프로젝트에서 TypeScript 컴파일러의 설정을 정의하는 파일
 
 {
     "compilerOptions": {
@@ -14,6 +11,8 @@
       "skipLibCheck": true,                    // 라이브러리 검사 생략
       "forceConsistentCasingInFileNames": true // 파일 이름의 대소문자 일관성 유지
     },
-    "include": ["calendar/**/*"],                   // 포함할 파일 및 디렉토리 (필요에 따라 변경)
-    "exclude": ["node_modules"]                // 제외할 파일 및 디렉토리
+    "include": ["./calendar/**/*"]                   // 포함할 파일 및 디렉토리 (필요에 따라 변경)
+    
+    // 제외할 파일 및 디렉토리
+    //"exclude": ["node_modules"]                
 }
