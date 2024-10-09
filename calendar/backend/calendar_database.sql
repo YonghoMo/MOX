@@ -46,3 +46,8 @@ FROM Comments c
 JOIN CalendarEvents e ON c.EventID = e.EventID
 WHERE e.EventID = 1;
 */
+
+/*DROP DATABASE calendar_database;*/
+
+SELECT *
+FROM Comments;
