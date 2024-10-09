@@ -1,527 +1,156 @@
-/*
-let isMoved = false;
+let currentMonth = new Date().getMonth();
+let currentYear = new Date().getFullYear();
+const today = new Date();
+const events = {}; // 일정을 저장할 객체
+const comments = {}; // 각 일정별 댓글 저장 객체
 
-function toggleBtn_menu() {
-  const menu = document.querySelector(".nav_menu");
-  menu.classList.toggle("active");
+function generateCalendar(month, year) {
+    const calendar = document.getElementById('calendar');
+    calendar.innerHTML = '';
 
-  const calendarBox = document.getElementById("calendarBox");
-  if (!isMoved) {
-    calendarBox.classList.add("move-down");
-  } else {
-    calendarBox.classList.remove("move-down");
-  }
-  isMoved = !isMoved;
+    const firstDay = new Date(year, month).getDay();
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+    document.getElementById('month-year').innerText = `${year}-${String(month + 1).padStart(2, '0')}`;
+
+    // 빈 칸 채우기
+    for (let i = 0; i < firstDay; i++) {
+        calendar.innerHTML += '<div class="day empty"></div>';
+    }
+
+    // 날짜 채우기
+    for (let i = 1; i <= daysInMonth; i++) {
+        let dayClass = 'day';
+        const dateKey = `${year}-${String(month + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
+
+        // 오늘 날짜 확인
+        if (year === today.getFullYear() && month === today.getMonth() && i === today.getDate()) {
+            dayClass += ' today';
+        }
+
+        // 일정이 있으면 클릭 시 댓글 모달이 뜨도록 설정하고 이벤트 전파 막기
+        const eventText = events[dateKey] ? 
+            `<div class="event" onclick="openCommentModal('${dateKey}', event)">${events[dateKey].title}</div>` : '';
+
+        // 날짜 박스를 클릭하면 일정 추가 모달이 뜨도록 설정
+        calendar.innerHTML += `
+            <div class="${dayClass}" data-date="${dateKey}" onclick="openAddEventModal('${dateKey}')">
+                <div class="date">${i}</div>
+                ${eventText}
+            </div>`;
+    }
 }
 
+function openAddEventModal(dateKey) {
+    // 모달에 날짜 값을 설정
+    document.getElementById('event-date').value = dateKey;
+    // 일정 추가 모달 열기
+    const modal = new bootstrap.Modal(document.getElementById('addEventModal'));
+    modal.show();
+}
 
+function saveEvent() {
+    const title = document.getElementById('event-title').value;
+    const date = document.getElementById('event-date').value;
+    const startTime = document.getElementById('start-time').value;
+    const endTime = document.getElementById('end-time').value;
 
-//  일정추가 기능
+    if (title && date) {
+        // 일정 데이터를 저장
+        events[date] = { title, startTime, endTime };
 
-// 기존 코드 내 일정 추가 버튼 클릭 이벤트 처리 부분에 아래 코드를 추가
-$("#addCalendar").on("click", function() {
-  var content = $("#calendar_content").val();
-  var date = $("#calendar_date").val();
-  var startTime = date + "T" + $("#calendar_startTime").val();
-  var endTime = date + "T" + $("#calendar_endTime").val();
+        // 캘린더 업데이트
+        generateCalendar(currentMonth, currentYear);
 
-  // 유효성 검사
-  if (content && date && startTime && endTime) {
-      var eventData = {
-          title: content,
-          start: startTime,
-          end: endTime
-      };
-      
-      // FullCalendar에 이벤트 추가
-      calendar.addEvent(eventData);
-      console.log(eventData);
+        // 모달 창 닫기
+        const modal = bootstrap.Modal.getInstance(document.getElementById('addEventModal'));
+        modal.hide();
+    } else {
+        alert('일정 제목과 날짜는 필수입니다.');
+    }
+}
 
-      // AJAX를 통해 백엔드에 이벤트 데이터 전송
-      addEventToDB(eventData); // 이 부분이 추가됩니다.
+function openCommentModal(eventKey, e) {
+    // 이벤트 전파 막기 (부모 요소의 클릭 이벤트를 막음)
+    e.stopPropagation();
 
-      // 모달 닫기
-      $("#calendarModal").modal("hide");
-  } else {
-      alert("모든 필드를 입력하세요.");
-  }
+    // 모달 창에 일정 제목 및 시간 표시
+    const event = events[eventKey];
+    if (event) {
+        document.getElementById('commentModalLabel').innerText = event.title;
+        document.getElementById('event-date-time').innerText = `${eventKey} 오후 6:00:00`;
+    } else {
+        document.getElementById('commentModalLabel').innerText = '일정 없음';
+        document.getElementById('event-date-time').innerText = `${eventKey} 오후 6:00:00`;
+    }
+
+    // 댓글 리스트 업데이트
+    updateCommentList(eventKey);
+
+    // 댓글 모달 열기
+    const modal = new bootstrap.Modal(document.getElementById('commentModal'));
+    modal.show();
+}
+
+function addComment() {
+    const eventKey = document.getElementById('event-date-time').innerText.split(' ')[0];
+    const commentInput = document.getElementById('comment-input');
+    const newComment = commentInput.value.trim();
+
+    if (newComment !== '') {
+        if (!comments[eventKey]) {
+            comments[eventKey] = []; // 해당 일정에 대한 댓글이 없으면 배열 생성
+        }
+
+        comments[eventKey].push(newComment); // 새 댓글 추가
+        updateCommentList(eventKey); // 댓글 리스트 업데이트
+        commentInput.value = ''; // 입력 필드 비우기
+    }
+}
+
+function updateCommentList(eventKey) {
+    const commentList = document.getElementById('comment-list');
+    commentList.innerHTML = ''; // 기존 리스트 비우기
+
+    if (comments[eventKey] && comments[eventKey].length > 0) {
+        comments[eventKey].forEach((comment) => {
+            const listItem = document.createElement('li');
+            listItem.classList.add('list-group-item');
+            listItem.textContent = comment;
+            commentList.appendChild(listItem);
+        });
+    } else {
+        const noComments = document.createElement('li');
+        noComments.classList.add('list-group-item');
+        noComments.textContent = '아직 댓글이 없습니다.';
+        commentList.appendChild(noComments);
+    }
+}
+
+document.getElementById('todayBtn').addEventListener('click', () => {
+    const today = new Date();
+    currentMonth = today.getMonth();
+    currentYear = today.getFullYear();
+    generateCalendar(currentMonth, currentYear);
 });
 
-// AJAX 요청을 보내어 일정 데이터를 백엔드로 전달
-function addEventToDB(eventData) {
-  $.ajax({
-      url: '/events', // 백엔드에 맞는 엔드포인트로 변경
-      type: 'POST',
-      data: JSON.stringify(eventData),
-      contentType: 'application/json',
-      success: function(response) {
-          console.log('Event saved successfully', response);
-      },
-      error: function(error) {
-          console.log('Error saving event', error);
-      }
-  });
-}
-
-
-
-//   댓글 추가 기능
-
-// 댓글 업로드 버튼 클릭 시
-function uploadComment() {
-  var commentText = $("#commentInput").val();
-  if (commentText.trim() === "") {
-      alert("댓글을 입력하세요.");
-      return;
-  }
-
-  var eventId = ;// 해당하는 이벤트의 ID 값을 설정해야 합니다 (예: info.event.id)
-  
-  // AJAX를 통해 댓글을 백엔드로 전송
-  addCommentToDB(eventId, commentText);
-
-  // 댓글을 화면에 추가
-  var commentItem = $("<li>").addClass("list-group-item").text(commentText);
-  $("#commentList").append(commentItem);
-  $("#commentInput").val("");
-}
-
-// 댓글을 백엔드로 전송하는 AJAX 요청
-function addCommentToDB(eventId, commentText) {
-  $.ajax({
-      url: '/comments', // 백엔드에 맞는 엔드포인트로 변경
-      type: 'POST',
-      data: JSON.stringify({
-          eventId: eventId,
-          content: commentText
-      }),
-      contentType: 'application/json',
-      success: function(response) {
-          console.log('Comment saved successfully', response);
-      },
-      error: function(error) {
-          console.log('Error saving comment', error);
-      }
-  });
-}
-
-
-//  일정 데이터 불러오기
-
-document.addEventListener('DOMContentLoaded', function() {
-  var calendarEl = document.getElementById('calendar');
-
-  var calendar = new FullCalendar.Calendar(calendarEl, {
-    themeSystem: 'bootstrap5',
-    timeZone: 'UTC',
-    initialView: 'dayGridMonth',
-    
-    // 일정 데이터를 백엔드에서 가져옴
-    events: function(fetchInfo, successCallback, failureCallback) {
-      $.ajax({
-        url: '/events',  // 일정 데이터를 제공하는 백엔드 API
-        type: 'GET',
-        success: function(data) {
-          // 백엔드에서 받은 데이터(data)를 FullCalendar 형식으로 변환
-          const events = data.map(event => ({
-            title: event.title,
-            start: event.startDate,
-            end: event.endDate
-          }));
-          successCallback(events); // FullCalendar에 일정 표시
-        },
-        error: function(error) {
-          console.error('Error fetching events:', error);
-          failureCallback(error);
-        }
-      });
-    },
-
-    eventClick: function(info) {
-      $("#scheduleModal").modal("show");
-
-      var scheduleTitle = $("#scheduleModalLabel");
-      var scheduleDate = $("#scheduleModal_date");
-      var scheduleStartTime = $("#scheduleModal_startTime");
-      var commentList = $("#commentList");
-
-      // 일정 정보 설정
-      scheduleTitle.text(info.event.title);
-      scheduleDate.text(info.event.start.toLocaleDateString());
-      scheduleStartTime.text(info.event.start.toLocaleTimeString());
-
-      // 댓글 목록 초기화
-      commentList.empty();
-
-      // 해당 일정의 댓글 데이터를 백엔드에서 가져옴
-      fetchComments(info.event.id);
-    },
-
-    customButtons: {
-      addEventButton: {
-        text: "일정 추가",
-        click: function() {
-          $("#calendarModal").modal("show");
-
-          $("#addCalendar").on("click", function() {
-            var content = $("#calendar_content").val();
-            var date = $("#calendar_date").val();
-            var startTime = date + "T" + $("#calendar_startTime").val();
-            var endTime = date + "T" + $("#calendar_endTime").val();
-
-            if (content && date && startTime && endTime) {
-              var eventData = {
-                title: content,
-                start: startTime,
-                end: endTime
-              };
-              
-              calendar.addEvent(eventData);
-              addEventToDB(eventData); // 백엔드로 일정 추가 요청
-
-              $("#calendarModal").modal("hide");
-            } else {
-              alert("모든 필드를 입력하세요.");
-            }
-          });
-        }
-      }
+document.getElementById('prevMonthBtn').addEventListener('click', () => {
+    currentMonth--;
+    if (currentMonth < 0) {
+        currentMonth = 11;
+        currentYear--;
     }
-  });
-
-  calendar.render();
+    generateCalendar(currentMonth, currentYear);
 });
 
-// 댓글 데이터 가져오기
-function fetchComments(eventId) {
-  $.ajax({
-    url: `/comments/${eventId}`,  // 댓글 데이터를 제공하는 백엔드 API
-    type: 'GET',
-    success: function(comments) {
-      var commentList = $("#commentList");
-      comments.forEach(comment => {
-        var commentItem = $("<li>").addClass("list-group-item").text(`${comment.userName}: ${comment.commentText}`);
-        commentList.append(commentItem);
-      });
-    },
-    error: function(error) {
-      console.error('Error fetching comments:', error);
+document.getElementById('nextMonthBtn').addEventListener('click', () => {
+    currentMonth++;
+    if (currentMonth > 11) {
+        currentMonth = 0;
+        currentYear++;
     }
-  });
-}
-
-document.addEventListener('DOMContentLoaded', function() {
-  var calendarEl = document.getElementById('calendar');
-
-  var calendar = new FullCalendar.Calendar(calendarEl, {
-    themeSystem: 'bootstrap5',
-    timeZone: 'UTC',
-    initialView: 'dayGridMonth',
-    
-    // 일정 데이터를 백엔드에서 가져옴
-    events: function(fetchInfo, successCallback, failureCallback) {
-      $.ajax({
-        url: '/events',  // 일정 데이터를 제공하는 백엔드 API
-        type: 'GET',
-        success: function(data) {
-          // 백엔드에서 받은 데이터(data)를 FullCalendar 형식으로 변환
-          const events = data.map(event => ({
-            title: event.title,
-            start: event.startDate,
-            end: event.endDate
-          }));
-          successCallback(events); // FullCalendar에 일정 표시
-        },
-        error: function(error) {
-          console.error('Error fetching events:', error);
-          failureCallback(error);
-        }
-      });
-    },
-
-    eventClick: function(info) {
-      $("#scheduleModal").modal("show");
-
-      var scheduleTitle = $("#scheduleModalLabel");
-      var scheduleDate = $("#scheduleModal_date");
-      var scheduleStartTime = $("#scheduleModal_startTime");
-      var commentList = $("#commentList");
-
-      // 일정 정보 설정
-      scheduleTitle.text(info.event.title);
-      scheduleDate.text(info.event.start.toLocaleDateString());
-      scheduleStartTime.text(info.event.start.toLocaleTimeString());
-
-      // 댓글 목록 초기화
-      commentList.empty();
-
-      // 해당 일정의 댓글 데이터를 백엔드에서 가져옴
-      fetchComments(info.event.id);
-    },
-
-    customButtons: {
-      addEventButton: {
-        text: "일정 추가",
-        click: function() {
-          $("#calendarModal").modal("show");
-
-          $("#addCalendar").on("click", function() {
-            var content = $("#calendar_content").val();
-            var date = $("#calendar_date").val();
-            var startTime = date + "T" + $("#calendar_startTime").val();
-            var endTime = date + "T" + $("#calendar_endTime").val();
-
-            if (content && date && startTime && endTime) {
-              var eventData = {
-                title: content,
-                start: startTime,
-                end: endTime
-              };
-              
-              calendar.addEvent(eventData);
-              addEventToDB(eventData); // 백엔드로 일정 추가 요청
-
-              $("#calendarModal").modal("hide");
-            } else {
-              alert("모든 필드를 입력하세요.");
-            }
-          });
-        }
-      }
-    }
-  });
-
-  calendar.render();
+    generateCalendar(currentMonth, currentYear);
 });
 
-
-// 댓글 데이터 가져오기 
-
-function fetchComments(eventId) {
-  $.ajax({
-    url: `/comments/${eventId}`,  // 댓글 데이터를 제공하는 백엔드 API
-    type: 'GET',
-    success: function(comments) {
-      var commentList = $("#commentList");
-      comments.forEach(comment => {
-        var commentItem = $("<li>").addClass("list-group-item").text(`${comment.userName}: ${comment.commentText}`);
-        commentList.append(commentItem);
-      });
-    },
-    error: function(error) {
-      console.error('Error fetching comments:', error);
-    }
-  });
-}
-
-
-// 댓글 추가
-
-// 댓글 업로드 버튼 클릭 시
-function uploadComment() {
-  var commentText = $("#commentInput").val();
-  if (commentText.trim() === "") {
-    alert("댓글을 입력하세요.");
-    return;
-  }
-
-  var eventId = ;// 일정 ID를 가져와야 합니다 (info.event.id 사용)
-  
-  // AJAX를 통해 댓글을 백엔드로 전송
-  addCommentToDB(eventId, commentText);
-
-  // 댓글을 화면에 추가
-  var commentItem = $("<li>").addClass("list-group-item").text(commentText);
-  $("#commentList").append(commentItem);
-  $("#commentInput").val("");
-}
-
-// 댓글을 백엔드로 전송하는 AJAX 요청
-function addCommentToDB(eventId, commentText) {
-  $.ajax({
-    url: '/comments',  // 백엔드 댓글 추가 API 엔드포인트
-    type: 'POST',
-    data: JSON.stringify({
-      eventId: eventId,
-      userName: '사용자명',  // 실제 사용자명으로 변경 필요
-      commentText: commentText
-    }),
-    contentType: 'application/json',
-    success: function(response) {
-      console.log('Comment saved successfully', response);
-    },
-    error: function(error) {
-      console.log('Error saving comment', error);
-    }
-  });
-}
-*/
-let isMoved = false;
-
-function toggleBtn_menu() {
-  const menu = document.querySelector(".nav_menu");
-  menu.classList.toggle("active");
-
-  const calendarBox = document.getElementById("calendarBox");
-  if (!isMoved) {
-    calendarBox.classList.add("move-down");
-  } else {
-    calendarBox.classList.remove("move-down");
-  }
-  isMoved = !isMoved;
-}
-
-// 일정 추가 기능
-function addEventToDB(eventData) {
-  $.ajax({
-    url: '/events',  // 백엔드에 맞는 엔드포인트로 변경
-    type: 'POST',
-    data: JSON.stringify(eventData),
-    contentType: 'application/json',
-    success: function(response) {
-      console.log('Event saved successfully', response);
-    },
-    error: function(error) {
-      console.log('Error saving event', error);
-    }
-  });
-}
-
-document.addEventListener('DOMContentLoaded', function() {
-  var calendarEl = document.getElementById('calendar');
-
-  var calendar = new FullCalendar.Calendar(calendarEl, {
-    themeSystem: 'bootstrap5',
-    timeZone: 'UTC',
-    initialView: 'dayGridMonth',
-
-    // 일정 데이터를 백엔드에서 가져옴
-    events: function(fetchInfo, successCallback, failureCallback) {
-      $.ajax({
-        url: '/events',  // 일정 데이터를 제공하는 백엔드 API
-        type: 'GET',
-        success: function(data) {
-          // FullCalendar 형식으로 변환하여 일정 추가
-          const events = data.map(event => ({
-            title: event.title,
-            start: event.startDate,
-            end: event.endDate
-          }));
-          successCallback(events);
-        },
-        error: function(error) {
-          console.error('Error fetching events:', error);
-          failureCallback(error);
-        }
-      });
-    },
-
-    eventClick: function(info) {
-      $("#scheduleModal").modal("show");
-
-      // 모달에 클릭된 일정 정보 표시
-      $("#scheduleModalLabel").text(info.event.title);
-      $("#scheduleModal_date").text(info.event.start.toLocaleDateString());
-      $("#scheduleModal_startTime").text(info.event.start.toLocaleTimeString());
-
-      // 댓글 목록 초기화 후 댓글 가져오기
-      $("#commentList").empty();
-      fetchComments(info.event.id);
-
-      // 댓글 업로드 버튼에 이벤트 ID 설정
-      $("#comment-submit").off("click").on("click", function() {
-        uploadComment(info.event.id);
-      });
-    },
-
-    customButtons: {
-      addEventButton: {
-        text: "일정 추가",
-        click: function() {
-          $("#calendarModal").modal("show");
-
-          // 일정 추가 버튼 클릭 이벤트 처리
-          $("#addCalendar").off("click").on("click", function() {
-            var content = $("#calendar_content").val();
-            var date = $("#calendar_date").val();
-            var startTime = date + "T" + $("#calendar_startTime").val();
-            var endTime = date + "T" + $("#calendar_endTime").val();
-
-            // 유효성 검사
-            if (content && date && startTime && endTime) {
-              var eventData = {
-                title: content,
-                start: startTime,
-                end: endTime
-              };
-
-              // FullCalendar에 일정 추가 및 백엔드로 전송
-              calendar.addEvent(eventData);
-              addEventToDB(eventData);
-              $("#calendarModal").modal("hide");
-            } else {
-              alert("모든 필드를 입력하세요.");
-            }
-          });
-        }
-      }
-    }
-  });
-
-  calendar.render();
-});
-
-// 댓글 데이터 가져오기
-function fetchComments(eventId) {
-  $.ajax({
-    url: `/comments/${eventId}`,  // 댓글 데이터를 제공하는 백엔드 API
-    type: 'GET',
-    success: function(comments) {
-      var commentList = $("#commentList");
-      comments.forEach(comment => {
-        var commentItem = $("<li>").addClass("list-group-item").text(`${comment.userName}: ${comment.commentText}`);
-        commentList.append(commentItem);
-      });
-    },
-    error: function(error) {
-      console.error('Error fetching comments:', error);
-    }
-  });
-}
-
-// 댓글 추가 기능
-function uploadComment(eventId) {
-  var commentText = $("#commentInput").val();
-  if (commentText.trim() === "") {
-    alert("댓글을 입력하세요.");
-    return;
-  }
-
-  // 댓글을 백엔드로 전송
-  addCommentToDB(eventId, commentText);
-
-  // 댓글을 화면에 추가
-  var commentItem = $("<li>").addClass("list-group-item").text(commentText);
-  $("#commentList").append(commentItem);
-  $("#commentInput").val("");
-}
-
-// 댓글을 백엔드로 전송하는 AJAX 요청
-function addCommentToDB(eventId, commentText) {
-  $.ajax({
-    url: '/comments',  // 백엔드 댓글 추가 API
-    type: 'POST',
-    data: JSON.stringify({
-      eventId: eventId,
-      userName: 'wooseong', 
-      commentText: commentText
-    }),
-    contentType: 'application/json',
-    success: function(response) {
-      console.log('Comment saved successfully', response);
-    },
-    error: function(error) {
-      console.log('Error saving comment', error);
-    }
-  });
-}
+// 처음 페이지 로드 시 캘린더 생성
+generateCalendar(currentMonth, currentYear);
