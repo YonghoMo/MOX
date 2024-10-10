@@ -12,33 +12,58 @@
       crossorigin
       href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css"
     />
-    <script src="script.js"></script>
+    <!--BootStrab 5.3.3-->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+      crossorigin="anonymous"
+    />
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
   </head>
   <body>
     <div id="wrap">
-      <nav class="navbar">
-        <div>
-          <a href="index.html"
-            ><img
-              src="image/logo.png"
-              class="nav_logo"
-              width="150px"
-              height="150px"
-          /></a>
-          <!--임시 로고 이미지-->
+      <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container-fluid">
+          <a class="navbar-brand" href="index.html">
+            <img src="image/logo.png" alt="" width="80" height="80" />
+          </a>
+          <button
+            class="navbar-toggler"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent"
+            aria-expanded="false"
+            aria-label="Toggle navigation"
+          >
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav ms-auto mb-2 mb-lg-0 text-end">
+              <li class="nav-item">
+                <a class="nav-link active" aria-current="page" href="index.html"
+                  >홈</a
+                >
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="calendar/calendar.html">캘린더</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="challenge.html">챌린지</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="ex_library.html">라이브러리</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="mypage.html">마이페이지</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#">로그아웃</a>
+              </li>
+            </ul>
+          </div>
         </div>
-        <ul class="nav_menu">
-          <li><a href="index.html">홈</a></li>
-          <li><a href="calendar/calendar.html">캘린더</a></li>
-          <li><a href="challenge.html">챌린지</a></li>
-          <li><a href="ex_library.html">라이브러리</a></li>
-          <li><a href="login.html">로그아웃</a></li>
-          <li><a href="mypage.html">마이페이지</a></li>
-          <!--나중에 이미지로 대체 가능-->
-        </ul>
-        <a href="#" class="navbar_toggleBtn" onclick="toggleMenu();">
-          <img src="icons/8666802_menu_navigation.svg" />
-        </a>
       </nav>
       <section class="center_section">
         <article>
@@ -64,5 +89,11 @@
       <p>Copyright 2024 Team Mox</p>
       <p>All right reserved</p>
     </footer>
+
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+      crossorigin="anonymous"
+    ></script>
   </body>
 </html>

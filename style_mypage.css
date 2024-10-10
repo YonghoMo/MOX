@@ -1,5 +1,4 @@
 body {
-  width: 480px;
   font-family: "Pretendard Variable", Pretendard, -apple-system,
     BlinkMacSystemFont, system-ui, Roboto, "Helvetica Neue", "Segoe UI",
     "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", "Apple Color Emoji",
@@ -14,40 +13,21 @@ body {
   background-attachment: fixed;
 }
 
-.navbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background-color: var(--background-color);
-  padding: 8px 12px;
-  border-radius: 8px;
-  margin: 20px 20px 20px 20px;
-  height: 75px;
-  overflow: hidden;
-}
-
-.nav_icons {
-  display: flex;
-  color: #7dc0ff;
-  list-style: none;
-  padding-left: 0;
-}
-
-.navbar_toggleBtn {
-  display: none;
-  color: var(--text-color);
-  position: absolute;
-  right: 32px;
-  font-size: 24px;
+#wrap {
+  height: auto;
+  min-height: 100vh;
+  padding-bottom: 80px;
 }
 
 .profile {
+  max-width: 480px;
   background-color: #fff;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   padding: 20px;
   margin-bottom: 20px;
   text-align: center;
+  margin: 0 auto;
 }
 
 .profile img {
@@ -77,11 +57,13 @@ body {
 }
 
 .group-management {
+  max-width: 480px;
   background-color: #fff;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   padding: 20px;
   margin-bottom: 20px;
+  margin: 0 auto;
 }
 
 .group-management h2 {
@@ -90,10 +72,12 @@ body {
 }
 
 .settings {
+  max-width: 480px;
   background-color: #fff;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   padding: 20px;
+  margin: 0 auto;
 }
 
 .settings a {
@@ -108,8 +92,8 @@ body {
 
 .main {
   width: 250px;
-  height: 300px;
-  border: 1px solid lightgrey;
+  height: 350px;
+  border: 2px solid lightgrey;
   border-radius: 5px;
   position: absolute;
   left: 50%;
@@ -122,12 +106,57 @@ body {
   margin-bottom: 40px;
 }
 
-#login {
+#loginBtn {
   width: 71%;
-  background-color: skyblue;
+  background-color: #007bff;
   border-color: transparent;
   color: white;
   transform: translate(20%, 0%);
+}
+
+#signupBtn {
+  width: 71%;
+  border-radius: 4px;
+  background-color: #007bff;
+  border-color: transparent;
+  color: white;
+  transform: translate(-3.0%, 0%);
+}
+
+#signupBtn:hover {
+  background-color: #0056b3;
+}
+
+#login:hover{
+  background-color: #0056b3;
+}
+
+#id{
+  display: flex;
+  justify-content: center;
+  width: 169px;
+}
+#password {
+  display: flex;
+  justify-content: center;
+  width: 169px;
+}
+
+#group-button {
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  padding-top: 2px;
+  padding-bottom: 2px; 
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  text-align: center;
+  display: inline-block;
+}
+
+#group-button:hover {
+  background-color: #0056b3;
 }
 
 .account {
@@ -141,4 +170,28 @@ body {
 
 #alert {
   border-color: transparent;
+}
+
+@media screen and (max-width: 768px) {
+  .navbar {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 8px 24px;
+    height: auto;
+  }
+  .nav_menu {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+  }
+  .navbar_toggleBtn {
+    display: block;
+    right: 35px;
+    top: 40px;
+  }
+  .nav_logo img {
+    width: 60px;
+    height: auto;
+  }
 }
