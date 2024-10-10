@@ -14,7 +14,7 @@
             background-size: cover;
             background-attachment: fixed;
         }
-        
+
         body {
             font-family: Arial, sans-serif;
             background-color: #FFFFFF;
@@ -22,7 +22,7 @@
         }
         h1 {
             color: #007bff;
-            margin-bottom: 40px;
+            margin-bottom: 70px;
         }
         .container {
             max-width: 600px;
@@ -95,6 +95,18 @@
         #refreshRoomsButton:hover {
             color: #202632;
         }
+        /* Flexbox를 사용하여 버튼을 가운데 정렬 */
+        #turnSection {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;  /* 수직 방향으로 정렬 */
+            height: 100px;  /* 높이 지정 */
+        }
+
+        #turnButton {
+            width: 150px;  /* 버튼의 너비 설정 */
+        }
     </style>
 </head>
 <body>
@@ -159,10 +171,19 @@
 
         <!-- 게임 영역 -->
         <div id="game">
-            <button id="leaveRoomButton">←</button>
-            <h2 id="roomTitle"></h2>
-            <div id="status">상대방의 턴입니다!</div>
-            <button id="turnButton" class="btn btn-success" disabled>턴 넘기기</button>
+            <div id="turnSection">
+                <button id="leaveRoomButton">←</button>
+                <h2 id="roomTitle"></h2>
+                <div id="status">상대방의 턴입니다!</div>
+                <button id="turnButton" class="btn btn-success" disabled>턴 넘기기</button>
+            </div>
+
+            <div id="restControls" style="display: none;">
+                <h3 id="roundStatus"></h3>
+                <h4>쉬는 시간: <span id="restTime">30</span>초</h4>
+                <button id="increaseRest" class="btn btn-info">+10초</button>
+                <button id="decreaseRest" class="btn btn-info">-10초</button>
+            </div>
         </div>
     </div>
 
@@ -184,6 +205,7 @@
         const socket = io();
         let currentRoom = null;
         let createdRoom = null;
+        let currentRestTime = 30;
 
         // 방 만들기
         createRoomButton.addEventListener('click', () => {
@@ -238,22 +260,46 @@
             gameDiv.style.display = 'block';
             roomTitle.textContent = `방: ${roomName}`; 
             statusElement.textContent = `"${roomName}"방에 입장했습니다. 턴을 기다려주세요!`;
+
+            // 쉬는 시간 관련 UI 초기화
+            currentRestTime = 30;  // 기본 쉬는 시간으로 초기화
+            document.getElementById('restTime').textContent = currentRestTime;
+            document.getElementById('restControls').style.display = 'none';  // 쉬는 시간 UI 숨기기
+            document.getElementById('status').style.display = 'block';  // 턴 상태 메시지 표시
+            document.getElementById('turnButton').style.display = 'block';  // 턴 넘기기 버튼 표시
         });
 
         // 방에서 나가기
         leaveRoomButton.addEventListener('click', () => {
             if (currentRoom) {
                 socket.emit('leave_room', currentRoom);
+
+                // 방에서 나가면 쉬는 시간 초기화
+                currentRestTime = 30;  // 기본 쉬는 시간으로 초기화
+                document.getElementById('restTime').textContent = currentRestTime;
+                document.getElementById('restControls').style.display = 'none';  // 쉬는 시간 UI 숨기기
+                document.getElementById('status').style.display = 'block';  // 턴 상태 메시지 표시
+                document.getElementById('turnButton').style.display = 'block';  // 턴 넘기기 버튼 표시
+
+                // 방에서 나가면 쉬는 시간 초기화
+                resetRestState();
+
+                // 방을 나가면 로비로 돌아가기
+                currentRoom = null;
+                gameDiv.style.display = 'none';
+                lobbyDiv.style.display = 'block';
+                statusElement.textContent = '방을 떠났습니다.';
             }
         });
 
-        // 방 나가기 처리 후 로비로 돌아가기
-        socket.on('left_room', () => {
-            currentRoom = null;
-            gameDiv.style.display = 'none';
-            lobbyDiv.style.display = 'block';
-            statusElement.textContent = '방을 떠났습니다.';
-        });
+        // 쉬는 시간 초기화 함수
+        function resetRestState() {
+            currentRestTime = 30;  // 기본 쉬는 시간으로 초기화
+            document.getElementById('restTime').textContent = currentRestTime;
+            document.getElementById('restControls').style.display = 'none';  // 쉬는 시간 UI 숨기기
+            document.getElementById('status').style.display = 'block';  // 턴 상태 메시지 표시
+            document.getElementById('turnButton').style.display = 'block';  // 턴 넘기기 버튼 표시
+        }
 
         // 다른 사용자가 방에 입장했을 때 처리
         socket.on('player_joined', ({ roomName, playerCount }) => {
@@ -287,6 +333,51 @@
 
         // 페이지가 로드될 때 방 목록 요청
         socket.emit('get_rooms');
+
+        socket.on('round_end', ({ round, restTime }) => {
+            // 라운드 종료 시 턴 상태 메시지와 턴 넘기기 버튼 숨기기
+            document.getElementById('status').style.display = 'none';
+            document.getElementById('turnButton').style.display = 'none';
+
+            // 쉬는 시간 동안 턴 넘기기 버튼 비활성화
+            turnButton.disabled = true;
+
+            // 쉬는 시간 UI 표시
+            document.getElementById('restControls').style.display = 'block';
+            document.getElementById('roundStatus').textContent = `${round} 라운드 종료`;
+            currentRestTime = restTime;
+            document.getElementById('restTime').textContent = currentRestTime;
+
+            // 쉬는 시간 타이머 시작
+            const restInterval = setInterval(() => {
+                currentRestTime--;
+                document.getElementById('restTime').textContent = currentRestTime;
+
+                if (currentRestTime <= 0) {
+                    clearInterval(restInterval);
+                    socket.emit('start_next_round', currentRoom);  // 다음 라운드 시작 요청
+
+                    // 쉬는 시간이 끝나면 쉬는 시간 UI를 숨기고 턴 UI 다시 표시
+                    document.getElementById('restControls').style.display = 'none';
+                    document.getElementById('status').style.display = 'block';
+                    document.getElementById('turnButton').style.display = 'block';
+                }
+            }, 1000);
+        });
+
+        // 쉬는 시간 조정
+        document.getElementById('increaseRest').addEventListener('click', () => {
+            socket.emit('adjust_rest_time', { roomName: currentRoom, adjustment: 10 });
+        });
+
+        document.getElementById('decreaseRest').addEventListener('click', () => {
+            socket.emit('adjust_rest_time', { roomName: currentRoom, adjustment: -10 });
+        });
+
+        socket.on('update_rest_time', (newRestTime) => {
+            currentRestTime = newRestTime;
+            document.getElementById('restTime').textContent = newRestTime;
+        });
     </script>
 </body>
 </html>

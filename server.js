@@ -2,6 +2,10 @@ const express = require('express');
 const http = require('http');
 const socketIo = require('socket.io');
 
+let round = 0;  // 라운드 번호 관리
+let restTime = 30;  // 기본 쉬는 시간
+let turnCount = {};  // 방별로 턴 횟수 관리
+
 // Express 앱 생성
 const app = express();
 const server = http.createServer(app);
@@ -83,8 +87,7 @@ io.on('connection', (socket) => {
                     delete rooms[roomName];
                 }
 
-                delete userRooms[socket.id];  // 사용자가 만든 방 정보 제거
-                updateRooms();
+                // 클라이언트에게 방을 나갔다는 알림을 보내고 초기화
                 socket.emit('left_room');
             }
         }
@@ -115,12 +118,38 @@ io.on('connection', (socket) => {
     // 턴 넘기기 처리
     socket.on('pass_turn', (roomName) => {
         const room = rooms[roomName];
+
+        if (!turnCount[roomName]) {
+            turnCount[roomName] = 0;
+        }
+
         if (room) {
             const otherClient = room.find(id => id !== socket.id);
             if (otherClient) {
                 io.to(otherClient).emit('your_turn');  // 상대방에게 턴 전달
             }
+
+            turnCount[roomName]++;  // 턴 넘길 때마다 카운트 증가
+
+            // 두 사람의 턴이 각각 한 번씩 끝나면 라운드 종료
+            if (turnCount[roomName] >= 2) {
+                round++;
+                turnCount[roomName] = 0;  // 턴 카운트 초기화
+                io.to(roomName).emit('round_end', { round, restTime });  // 라운드 종료 및 쉬는 시간 알림
+            }
         }
+    });
+
+    // 쉬는 시간 조정 이벤트
+    socket.on('adjust_rest_time', ({ roomName, adjustment }) => {
+        restTime += adjustment;
+        if (restTime < 10) restTime = 10;  // 최소 10초
+        io.to(roomName).emit('update_rest_time', restTime);  // 쉬는 시간 업데이트
+    });
+
+    // 라운드 시작 이벤트
+    socket.on('start_next_round', (roomName) => {
+        io.to(roomName).emit('your_turn');  // 다음 라운드 턴 시작
     });
 });
 
