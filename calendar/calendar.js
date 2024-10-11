@@ -29,6 +29,10 @@ function generateCalendar(month, year) {
             dayClass += ' today';
         }
 
+        // 해당 날짜에 대한 이벤트 목록 가져오기
+        const eventList = Object.values(events).filter(event => event.date === dateKey); // 해당 날짜의 이벤트 목록
+        let eventText = '';
+
         // 일정이 있으면 일정과 삭제 버튼 표시
         if (eventList.length > 0) {
             eventList.forEach(event => {
@@ -42,7 +46,7 @@ function generateCalendar(month, year) {
 
         // 날짜 박스 클릭 시 일정 있으면 댓글 모달이, 없으면 일정 추가 모달이 뜨도록 설정
         calendar.innerHTML += `
-            <div class="${dayClass}" data-date="${dateKey}" onclick="${eventList.length > 0 ? `openCommentModal('${eventList[0].id}')` : `openAddEventModal('${dateKey}')`}">
+            <div class="${dayClass}" data-date="${dateKey}" onclick="${eventList.length > 0 ? `openCommentModal(${eventList[0].id})` : `openAddEventModal('${dateKey}')`}">
                 <div class="date">${i}</div>
                 ${eventText}
             </div>`;
@@ -81,12 +85,20 @@ function saveEvent() {
     }
 }
 
-function deleteEvent(eventId, e) {
-    e.stopPropagation(); // 부모의 클릭 이벤트가 실행되지 않도록 이벤트 전파 차단
-
+function deleteEvent() {
     if (confirm('정말 이 일정을 삭제하시겠습니까?')) {
-        delete events[eventId]; // 이벤트 객체에서 해당 일정을 삭제
+        // 현재 보고 있는 일정 삭제
+        delete events[currentEventId]; // 전역 변수로 저장된 일정 ID를 사용
         generateCalendar(currentMonth, currentYear); // 캘린더 갱신
+
+        // 모달 닫기
+        const modal = bootstrap.Modal.getInstance(document.getElementById('commentModal'));
+        modal.hide();
+
+        // 강제적으로 모달과 백드롭 제거
+        document.querySelectorAll('.modal-backdrop').forEach(backdrop => backdrop.remove()); // 백드롭 제거
+        document.body.classList.remove('modal-open'); // 모달 오픈 상태 클래스 제거
+        document.body.style = ''; // body에 적용된 스타일 초기화
     }
 }
 
@@ -97,7 +109,9 @@ function openCommentModal(eventId) {
     // 모달 창에 일정 제목 및 시간 표시
     if (event) {
         document.getElementById('commentModalLabel').innerText = event.title;
-        document.getElementById('event-date-time').innerText = `${event.date}`;
+        
+        // 일정 날짜와 시간 표시
+        document.getElementById('event-date-time').innerText = `${event.date} ${event.startTime} - ${event.endTime}`;
     }
 
     // 댓글 리스트 업데이트
@@ -107,6 +121,7 @@ function openCommentModal(eventId) {
     const modal = new bootstrap.Modal(document.getElementById('commentModal'));
     modal.show();
 }
+
 
 function addComment() {
     const eventKey = document.getElementById('event-date-time').innerText.split(' ')[0];
