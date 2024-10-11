@@ -1,5 +1,6 @@
 let currentMonth = new Date().getMonth();
 let currentYear = new Date().getFullYear();
+let currentEventId = '';
 const today = new Date();
 const events = {}; // 일정을 저장할 객체
 const comments = {}; // 각 일정별 댓글 저장 객체
@@ -28,13 +29,20 @@ function generateCalendar(month, year) {
             dayClass += ' today';
         }
 
-        // 일정이 있으면 클릭 시 댓글 모달이 뜨도록 설정하고 이벤트 전파 막기
-        const eventText = events[dateKey] ? 
-            `<div class="event" onclick="openCommentModal('${dateKey}', event)">${events[dateKey].title}</div>` : '';
+        // 일정이 있으면 일정과 삭제 버튼 표시
+        if (eventList.length > 0) {
+            eventList.forEach(event => {
+                eventText += `
+                    <div class="event" onclick="openCommentModal(${event.id})">
+                        ${event.title}
+                        <button class="btn btn-sm btn-danger" onclick="deleteEvent(${event.id}, event)">삭제</button>
+                    </div>`;
+            });
+        }
 
-        // 날짜 박스를 클릭하면 일정 추가 모달이 뜨도록 설정
+        // 날짜 박스 클릭 시 일정 있으면 댓글 모달이, 없으면 일정 추가 모달이 뜨도록 설정
         calendar.innerHTML += `
-            <div class="${dayClass}" data-date="${dateKey}" onclick="openAddEventModal('${dateKey}')">
+            <div class="${dayClass}" data-date="${dateKey}" onclick="${eventList.length > 0 ? `openCommentModal('${eventList[0].id}')` : `openAddEventModal('${dateKey}')`}">
                 <div class="date">${i}</div>
                 ${eventText}
             </div>`;
@@ -56,8 +64,11 @@ function saveEvent() {
     const endTime = document.getElementById('end-time').value;
 
     if (title && date) {
+        // 고유 ID 생성
+        const eventId = Date.now();
+
         // 일정 데이터를 저장
-        events[date] = { title, startTime, endTime };
+        events[eventId] = { id: eventId, title, date, startTime, endTime };
 
         // 캘린더 업데이트
         generateCalendar(currentMonth, currentYear);
@@ -70,22 +81,27 @@ function saveEvent() {
     }
 }
 
-function openCommentModal(eventKey, e) {
-    // 이벤트 전파 막기 (부모 요소의 클릭 이벤트를 막음)
-    e.stopPropagation();
+function deleteEvent(eventId, e) {
+    e.stopPropagation(); // 부모의 클릭 이벤트가 실행되지 않도록 이벤트 전파 차단
+
+    if (confirm('정말 이 일정을 삭제하시겠습니까?')) {
+        delete events[eventId]; // 이벤트 객체에서 해당 일정을 삭제
+        generateCalendar(currentMonth, currentYear); // 캘린더 갱신
+    }
+}
+
+function openCommentModal(eventId) {
+    currentEventId = eventId; // 현재 보고 있는 일정의 ID 저장
+    const event = events[eventId];
 
     // 모달 창에 일정 제목 및 시간 표시
-    const event = events[eventKey];
     if (event) {
         document.getElementById('commentModalLabel').innerText = event.title;
-        document.getElementById('event-date-time').innerText = `${eventKey} 오후 6:00:00`;
-    } else {
-        document.getElementById('commentModalLabel').innerText = '일정 없음';
-        document.getElementById('event-date-time').innerText = `${eventKey} 오후 6:00:00`;
+        document.getElementById('event-date-time').innerText = `${event.date}`;
     }
 
     // 댓글 리스트 업데이트
-    updateCommentList(eventKey);
+    updateCommentList(eventId);
 
     // 댓글 모달 열기
     const modal = new bootstrap.Modal(document.getElementById('commentModal'));
