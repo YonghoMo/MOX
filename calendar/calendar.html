@@ -106,7 +106,7 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="commentModalLabel">일정 댓글</h5> <!-- 클릭한 일정 제목 -->
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        <button type="button" class="btn-close" onclick="closeCommentModal()" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
                         <p id="event-date-time"></p> <!-- 일정 날짜 및 시간 표시 -->
@@ -124,8 +124,8 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                      <button type="button" class="btn btn-primary" onclick="deleteEvent()">일정 삭제</button> 
-                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+                      <button type="button" class="btn btn-primary" onclick="deleteEvent(currentEventId)">일정 삭제</button> 
+                      <button type="button" class="btn btn-secondary" onclick="closeCommentModal()">닫기</button>
                   </div>
                   
                 </div>
