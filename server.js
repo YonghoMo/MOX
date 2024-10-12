@@ -32,8 +32,23 @@ app.use(session({
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// 로그인 페이지에 필요한 정적 파일들을 로그인 여부와 상관없이 제공
+app.use('/css', express.static(path.join(__dirname, 'public', 'css')));
+app.use('/images', express.static(path.join(__dirname, 'public', 'images')));
+app.use('/js', express.static(path.join(__dirname, 'public', 'js')));
+
 // 유저 경로 라우트
 app.use('/api/users', userRoutes);
+
+// 회원가입 페이지 제공 (GET 요청)
+app.get('/signup', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'sign_up.html'));
+});
+
+// 로그인 페이지 제공
+app.get('/login', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'login.html'));
+});
 
 // 로그인 여부 확인 미들웨어
 function isAuthenticated(req, res, next) {
@@ -44,20 +59,10 @@ function isAuthenticated(req, res, next) {
     }
 }
 
-// 1. 로그인 페이지에 필요한 정적 파일들을 로그인 여부와 상관없이 제공
-app.use('/css', express.static(path.join(__dirname, 'public', 'css')));
-app.use('/images', express.static(path.join(__dirname, 'public', 'images')));
-app.use('/js', express.static(path.join(__dirname, 'public', 'js')));
-
-// 2. 로그인 페이지 제공
-app.get('/login', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'login.html'));
-});
-
-// 3. 로그인 후에만 접근 가능한 파일들
+// 로그인 후에만 접근 가능한 정적 파일들
 app.use('/public', isAuthenticated, express.static(path.join(__dirname, 'public')));
 
-// 4. 메인 페이지 경로 (인증 필요)
+// 메인 페이지 경로 (인증 필요)
 app.get('/', isAuthenticated, (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
