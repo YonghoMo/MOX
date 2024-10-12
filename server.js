@@ -7,6 +7,8 @@ const path = require('path');
 const { handleSocketConnection } = require('./controllers/socketController');  // Socket.IO 로직 불러오기
 const connectDB = require('./config/db');
 require('dotenv').config();  // .env 파일에서 환경 변수 로드
+const userRoutes = require('./routes/userRoutes');
+const scheduleRoutes = require('./routes/scheduleRoutes');
 
 // Express 앱 생성
 const app = express();
@@ -14,8 +16,13 @@ const app = express();
 // MongoDB Atlas 연결
 connectDB();
 
-// 미들웨어
+// JSON 파싱 미들웨어
 app.use(express.json());
+
+// 유저 경로
+app.use('/api/users', userRoutes);
+// 일정 경로 
+app.use('/api/schedules', scheduleRoutes);
 
 // HTTP 서버 생성
 const server = http.createServer(app);
