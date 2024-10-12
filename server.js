@@ -16,8 +16,11 @@ const io = socketIo(server, {
 });
 
 // 정적 파일 제공 (HTML 파일 등)
+app.use(express.static(path.join(__dirname, 'public')));
+
+// 기본 경로 설정 (index.html 제공)
 app.get('/', (req, res) => {
-    res.sendFile(__dirname + '/challenge.html');
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
 // 방 목록을 관리할 객체
@@ -154,6 +157,6 @@ io.on('connection', (socket) => {
 });
 
 // 서버 실행
-server.listen(5000, () => {
-    console.log('서버가 http://localhost:5000 에서 실행 중입니다.');
+server.listen(3000, () => {
+    console.log('서버가 http://localhost:3000 에서 실행 중입니다.');
 });
