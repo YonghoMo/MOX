@@ -3,7 +3,6 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link href="css/style_mypage.css" rel="stylesheet" type="text/css" />
     <title>회원가입</title>
     <style>
       #id,
@@ -102,9 +101,9 @@
       document
         .getElementById("signup-form")
         .addEventListener("submit", async function (event) {
-          event.preventDefault(); // 폼이 자동으로 제출되는 것을 막음
+          event.preventDefault(); // 폼 자동 제출 막음
 
-          // 입력 값 가져오기
+          // 입력된 값 가져오기
           const username = document.getElementById("username").value;
           const password = document.getElementById("password-input").value;
           const confirmPassword = document.getElementById(
@@ -132,13 +131,22 @@
               }),
             });
 
-            const data = await response.json();
-
-            if (response.ok) {
-              alert("회원가입 성공! 로그인 페이지로 이동합니다.");
-              window.location.href = "/login"; // 성공 시 로그인 페이지로 리다이렉트
+            // 응답의 Content-Type이 JSON인지 확인
+            if (
+              response.headers.get("content-type")?.includes("application/json")
+            ) {
+              const data = await response.json();
+              if (response.ok) {
+                alert("회원가입 성공! 로그인 페이지로 이동합니다.");
+                window.location.href = "/login"; // 성공 시 리다이렉트
+              } else {
+                document.getElementById("error-message").innerText =
+                  data.message || "회원가입에 실패했습니다.";
+              }
             } else {
-              document.getElementById("error-message").innerText = data.message;
+              // JSON이 아닌 응답을 받으면 에러 메시지 표시
+              document.getElementById("error-message").innerText =
+                "서버에서 잘못된 응답을 받았습니다.";
             }
           } catch (error) {
             console.error("회원가입 중 오류 발생:", error);
