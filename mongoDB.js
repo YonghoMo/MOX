@@ -2,10 +2,10 @@ const { MongoClient } = require('mongodb');
 require('dotenv').config(); // .env 파일에서 환경 변수 불러오기
 
 // MongoDB URI 설정
-const uri = process.env.MONGODB_URI; 
+const uri = process.env.MONGODB_URI;
 
 // MongoClient 객체 생성
-const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
+const client = new MongoClient(uri);
 
 // MongoDB 연결 및 데이터베이스 반환 함수
 async function connectToDB() {
