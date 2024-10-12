@@ -123,7 +123,23 @@ function handleSocketConnection(io) {
                     round++;
                     turnCount[roomName] = 0;  // 턴 카운트 초기화
                     io.to(roomName).emit('round_end', { round, restTime });  // 라운드 종료 및 쉬는 시간 알림
+
+                    // 턴 상태를 유지한 채 쉬는 시간 후에 첫 번째 플레이어에게 다시 턴 전달
+                    const firstPlayer = room[0];  // 첫 번째 플레이어
+                    setTimeout(() => {
+                        io.to(firstPlayer).emit('your_turn');  // 쉬는 시간 후 첫 번째 플레이어에게 턴 전달
+                    }, restTime * 1000);  // 쉬는 시간이 끝나면 턴을 첫 번째 플레이어에게 다시 전달
                 }
+            }
+        });
+
+        // 클라이언트가 턴 상태를 확인할 때 처리
+        socket.on('check_turn', (roomName) => {
+            const room = rooms[roomName];
+            if (room) {
+                const currentTurnPlayer = room.currentTurnPlayerId;  // 현재 턴인 플레이어 ID
+                const isYourTurn = socket.id === currentTurnPlayer;  // 현재 소켓 ID가 턴인지 확인
+                io.to(socket.id).emit('turn_status', isYourTurn);  // 현재 클라이언트에게 턴 상태 전송
             }
         });
 

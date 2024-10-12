@@ -330,31 +330,27 @@
         alert(message);
       });
 
-      // 턴 시작
+      // 턴 시작 (본인의 턴이 시작될 때)
       socket.on("your_turn", () => {
         statusElement.textContent = "당신의 턴입니다!";
-        turnButton.disabled = false; // 턴 넘기기 버튼 활성화
+        turnButton.disabled = false; // 본인의 턴일 때만 버튼 활성화
       });
 
-      // 턴 넘기기
+      // 턴 넘기기 버튼 클릭 처리
       turnButton.addEventListener("click", () => {
         if (currentRoom) {
-          socket.emit("pass_turn", currentRoom);
-          turnButton.disabled = true;
+          socket.emit("pass_turn", currentRoom); // 턴을 서버에 넘김
+          turnButton.disabled = true; // 클릭 후 버튼 비활성화
           statusElement.textContent = "상대방의 턴입니다...";
         }
       });
 
-      // 페이지가 로드될 때 방 목록 요청
-      socket.emit("get_rooms");
-
+      // 라운드 종료 시 처리
       socket.on("round_end", ({ round, restTime }) => {
-        // 라운드 종료 시 턴 상태 메시지와 턴 넘기기 버튼 숨기기
+        // 턴 상태 메시지와 턴 넘기기 버튼 숨기기
         document.getElementById("status").style.display = "none";
         document.getElementById("turnButton").style.display = "none";
-
-        // 쉬는 시간 동안 턴 넘기기 버튼 비활성화
-        turnButton.disabled = true;
+        turnButton.disabled = true; // 쉬는 시간 동안 버튼 비활성화
 
         // 쉬는 시간 UI 표시
         document.getElementById("restControls").style.display = "block";
@@ -377,8 +373,22 @@
             document.getElementById("restControls").style.display = "none";
             document.getElementById("status").style.display = "block";
             document.getElementById("turnButton").style.display = "block";
+
+            // 현재 턴이 본인인지 확인하여 버튼 상태 복원
+            socket.emit("check_turn", currentRoom); // 서버에 턴 상태 확인 요청
           }
         }, 1000);
+      });
+
+      // 서버에서 확인한 턴 정보에 따라 버튼 상태 복원
+      socket.on("turn_status", (isYourTurn) => {
+        if (isYourTurn) {
+          turnButton.disabled = false; // 본인의 턴이면 버튼 활성화
+          statusElement.textContent = "당신의 턴입니다!";
+        } else {
+          turnButton.disabled = true; // 상대방의 턴이면 버튼 비활성화
+          statusElement.textContent = "상대방의 턴입니다!";
+        }
       });
 
       // 쉬는 시간 조정
@@ -401,6 +411,7 @@
         document.getElementById("restTime").textContent = newRestTime;
       });
     </script>
+
     <script
       src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
       integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
