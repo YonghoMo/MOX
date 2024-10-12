@@ -1,6 +1,8 @@
 const express = require('express');
 const http = require('http');
 const socketIo = require('socket.io');
+const path = require('path');
+const { addEvent, getEvents } = require('./mongoDB'); // MongoDB 관련 함수 가져오기
 
 let round = 0;  // 라운드 번호 관리
 let restTime = 30;  // 기본 쉬는 시간
