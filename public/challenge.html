@@ -1,383 +1,410 @@
 <!DOCTYPE html>
 <html lang="ko">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>챌린지</title>
-    
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="icon" type="image/x-icon" href="favicon.ico">
+
+    <!--BootStrab 5.3.3-->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+      crossorigin="anonymous"
+    />
+    <link rel="icon" type="image/x-icon" href="favicon.ico" />
     <style>
-        html, body{
-            background-image: url("images/background_image.png");
-            background-size: cover;
-            background-attachment: fixed;
-        }
+      html,
+      body {
+        background-image: url("images/background_image.png");
+        background-size: cover;
+        background-attachment: fixed;
+      }
 
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #FFFFFF;
-            color: #202632;
-        }
-        h1 {
-            color: #007bff;
-            margin-bottom: 70px;
-        }
-        .container {
-            max-width: 600px;
-            margin-top: 50px;
-        }
-        button, input {
-            font-size: 18px;
-            margin: 10px;
-        }
-        #status {
-            font-size: 24px;
-            margin: 20px 0;
-        }
-        /* 처음에는 로비 화면을 보이도록 설정 */
-        #lobby {
-            display: block;
-        }
-        /* 처음에는 게임 화면은 숨김 */
-        #game {
-            display: none;
-        }
-        #leaveRoomButton {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            background: none;
-            border: none;
-            font-size: 30px;
-            color: #007bff;
-            cursor: pointer;
-        }
-        #leaveRoomButton:hover {
-            color: #202632;
-        }
-        .room-list-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin: 10px 0;
-            padding: 10px;
-            background-color: #F8F9FA;
-            border-radius: 5px;
-            border: 1px solid #E0E0E0;
-        }
-        .join-btn {
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            padding: 5px 10px;
-        }
-        .join-btn:hover {
-            background-color: #202632;
-        }
-        .full-btn {
-            background-color: gray;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            padding: 5px 10px;
-            cursor: not-allowed;
-        }
-        #refreshRoomsButton {
-            font-size: 25px;
-            background: none;
-            border: none;
-            color: #007bff;
-            cursor: pointer;
-        }
-        #refreshRoomsButton:hover {
-            color: #202632;
-        }
-        /* Flexbox를 사용하여 버튼을 가운데 정렬 */
-        #turnSection {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;  /* 수직 방향으로 정렬 */
-            height: 100px;  /* 높이 지정 */
-        }
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #ffffff;
+        color: #202632;
+      }
+      h1 {
+        color: #007bff;
+        margin-bottom: 70px;
+      }
+      .container {
+        max-width: 600px;
+        margin-top: 50px;
+      }
+      button,
+      input {
+        font-size: 18px;
+        margin: 10px;
+      }
+      #status {
+        font-size: 24px;
+        margin: 20px 0;
+      }
+      /* 처음에는 로비 화면을 보이도록 설정 */
+      #lobby {
+        display: block;
+      }
+      /* 처음에는 게임 화면은 숨김 */
+      #game {
+        display: none;
+      }
+      #leaveRoomButton {
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        background: none;
+        border: none;
+        font-size: 30px;
+        color: #007bff;
+        cursor: pointer;
+      }
+      #leaveRoomButton:hover {
+        color: #202632;
+      }
+      .room-list-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin: 10px 0;
+        padding: 10px;
+        background-color: #f8f9fa;
+        border-radius: 5px;
+        border: 1px solid #e0e0e0;
+      }
+      .join-btn {
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        padding: 5px 10px;
+      }
+      .join-btn:hover {
+        background-color: #202632;
+      }
+      .full-btn {
+        background-color: gray;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        padding: 5px 10px;
+        cursor: not-allowed;
+      }
+      #refreshRoomsButton {
+        font-size: 25px;
+        background: none;
+        border: none;
+        color: #007bff;
+        cursor: pointer;
+      }
+      #refreshRoomsButton:hover {
+        color: #202632;
+      }
+      /* Flexbox를 사용하여 버튼을 가운데 정렬 */
+      #turnSection {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column; /* 수직 방향으로 정렬 */
+        height: 100px; /* 높이 지정 */
+      }
 
-        #turnButton {
-            width: 150px;  /* 버튼의 너비 설정 */
-        }
+      #turnButton {
+        width: 150px; /* 버튼의 너비 설정 */
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <div class="container-fluid">
-          <a class="navbar-brand" href="index.html">
-            <img src="images/logo.png" alt="" width="80" height="80" />
-          </a>
-          <button
-            class="navbar-toggler"
-            type="button"
-            data-bs-toggle="collapse"
-            data-bs-target="#navbarSupportedContent"
-            aria-controls="navbarSupportedContent"
-            aria-expanded="false"
-            aria-label="Toggle navigation"
-          >
-            <span class="navbar-toggler-icon"></span>
-          </button>
-          <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav ms-auto mb-2 mb-lg-0 text-end">
-              <li class="nav-item">
-                <a class="nav-link active" aria-current="page" href="index.html"
-                  >홈</a
-                >
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="calendar.html">캘린더</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="challenge.html">챌린지</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="ex_library.html">라이브러리</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="mypage.html">마이페이지</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="login.html">로그인</a>
-              </li>
-            </ul>
-          </div>
+      <div class="container-fluid">
+        <a class="navbar-brand" href="index.html">
+          <img src="images/logo.png" alt="" width="80" height="80" />
+        </a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarSupportedContent"
+          aria-controls="navbarSupportedContent"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav ms-auto mb-2 mb-lg-0 text-end">
+            <li class="nav-item">
+              <a class="nav-link active" aria-current="page" href="index.html"
+                >홈</a
+              >
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="calendar.html">캘린더</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="challenge.html">챌린지</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="ex_library.html">라이브러리</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="mypage.html">마이페이지</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="login.html">로그인</a>
+            </li>
+          </ul>
         </div>
-      </nav>
+      </div>
+    </nav>
     <div class="container text-center">
-        <h1>챌린지</h1>
+      <h1>챌린지</h1>
 
-        <!-- 로비 영역 -->
-        <div id="lobby">
-            <input type="text" id="roomNameInput" class="form-control" placeholder="방 제목을 입력해주세요...">
-            <button id="createRoomButton" class="btn btn-primary">방 만들기</button>
+      <!-- 로비 영역 -->
+      <div id="lobby">
+        <input
+          type="text"
+          id="roomNameInput"
+          class="form-control"
+          placeholder="방 제목을 입력해주세요..."
+        />
+        <button id="createRoomButton" class="btn btn-primary">방 만들기</button>
 
-            <div class="d-flex justify-content-between align-items-center mt-4">
-                <h2>방 리스트</h2>
-                <!-- 새로고침 버튼 -->
-                <button id="refreshRoomsButton">🔄</button>
-            </div>
-
-            <ul id="roomList" class="list-unstyled"></ul>
+        <div class="d-flex justify-content-between align-items-center mt-4">
+          <h2>방 리스트</h2>
+          <!-- 새로고침 버튼 -->
+          <button id="refreshRoomsButton">🔄</button>
         </div>
 
-        <!-- 게임 영역 -->
-        <div id="game">
-            <div id="turnSection">
-                <button id="leaveRoomButton">←</button>
-                <h2 id="roomTitle"></h2>
-                <div id="status">상대방의 턴입니다!</div>
-                <button id="turnButton" class="btn btn-success" disabled>턴 넘기기</button>
-            </div>
+        <ul id="roomList" class="list-unstyled"></ul>
+      </div>
 
-            <div id="restControls" style="display: none;">
-                <h3 id="roundStatus"></h3>
-                <h4>쉬는 시간: <span id="restTime">30</span>초</h4>
-                <button id="increaseRest" class="btn btn-info">+10초</button>
-                <button id="decreaseRest" class="btn btn-info">-10초</button>
-            </div>
+      <!-- 게임 영역 -->
+      <div id="game">
+        <div id="turnSection">
+          <button id="leaveRoomButton">←</button>
+          <h2 id="roomTitle"></h2>
+          <div id="status">상대방의 턴입니다!</div>
+          <button id="turnButton" class="btn btn-success" disabled>
+            턴 넘기기
+          </button>
         </div>
+
+        <div id="restControls" style="display: none">
+          <h3 id="roundStatus"></h3>
+          <h4>쉬는 시간: <span id="restTime">30</span>초</h4>
+          <button id="increaseRest" class="btn btn-info">+10초</button>
+          <button id="decreaseRest" class="btn btn-info">-10초</button>
+        </div>
+      </div>
     </div>
 
     <!-- Socket.io 클라이언트 라이브러리 로드 -->
     <script src="https://cdn.socket.io/4.5.0/socket.io.min.js"></script>
-    
+
     <script>
-        const statusElement = document.getElementById('status');
-        const roomNameInput = document.getElementById('roomNameInput');
-        const createRoomButton = document.getElementById('createRoomButton');
-        const roomListElement = document.getElementById('roomList');
-        const turnButton = document.getElementById('turnButton');
-        const leaveRoomButton = document.getElementById('leaveRoomButton');
-        const lobbyDiv = document.getElementById('lobby');
-        const gameDiv = document.getElementById('game');
-        const roomTitle = document.getElementById('roomTitle'); 
-        const refreshRoomsButton = document.getElementById('refreshRoomsButton'); 
+      const statusElement = document.getElementById("status");
+      const roomNameInput = document.getElementById("roomNameInput");
+      const createRoomButton = document.getElementById("createRoomButton");
+      const roomListElement = document.getElementById("roomList");
+      const turnButton = document.getElementById("turnButton");
+      const leaveRoomButton = document.getElementById("leaveRoomButton");
+      const lobbyDiv = document.getElementById("lobby");
+      const gameDiv = document.getElementById("game");
+      const roomTitle = document.getElementById("roomTitle");
+      const refreshRoomsButton = document.getElementById("refreshRoomsButton");
 
-        const socket = io();
-        let currentRoom = null;
-        let createdRoom = null;
-        let currentRestTime = 30;
+      const socket = io();
+      let currentRoom = null;
+      let createdRoom = null;
+      let currentRestTime = 30;
 
-        // 방 만들기
-        createRoomButton.addEventListener('click', () => {
-            const roomName = roomNameInput.value;
-            if (roomName) {
-                if (!createdRoom) {  
-                    socket.emit('create_room', roomName);
-                    roomNameInput.value = '';
-                    createdRoom = roomName;  
-                } else {
-                    alert('이미 만든 방이 있습니다.');
-                }
-            }
-        });
+      // 방 만들기
+      createRoomButton.addEventListener("click", () => {
+        const roomName = roomNameInput.value;
+        if (roomName) {
+          if (!createdRoom) {
+            socket.emit("create_room", roomName);
+            roomNameInput.value = "";
+            createdRoom = roomName;
+          } else {
+            alert("이미 만든 방이 있습니다.");
+          }
+        }
+      });
 
-        // 새로고침 버튼 클릭 시 방 목록 요청
-        refreshRoomsButton.addEventListener('click', () => {
-            socket.emit('get_rooms');
-        });
+      // 새로고침 버튼 클릭 시 방 목록 요청
+      refreshRoomsButton.addEventListener("click", () => {
+        socket.emit("get_rooms");
+      });
 
-        // 방 목록 업데이트
-        socket.on('room_list', (rooms) => {
-            roomListElement.innerHTML = '';
-            for (let roomName in rooms) {
-                const listItem = document.createElement('li');
-                listItem.classList.add('room-list-item');
-                
-                const isFull = rooms[roomName].length >= 2;
-                const joinButtonHTML = isFull
-                    ? `<button class="full-btn">가득 참</button>`
-                    : `<button class="join-btn">참가</button>`;
-                
-                listItem.innerHTML = `
+      // 방 목록 업데이트
+      socket.on("room_list", (rooms) => {
+        roomListElement.innerHTML = "";
+        for (let roomName in rooms) {
+          const listItem = document.createElement("li");
+          listItem.classList.add("room-list-item");
+
+          const isFull = rooms[roomName].length >= 2;
+          const joinButtonHTML = isFull
+            ? `<button class="full-btn">가득 참</button>`
+            : `<button class="join-btn">참가</button>`;
+
+          listItem.innerHTML = `
                     ${roomName} (${rooms[roomName].length}/2)
                     ${joinButtonHTML}
                 `;
 
-                if (!isFull) {
-                    listItem.querySelector('.join-btn').onclick = () => {
-                        socket.emit('join_room', roomName);
-                    };
-                }
+          if (!isFull) {
+            listItem.querySelector(".join-btn").onclick = () => {
+              socket.emit("join_room", roomName);
+            };
+          }
 
-                roomListElement.appendChild(listItem);
-            }
-        });
-
-        // 방 참가 성공
-        socket.on('joined_room', (roomName) => {
-            currentRoom = roomName;
-            lobbyDiv.style.display = 'none';
-            gameDiv.style.display = 'block';
-            roomTitle.textContent = `방: ${roomName}`; 
-            statusElement.textContent = `"${roomName}"방에 입장했습니다. 턴을 기다려주세요!`;
-
-            // 쉬는 시간 관련 UI 초기화
-            currentRestTime = 30;  // 기본 쉬는 시간으로 초기화
-            document.getElementById('restTime').textContent = currentRestTime;
-            document.getElementById('restControls').style.display = 'none';  // 쉬는 시간 UI 숨기기
-            document.getElementById('status').style.display = 'block';  // 턴 상태 메시지 표시
-            document.getElementById('turnButton').style.display = 'block';  // 턴 넘기기 버튼 표시
-        });
-
-        // 방에서 나가기
-        leaveRoomButton.addEventListener('click', () => {
-            if (currentRoom) {
-                socket.emit('leave_room', currentRoom);
-
-                // 방에서 나가면 쉬는 시간 초기화
-                currentRestTime = 30;  // 기본 쉬는 시간으로 초기화
-                document.getElementById('restTime').textContent = currentRestTime;
-                document.getElementById('restControls').style.display = 'none';  // 쉬는 시간 UI 숨기기
-                document.getElementById('status').style.display = 'block';  // 턴 상태 메시지 표시
-                document.getElementById('turnButton').style.display = 'block';  // 턴 넘기기 버튼 표시
-
-                // 방에서 나가면 쉬는 시간 초기화
-                resetRestState();
-
-                // 방을 나가면 로비로 돌아가기
-                currentRoom = null;
-                gameDiv.style.display = 'none';
-                lobbyDiv.style.display = 'block';
-                statusElement.textContent = '방을 떠났습니다.';
-            }
-        });
-
-        // 쉬는 시간 초기화 함수
-        function resetRestState() {
-            currentRestTime = 30;  // 기본 쉬는 시간으로 초기화
-            document.getElementById('restTime').textContent = currentRestTime;
-            document.getElementById('restControls').style.display = 'none';  // 쉬는 시간 UI 숨기기
-            document.getElementById('status').style.display = 'block';  // 턴 상태 메시지 표시
-            document.getElementById('turnButton').style.display = 'block';  // 턴 넘기기 버튼 표시
+          roomListElement.appendChild(listItem);
         }
+      });
 
-        // 다른 사용자가 방에 입장했을 때 처리
-        socket.on('player_joined', ({ roomName, playerCount }) => {
-            statusElement.textContent = `플레이어가 "${roomName}" 방에 입장했습니다. 인원: ${playerCount}/2`;
+      // 방 참가 성공
+      socket.on("joined_room", (roomName) => {
+        currentRoom = roomName;
+        lobbyDiv.style.display = "none";
+        gameDiv.style.display = "block";
+        roomTitle.textContent = `방: ${roomName}`;
+        statusElement.textContent = `"${roomName}"방에 입장했습니다. 턴을 기다려주세요!`;
+
+        // 쉬는 시간 관련 UI 초기화
+        currentRestTime = 30; // 기본 쉬는 시간으로 초기화
+        document.getElementById("restTime").textContent = currentRestTime;
+        document.getElementById("restControls").style.display = "none"; // 쉬는 시간 UI 숨기기
+        document.getElementById("status").style.display = "block"; // 턴 상태 메시지 표시
+        document.getElementById("turnButton").style.display = "block"; // 턴 넘기기 버튼 표시
+      });
+
+      // 방에서 나가기
+      leaveRoomButton.addEventListener("click", () => {
+        if (currentRoom) {
+          socket.emit("leave_room", currentRoom);
+
+          // 방에서 나가면 쉬는 시간 초기화
+          currentRestTime = 30; // 기본 쉬는 시간으로 초기화
+          document.getElementById("restTime").textContent = currentRestTime;
+          document.getElementById("restControls").style.display = "none"; // 쉬는 시간 UI 숨기기
+          document.getElementById("status").style.display = "block"; // 턴 상태 메시지 표시
+          document.getElementById("turnButton").style.display = "block"; // 턴 넘기기 버튼 표시
+
+          // 방에서 나가면 쉬는 시간 초기화
+          resetRestState();
+
+          // 방을 나가면 로비로 돌아가기
+          currentRoom = null;
+          gameDiv.style.display = "none";
+          lobbyDiv.style.display = "block";
+          statusElement.textContent = "방을 떠났습니다.";
+        }
+      });
+
+      // 쉬는 시간 초기화 함수
+      function resetRestState() {
+        currentRestTime = 30; // 기본 쉬는 시간으로 초기화
+        document.getElementById("restTime").textContent = currentRestTime;
+        document.getElementById("restControls").style.display = "none"; // 쉬는 시간 UI 숨기기
+        document.getElementById("status").style.display = "block"; // 턴 상태 메시지 표시
+        document.getElementById("turnButton").style.display = "block"; // 턴 넘기기 버튼 표시
+      }
+
+      // 다른 사용자가 방에 입장했을 때 처리
+      socket.on("player_joined", ({ roomName, playerCount }) => {
+        statusElement.textContent = `플레이어가 "${roomName}" 방에 입장했습니다. 인원: ${playerCount}/2`;
+      });
+
+      // 방에서 사용자가 나갔을 때 처리
+      socket.on("player_left", ({ roomName, playerCount }) => {
+        statusElement.textContent = `플레이어가 "${roomName}" 방을 떠났습니다. 인원: ${playerCount}/2`;
+      });
+
+      // 방이 가득 찼을 때 처리
+      socket.on("error_message", (message) => {
+        alert(message);
+      });
+
+      // 턴 시작
+      socket.on("your_turn", () => {
+        statusElement.textContent = "당신의 턴입니다!";
+        turnButton.disabled = false; // 턴 넘기기 버튼 활성화
+      });
+
+      // 턴 넘기기
+      turnButton.addEventListener("click", () => {
+        if (currentRoom) {
+          socket.emit("pass_turn", currentRoom);
+          turnButton.disabled = true;
+          statusElement.textContent = "상대방의 턴입니다...";
+        }
+      });
+
+      // 페이지가 로드될 때 방 목록 요청
+      socket.emit("get_rooms");
+
+      socket.on("round_end", ({ round, restTime }) => {
+        // 라운드 종료 시 턴 상태 메시지와 턴 넘기기 버튼 숨기기
+        document.getElementById("status").style.display = "none";
+        document.getElementById("turnButton").style.display = "none";
+
+        // 쉬는 시간 동안 턴 넘기기 버튼 비활성화
+        turnButton.disabled = true;
+
+        // 쉬는 시간 UI 표시
+        document.getElementById("restControls").style.display = "block";
+        document.getElementById(
+          "roundStatus"
+        ).textContent = `${round} 라운드 종료`;
+        currentRestTime = restTime;
+        document.getElementById("restTime").textContent = currentRestTime;
+
+        // 쉬는 시간 타이머 시작
+        const restInterval = setInterval(() => {
+          currentRestTime--;
+          document.getElementById("restTime").textContent = currentRestTime;
+
+          if (currentRestTime <= 0) {
+            clearInterval(restInterval);
+            socket.emit("start_next_round", currentRoom); // 다음 라운드 시작 요청
+
+            // 쉬는 시간이 끝나면 쉬는 시간 UI를 숨기고 턴 UI 다시 표시
+            document.getElementById("restControls").style.display = "none";
+            document.getElementById("status").style.display = "block";
+            document.getElementById("turnButton").style.display = "block";
+          }
+        }, 1000);
+      });
+
+      // 쉬는 시간 조정
+      document.getElementById("increaseRest").addEventListener("click", () => {
+        socket.emit("adjust_rest_time", {
+          roomName: currentRoom,
+          adjustment: 10,
         });
+      });
 
-        // 방에서 사용자가 나갔을 때 처리
-        socket.on('player_left', ({ roomName, playerCount }) => {
-            statusElement.textContent = `플레이어가 "${roomName}" 방을 떠났습니다. 인원: ${playerCount}/2`;
+      document.getElementById("decreaseRest").addEventListener("click", () => {
+        socket.emit("adjust_rest_time", {
+          roomName: currentRoom,
+          adjustment: -10,
         });
+      });
 
-        // 방이 가득 찼을 때 처리
-        socket.on('error_message', (message) => {
-            alert(message);
-        });
-
-        // 턴 시작
-        socket.on('your_turn', () => {
-            statusElement.textContent = '당신의 턴입니다!';
-            turnButton.disabled = false;  // 턴 넘기기 버튼 활성화
-        });
-
-        // 턴 넘기기
-        turnButton.addEventListener('click', () => {
-            if (currentRoom) {
-                socket.emit('pass_turn', currentRoom);
-                turnButton.disabled = true;
-                statusElement.textContent = '상대방의 턴입니다...';
-            }
-        });
-
-        // 페이지가 로드될 때 방 목록 요청
-        socket.emit('get_rooms');
-
-        socket.on('round_end', ({ round, restTime }) => {
-            // 라운드 종료 시 턴 상태 메시지와 턴 넘기기 버튼 숨기기
-            document.getElementById('status').style.display = 'none';
-            document.getElementById('turnButton').style.display = 'none';
-
-            // 쉬는 시간 동안 턴 넘기기 버튼 비활성화
-            turnButton.disabled = true;
-
-            // 쉬는 시간 UI 표시
-            document.getElementById('restControls').style.display = 'block';
-            document.getElementById('roundStatus').textContent = `${round} 라운드 종료`;
-            currentRestTime = restTime;
-            document.getElementById('restTime').textContent = currentRestTime;
-
-            // 쉬는 시간 타이머 시작
-            const restInterval = setInterval(() => {
-                currentRestTime--;
-                document.getElementById('restTime').textContent = currentRestTime;
-
-                if (currentRestTime <= 0) {
-                    clearInterval(restInterval);
-                    socket.emit('start_next_round', currentRoom);  // 다음 라운드 시작 요청
-
-                    // 쉬는 시간이 끝나면 쉬는 시간 UI를 숨기고 턴 UI 다시 표시
-                    document.getElementById('restControls').style.display = 'none';
-                    document.getElementById('status').style.display = 'block';
-                    document.getElementById('turnButton').style.display = 'block';
-                }
-            }, 1000);
-        });
-
-        // 쉬는 시간 조정
-        document.getElementById('increaseRest').addEventListener('click', () => {
-            socket.emit('adjust_rest_time', { roomName: currentRoom, adjustment: 10 });
-        });
-
-        document.getElementById('decreaseRest').addEventListener('click', () => {
-            socket.emit('adjust_rest_time', { roomName: currentRoom, adjustment: -10 });
-        });
-
-        socket.on('update_rest_time', (newRestTime) => {
-            currentRestTime = newRestTime;
-            document.getElementById('restTime').textContent = newRestTime;
-        });
+      socket.on("update_rest_time", (newRestTime) => {
+        currentRestTime = newRestTime;
+        document.getElementById("restTime").textContent = newRestTime;
+      });
     </script>
-</body>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+      crossorigin="anonymous"
+    ></script>
+  </body>
 </html>
