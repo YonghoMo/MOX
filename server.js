@@ -2,7 +2,7 @@ const express = require('express');
 const http = require('http');
 const socketIo = require('socket.io');
 const path = require('path');
-const connectToDB = require('./data');  // mongoDB.js 모듈 불러오기
+const { addEvent, getEvents } = require('./data');  // data.js 모듈에서 함수 불러오기
 
 let round = 0;  // 라운드 번호 관리
 let restTime = 30;  // 기본 쉬는 시간
@@ -156,6 +156,26 @@ io.on('connection', (socket) => {
     socket.on('start_next_round', (roomName) => {
         io.to(roomName).emit('your_turn');  // 다음 라운드 턴 시작
     });
+});
+
+//일정 추가, 조회
+app.post('/api/add-event', express.json(), async (req, res) => {
+    const newEvent = req.body;  // 클라이언트에서 전달된 새 일정 데이터
+    try {
+        await addEvent(newEvent);  // MongoDB에 새 일정 추가
+        res.status(200).json({ message: '일정이 성공적으로 추가되었습니다.' });
+    } catch (error) {
+        res.status(500).json({ message: '일정 추가 중 오류가 발생했습니다.' });
+    }
+});
+
+app.get('/api/events', async (req, res) => {
+    try {
+        const events = await getEvents();  // MongoDB에서 일정 조회
+        res.status(200).json(events);
+    } catch (error) {
+        res.status(500).json({ message: '일정 조회 중 오류가 발생했습니다.' });
+    }
 });
 
 // 서버 실행
