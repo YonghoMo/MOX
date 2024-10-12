@@ -11,7 +11,7 @@ require('dotenv').config();  // .env 파일에서 환경 변수 로드
 // Express 앱 생성
 const app = express();
 
-// Connect to MongoDB Atlas
+// MongoDB Atlas 연결
 connectDB();
 
 // 미들웨어
@@ -39,6 +39,5 @@ app.get('/', (req, res) => {
 handleSocketConnection(io);
 
 // 서버 실행
-server.listen(3000, () => {
-    console.log('서버가 http://localhost:3000 에서 실행 중입니다.');
-});
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
