@@ -1,16 +1,26 @@
+// server.js
+
 const express = require('express');
 const http = require('http');
 const socketIo = require('socket.io');
 const path = require('path');
-const { addEvent, getEvents } = require('./data');  // data.js 모듈에서 함수 불러오기
-
-let round = 0;  // 라운드 번호 관리
-let restTime = 30;  // 기본 쉬는 시간
-let turnCount = {};  // 방별로 턴 횟수 관리
+const { handleSocketConnection } = require('./controllers/socketController');  // Socket.IO 로직 불러오기
+const connectDB = require('./config/db');
+require('dotenv').config();  // .env 파일에서 환경 변수 로드
 
 // Express 앱 생성
 const app = express();
+
+// MongoDB Atlas 연결
+connectDB();
+
+// 미들웨어
+app.use(express.json());
+
+// HTTP 서버 생성
 const server = http.createServer(app);
+
+// Socket.IO 서버 생성, CORS 설정
 const io = socketIo(server, {
     cors: {
         origin: '*',
@@ -25,160 +35,9 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-// 방 목록을 관리할 객체
-let rooms = {};
-let userRooms = {};  // 사용자가 만든 방을 저장
-
-// 방 목록 갱신 함수
-function updateRooms() {
-    io.emit('room_list', rooms);
-}
-
-io.on('connection', (socket) => {
-    console.log('새 클라이언트가 연결되었습니다.');
-
-    // 방 목록 요청 처리
-    socket.on('get_rooms', () => {
-        socket.emit('room_list', rooms);
-    });
-
-    // 방 생성
-    socket.on('create_room', (roomName) => {
-        if (userRooms[socket.id]) {
-            socket.emit('error_message', '이미 방을 만들었습니다.');
-        } else if (rooms[roomName]) {
-            socket.emit('error_message', '이미 존재하는 방입니다.');
-        } else {
-            rooms[roomName] = [];
-            userRooms[socket.id] = roomName;  // 사용자가 만든 방 저장
-            updateRooms();
-        }
-    });
-
-    // 방 참가
-    socket.on('join_room', (roomName) => {
-        const room = rooms[roomName];
-        if (room && room.length < 2) {
-            socket.join(roomName);
-            room.push(socket.id);
-            socket.emit('joined_room', roomName);
-
-            // 방에 두 명이 되면 첫 번째 플레이어에게 턴 시작 이벤트 전송
-            if (room.length === 2) {
-                const firstPlayer = room[0];
-                io.to(firstPlayer).emit('your_turn');  // 첫 번째 플레이어에게 턴 시작 이벤트
-            }
-
-            io.to(roomName).emit('player_joined', { roomName, playerCount: room.length });
-
-            updateRooms();
-        } else {
-            socket.emit('error_message', '방이 가득 찼습니다.');
-        }
-    });
-
-    // 방에서 나가기 처리
-    socket.on('leave_room', (roomName) => {
-        const room = rooms[roomName];
-        if (room) {
-            const index = room.indexOf(socket.id);
-            if (index !== -1) {
-                socket.leave(roomName);
-                room.splice(index, 1);
-
-                io.to(roomName).emit('player_left', { roomName, playerCount: room.length });
-
-                if (room.length === 0) {
-                    delete rooms[roomName];
-                }
-
-                // 클라이언트에게 방을 나갔다는 알림을 보내고 초기화
-                socket.emit('left_room');
-            }
-        }
-    });
-
-    // 클라이언트 연결 해제 처리
-    socket.on('disconnect', () => {
-        const roomName = userRooms[socket.id];
-        if (roomName) {
-            delete userRooms[socket.id];  // 사용자가 만든 방 제거
-            const room = rooms[roomName];
-            if (room) {
-                const index = room.indexOf(socket.id);
-                if (index !== -1) {
-                    room.splice(index, 1);
-                    io.to(roomName).emit('player_left', { roomName, playerCount: room.length });
-
-                    if (room.length === 0) {
-                        delete rooms[roomName];
-                    }
-                }
-            }
-        }
-        updateRooms();
-        console.log('클라이언트가 연결을 해제했습니다.');
-    });
-
-    // 턴 넘기기 처리
-    socket.on('pass_turn', (roomName) => {
-        const room = rooms[roomName];
-
-        if (!turnCount[roomName]) {
-            turnCount[roomName] = 0;
-        }
-
-        if (room) {
-            const otherClient = room.find(id => id !== socket.id);
-            if (otherClient) {
-                io.to(otherClient).emit('your_turn');  // 상대방에게 턴 전달
-            }
-
-            turnCount[roomName]++;  // 턴 넘길 때마다 카운트 증가
-
-            // 두 사람의 턴이 각각 한 번씩 끝나면 라운드 종료
-            if (turnCount[roomName] >= 2) {
-                round++;
-                turnCount[roomName] = 0;  // 턴 카운트 초기화
-                io.to(roomName).emit('round_end', { round, restTime });  // 라운드 종료 및 쉬는 시간 알림
-            }
-        }
-    });
-
-    // 쉬는 시간 조정 이벤트
-    socket.on('adjust_rest_time', ({ roomName, adjustment }) => {
-        restTime += adjustment;
-        if (restTime < 10) restTime = 10;  // 최소 10초
-        io.to(roomName).emit('update_rest_time', restTime);  // 쉬는 시간 업데이트
-    });
-
-    // 라운드 시작 이벤트
-    socket.on('start_next_round', (roomName) => {
-        io.to(roomName).emit('your_turn');  // 다음 라운드 턴 시작
-    });
-});
-
-//일정 추가, 조회
-app.post('/api/add-event', express.json(), async (req, res) => {
-    const newEvent = req.body;  // 클라이언트에서 전달된 새 일정 데이터
-    try {
-        await addEvent(newEvent);  // MongoDB에 새 일정 추가
-        res.status(200).json({ message: '일정이 성공적으로 추가되었습니다.' });
-    } catch (error) {
-        res.status(500).json({ message: '일정 추가 중 오류가 발생했습니다.' });
-    }
-});
-
-app.get('/api/events', async (req, res) => {
-    try {
-        const events = await getEvents();  // MongoDB에서 일정 조회
-        res.status(200).json(events);
-    } catch (error) {
-        res.status(500).json({ message: '일정 조회 중 오류가 발생했습니다.' });
-    }
-});
+// Socket.IO 연결 처리 (socketController.js의 handleSocketConnection 호출)
+handleSocketConnection(io);
 
 // 서버 실행
-server.listen(3000, () => {
-    console.log('서버가 http://localhost:3000 에서 실행 중입니다.');
-});
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

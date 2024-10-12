@@ -5,6 +5,11 @@ const today = new Date();
 const events = {}; // 일정을 저장할 객체
 const comments = {}; // 각 일정별 댓글 저장 객체
 
+const exerciseLibrary = [
+    '런닝', '수영', '요가', '웨이트', '윗몸 일으키기', '크런치', '레그 레이즈', '플랭크',
+    '에어 스쿼트', '바벨 백 스쿼트', '레그 프레스', '트레드밀'
+];
+
 // 캘린더 생성 코드 수정
 function generateCalendar(month, year) {
     const calendar = document.getElementById('calendar');
@@ -55,6 +60,29 @@ function openAddEventModal(dateKey) {
     modal.show();
 }
 
+// 운동 종목을 체크박스로 추가
+function populateExerciseCheckboxes() {
+    const checkboxGroup = document.getElementById('exercise-checkbox-group');
+    exerciseLibrary.forEach(exercise => {
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.value = exercise;
+        checkbox.id = `exercise-${exercise}`;
+        checkbox.classList.add('exercise-checkbox');
+        
+        const label = document.createElement('label');
+        label.htmlFor = `exercise-${exercise}`;
+        label.textContent = exercise;
+        
+        checkboxGroup.appendChild(checkbox);
+        checkboxGroup.appendChild(label);
+        checkboxGroup.appendChild(document.createElement('br'));
+    });
+}
+
+// 페이지 로드 시 체크박스 추가
+document.addEventListener('DOMContentLoaded', populateExerciseCheckboxes);
+
 function saveEvent() {
     const title = document.getElementById('event-title').value;
     const date = document.getElementById('event-date').value;
@@ -96,24 +124,76 @@ function deleteEvent() {
     }
 }
 
-function openCommentModal(eventId) {
-    currentEventId = eventId; // 현재 보고 있는 일정의 ID 저장
-    const event = events[eventId];
+function openCommentModal() {
+    const selectedExercises = getSelectedExercises(); // 선택된 운동 종목 가져오기
+    const selectedList = document.getElementById('selected-exercises-list');
+    selectedList.innerHTML = selectedExercises.join(', '); // 선택된 운동 종목을 모달에 표시
 
-    // 모달 창에 일정 제목 및 시간 표시
-    if (event) {
-        document.getElementById('commentModalLabel').innerText = event.title;
-        
-        // 일정 날짜와 시간 표시
-        document.getElementById('event-date-time').innerText = `${event.date} ${event.startTime} - ${event.endTime}`;
-    }
+    const settingsContainer = document.getElementById('exercise-amount-settings');
+    settingsContainer.innerHTML = ''; // 기존 설정 필드 초기화
 
-    // 댓글 리스트 업데이트
-    updateCommentList(eventId);
+    // 선택된 운동 종목에 따라 동적으로 운동량 설정 필드를 생성
+    selectedExercises.forEach(exercise => {
+        const fieldSet = document.createElement('fieldset');
+        const legend = document.createElement('legend');
+        legend.textContent = `${exercise}`;  // 운동 이름
+        fieldSet.appendChild(legend);
 
-    // 댓글 모달 열기
+        if (exercise === '트레드밀') {
+            // 유산소 운동 (시간 설정)
+            const timeLabel = document.createElement('label');
+            timeLabel.textContent = '운동 시간 (분)';
+            const timeInput = document.createElement('input');
+            timeInput.type = 'number';
+            timeInput.id = `amount-${exercise}`;
+            timeInput.placeholder = '예: 30';
+            fieldSet.appendChild(timeLabel);
+            fieldSet.appendChild(timeInput);
+        } else if (exercise === '웨이트') {
+            // 무게와 횟수 설정
+            const weightLabel = document.createElement('label');
+            weightLabel.textContent = '무게 (kg)';
+            const weightInput = document.createElement('input');
+            weightInput.type = 'number';
+            weightInput.id = `weight-${exercise}`;
+            weightInput.placeholder = '예: 50';
+            fieldSet.appendChild(weightLabel);
+            fieldSet.appendChild(weightInput);
+            
+            const repsLabel = document.createElement('label');
+            repsLabel.textContent = '횟수';
+            const repsInput = document.createElement('input');
+            repsInput.type = 'number';
+            repsInput.id = `reps-${exercise}`;
+            repsInput.placeholder = '예: 10';
+            fieldSet.appendChild(repsLabel);
+            fieldSet.appendChild(repsInput);
+        } else {
+            // 기본 횟수 설정
+            const repsLabel = document.createElement('label');
+            repsLabel.textContent = '횟수';
+            const repsInput = document.createElement('input');
+            repsInput.type = 'number';
+            repsInput.id = `reps-${exercise}`;
+            repsInput.placeholder = '예: 15';
+            fieldSet.appendChild(repsLabel);
+            fieldSet.appendChild(repsInput);
+        }
+
+        settingsContainer.appendChild(fieldSet);
+    });
+
     const modal = new bootstrap.Modal(document.getElementById('commentModal'));
     modal.show();
+}
+
+function getSelectedExercises() {
+    const checkboxes = document.querySelectorAll('.exercise-checkbox:checked');
+    const selectedExercises = [];
+    checkboxes.forEach(checkbox => {
+        selectedExercises.push(checkbox.value);
+    });
+    return selectedExercises;
 }
 
 function closeCommentModal() {
@@ -135,12 +215,12 @@ function addComment() {
     const newComment = commentInput.value.trim();
 
     if (newComment !== '') {
-        if (!comments[eventKey]) {
-            comments[eventKey] = []; // 해당 일정에 대한 댓글이 없으면 배열 생성
+        if (!comments[currentEventId]) {
+            comments[currentEventId] = []; // 해당 일정에 대한 댓글이 없으면 배열 생성
         }
 
-        comments[eventKey].push(newComment); // 새 댓글 추가
-        updateCommentList(eventKey); // 댓글 리스트 업데이트
+        comments[currentEventId].push(newComment); // 새 댓글 추가
+        updateCommentList(currentEventId); // 댓글 리스트 업데이트
         commentInput.value = ''; // 입력 필드 비우기
     }
 }

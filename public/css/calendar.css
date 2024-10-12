@@ -129,3 +129,38 @@ h2#month-year {
 .btn {
   font-family: "Arial", sans-serif; /* 버튼 글씨체 통일 */
 }
+
+#exercise-amount-settings fieldset {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+#exercise-amount-settings legend {
+  margin-right: 10px;
+  font-size: 1rem;
+}
+
+#exercise-amount-settings label {
+  font-size: 0.8rem;
+  color: #aaa;
+}
+
+#exercise-amount-settings input {
+  width: 80px;  /* 가로 크기 조정 */
+  margin-left: 10px;
+}
+
+#exercise-amount-settings select {
+  width: 80px;  /* 가로 크기 조정 */
+}
+
+.input-group {
+  margin-top: 20px;
+}
+
+#comment-list {
+  max-height: 150px;
+  overflow-y: auto;
+}

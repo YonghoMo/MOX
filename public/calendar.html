@@ -89,9 +89,16 @@
                             <label for="end-time" class="form-label">종료 시간</label>
                             <input type="time" class="form-control" id="end-time">
                         </div>
+                        <!-- 운동 종목 선택 (체크박스) -->
+                        <div class="mb-3">
+                            <label class="form-label">운동 종목</label><br>
+                            <div id="exercise-checkbox-group" style="max-height: 100px; overflow-y: auto">
+                                <!-- 운동 종목이 여기에 동적으로 추가됩니다 -->
+                            </div>
+                        </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="closeCommentModal()">닫기</button>
                         <button type="button" class="btn btn-primary" onclick="saveEvent()">저장</button>
                     </div>
                 </div>
@@ -103,32 +110,34 @@
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="commentModalLabel">일정 댓글</h5> <!-- 클릭한 일정 제목 -->
-                        <button type="button" class="btn-close" onclick="closeCommentModal()" aria-label="Close"></button>
+                        <h5 class="modal-title" id="commentModalLabel">운동량 설정</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" onclick="closeCommentModal()" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <p id="event-date-time"></p> <!-- 일정 날짜 및 시간 표시 -->
-                        
-                        <!-- 댓글 섹션 -->
-                        <h6>의견 나누기</h6>
-                        <ul id="comment-list" class="list-group mb-3"> <!-- 댓글 리스트 -->
-                            <!-- 댓글 항목들이 여기에 동적으로 추가됩니다 -->
+                        <p id="selected-exercises">선택된 운동 | <span id="selected-exercises-list"></span></p>
+
+                        <!-- 운동량 설정 공간 -->
+                        <div id="exercise-amount-settings">
+                            <!-- 운동량 설정 필드가 동적으로 추가됩니다 -->
+                        </div>
+
+                        <!-- 댓글 추가 섹션 -->
+                        <h6>댓글 나누기</h6>
+                        <ul id="comment-list" class="list-group mb-3">
+                            <!-- 댓글 목록이 동적으로 추가됩니다 -->
                         </ul>
-                        
-                        <!-- 댓글 입력 및 추가 버튼 -->
                         <div class="input-group">
-                            <input type="text" class="form-control" id="comment-input" placeholder="댓글을 입력하세요">
-                            <button class="btn btn-primary" id="add-comment-btn" onclick="addComment()">업로드</button>
+                            <input type="text" id="comment-input" class="form-control" placeholder="댓글을 입력하세요">
+                            <button class="btn btn-primary" onclick="addComment()">업로드</button>
                         </div>
                     </div>
                     <div class="modal-footer">
-                      <button type="button" class="btn btn-primary" onclick="deleteEvent(currentEventId)">일정 삭제</button> 
-                      <button type="button" class="btn btn-secondary" onclick="closeCommentModal()">닫기</button>
-                  </div>
-                  
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+                        <button type="button" class="btn btn-primary" onclick="saveExerciseAmount()">운동량 저장</button>
+                    </div>
                 </div>
             </div>
-        </div>
+          </div>
     </div>
 
     <footer class="footer">
