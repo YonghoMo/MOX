@@ -1,6 +1,7 @@
 const express = require('express');
 const http = require('http');
 const socketIo = require('socket.io');
+const path = require('path');
 
 let round = 0;  // 라운드 번호 관리
 let restTime = 30;  // 기본 쉬는 시간
