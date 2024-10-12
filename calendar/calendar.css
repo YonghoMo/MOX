@@ -1,14 +1,14 @@
 #calendar {
     display: grid;
     grid-template-columns: repeat(7, 1fr); /* 7열로 균등 배치 */
-    grid-auto-rows: 100px; /* 셀의 높이를 고정 */
-    gap: 5px;
+    grid-auto-rows: 70px; /* 셀의 높이를 줄임 */
+    gap: 2px; /* 박스 간의 간격을 2px로 줄임 */
     width: 100%;
     max-width: 900px;
     margin: 20px auto;
-    padding: 20px;
+    padding: 10px; /* 전체 캘린더의 패딩도 줄여서 더 타이트하게 */
     background-color: #f1f3f5;
-    border-radius: 15px;
+    border-radius: 10px; /* 전체 캘린더 모서리 둥글기 조정 */
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
 }
 
@@ -16,12 +16,13 @@
     position: relative;
     border: 1px solid #ddd;
     background-color: #fff;
-    border-radius: 10px;
+    border-radius: 4px; /* 날짜 박스 모서리를 덜 둥글게 설정 */
     padding: 5px;
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
-    overflow: hidden; /* 텍스트가 넘치면 숨기기 */
+    overflow: hidden;
+    height: 70px; /* 날짜 박스 높이 */
 }
 
 .day .date {
@@ -33,17 +34,22 @@
 
 .day .event {
     margin-top: auto;
-    font-size: 0.85rem;
+    font-size: 0.6rem; /* 글자 크기를 조금 작게 */
     background-color: #e9ecef;
     border-radius: 5px;
-    padding: 5px;
+    padding: 0px; /* 패딩을 줄여서 텍스트 영역 확보 */
     text-align: center;
     color: #333;
     font-weight: normal;
-    white-space: nowrap; /* 한 줄로 표시 */
-    overflow: hidden; /* 텍스트가 넘칠 때 숨기기 */
-    text-overflow: ellipsis; /* 넘칠 때 말줄임표로 표시 */
+    white-space: nowrap; /* 텍스트가 한 줄로 표시되게 설정 */
+    overflow: hidden; /* 넘치는 텍스트 숨기기 */
+    text-overflow: ellipsis; /* 넘치는 텍스트를 말줄임표로 처리 */
+    height: auto; /* 높이를 자동으로 맞춤 */
+    max-height: 16px; /* 일정 박스의 최대 높이를 제한 */
+    line-height: 1rem; /* 글자 높이를 정렬 */
 }
+
+
 
 .day:hover {
     background-color: #e9ecef;
@@ -77,10 +83,6 @@ body {
     padding: 10px 20px;
 }
 
-.navbar-brand img {
-    margin-left ;
-}
-
 /* 메인 컨텐츠와 캘린더 스타일 */
 .main-content {
     margin-top: 50px;
@@ -91,6 +93,17 @@ body {
     font-size: 2rem;
     margin-bottom: 20px;
     font-family: 'Arial', sans-serif; /* 제목 글씨체 통일 */
+}
+
+#month-year {
+    font-family: 'Arial', sans-serif; /* 깔끔한 Arial 폰트 사용 */
+    font-size: 1.8rem; /* 글씨 크기 조정 */
+    font-weight: bold; /* 볼드 처리로 강조 */
+    text-align: left; /* 왼쪽 정렬 */
+    color: #333; /* 다크 그레이 색상 */
+    margin-bottom: 10px; /* 아래 여백 */
+    margin-left: 13px; /* 왼쪽으로 약간 간격 */
+    margin-top: 12px; /* 연월 표시를 아래로 20px 내리기 */
 }
 
 /* footer 스타일, 배경 이미지와 일치 */

@@ -1,9 +1,11 @@
 let currentMonth = new Date().getMonth();
 let currentYear = new Date().getFullYear();
+let currentEventId = '';
 const today = new Date();
 const events = {}; // 일정을 저장할 객체
 const comments = {}; // 각 일정별 댓글 저장 객체
 
+// 캘린더 생성 코드 수정
 function generateCalendar(month, year) {
     const calendar = document.getElementById('calendar');
     calendar.innerHTML = '';
@@ -13,28 +15,32 @@ function generateCalendar(month, year) {
 
     document.getElementById('month-year').innerText = `${year}-${String(month + 1).padStart(2, '0')}`;
 
-    // 빈 칸 채우기
     for (let i = 0; i < firstDay; i++) {
         calendar.innerHTML += '<div class="day empty"></div>';
     }
 
-    // 날짜 채우기
     for (let i = 1; i <= daysInMonth; i++) {
         let dayClass = 'day';
         const dateKey = `${year}-${String(month + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
 
-        // 오늘 날짜 확인
         if (year === today.getFullYear() && month === today.getMonth() && i === today.getDate()) {
             dayClass += ' today';
         }
 
-        // 일정이 있으면 클릭 시 댓글 모달이 뜨도록 설정하고 이벤트 전파 막기
-        const eventText = events[dateKey] ? 
-            `<div class="event" onclick="openCommentModal('${dateKey}', event)">${events[dateKey].title}</div>` : '';
+        // 일정 표시 (삭제 버튼 제외)
+        let eventText = '';
+        const eventList = Object.values(events).filter(event => event.date === dateKey);
+        if (eventList.length > 0) {
+            eventList.forEach(event => {
+                eventText += `
+                    <div class="event" onclick="openCommentModal(${event.id})">
+                        ${event.title} <!-- 삭제 버튼을 캘린더에서 숨기기 -->
+                    </div>`;
+            });
+        }
 
-        // 날짜 박스를 클릭하면 일정 추가 모달이 뜨도록 설정
         calendar.innerHTML += `
-            <div class="${dayClass}" data-date="${dateKey}" onclick="openAddEventModal('${dateKey}')">
+            <div class="${dayClass}" data-date="${dateKey}" onclick="${eventList.length > 0 ? `openCommentModal('${eventList[0].id}')` : `openAddEventModal('${dateKey}')`}">
                 <div class="date">${i}</div>
                 ${eventText}
             </div>`;
@@ -56,8 +62,11 @@ function saveEvent() {
     const endTime = document.getElementById('end-time').value;
 
     if (title && date) {
+        // 고유 ID 생성
+        const eventId = Date.now();
+
         // 일정 데이터를 저장
-        events[date] = { title, startTime, endTime };
+        events[eventId] = { id: eventId, title, date, startTime, endTime };
 
         // 캘린더 업데이트
         generateCalendar(currentMonth, currentYear);
@@ -70,26 +79,54 @@ function saveEvent() {
     }
 }
 
-function openCommentModal(eventKey, e) {
-    // 이벤트 전파 막기 (부모 요소의 클릭 이벤트를 막음)
-    e.stopPropagation();
+function deleteEvent() {
+    if (confirm('정말 이 일정을 삭제하시겠습니까?')) {
+        // 현재 보고 있는 일정 삭제
+        delete events[currentEventId]; // 전역 변수로 저장된 일정 ID를 사용
+        generateCalendar(currentMonth, currentYear); // 캘린더 갱신
+
+        // 모달 닫기
+        const modal = bootstrap.Modal.getInstance(document.getElementById('commentModal'));
+        modal.hide();
+
+        // 강제적으로 모달과 백드롭 제거
+        document.querySelectorAll('.modal-backdrop').forEach(backdrop => backdrop.remove()); // 백드롭 제거
+        document.body.classList.remove('modal-open'); // 모달 오픈 상태 클래스 제거
+        document.body.style = ''; // body에 적용된 스타일 초기화
+    }
+}
+
+function openCommentModal(eventId) {
+    currentEventId = eventId; // 현재 보고 있는 일정의 ID 저장
+    const event = events[eventId];
 
     // 모달 창에 일정 제목 및 시간 표시
-    const event = events[eventKey];
     if (event) {
         document.getElementById('commentModalLabel').innerText = event.title;
-        document.getElementById('event-date-time').innerText = `${eventKey} 오후 6:00:00`;
-    } else {
-        document.getElementById('commentModalLabel').innerText = '일정 없음';
-        document.getElementById('event-date-time').innerText = `${eventKey} 오후 6:00:00`;
+        
+        // 일정 날짜와 시간 표시
+        document.getElementById('event-date-time').innerText = `${event.date} ${event.startTime} - ${event.endTime}`;
     }
 
     // 댓글 리스트 업데이트
-    updateCommentList(eventKey);
+    updateCommentList(eventId);
 
     // 댓글 모달 열기
     const modal = new bootstrap.Modal(document.getElementById('commentModal'));
     modal.show();
+}
+
+function closeCommentModal() {
+    const modal = bootstrap.Modal.getInstance(document.getElementById('commentModal'));
+
+    if (modal) {
+        modal.hide(); // 모달 닫기
+    }
+
+    // 강제적으로 모달과 백드롭 제거
+    document.querySelectorAll('.modal-backdrop').forEach(backdrop => backdrop.remove()); // 백드롭 제거
+    document.body.classList.remove('modal-open'); // 모달 오픈 상태 클래스 제거
+    document.body.style = ''; // body에 적용된 스타일 초기화
 }
 
 function addComment() {
