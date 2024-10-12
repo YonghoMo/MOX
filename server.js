@@ -57,6 +57,7 @@ function isAuthenticated(req, res, next) {
 app.use('/css', express.static(path.join(__dirname, 'public', 'css')));
 app.use('/images', express.static(path.join(__dirname, 'public', 'images')));
 app.use('/js', express.static(path.join(__dirname, 'public', 'js')));
+app.use('/favicon.ico', express.static(path.join(__dirname, 'public', 'favicon.ico')));
 
 // 유저 경로 라우트
 app.use('/api/users', userRoutes);
@@ -71,20 +72,22 @@ app.get('/signup', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'sign_up.html'));
 });
 
-// 로그인 후에만 접근할 수 있도록 설정 (모든 정적 파일 및 HTML)
-app.use(isAuthenticated);  // 이 줄이 모든 파일에 대해 인증을 요구함
-
 // 모든 정적 파일 제공 (로그인 후에만 접근 가능)
-app.use(express.static(path.join(__dirname, 'public')));
-
-// 보호된 경로 (index.html 제공 - 인증 필요)
-app.get('/index', isAuthenticated, (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'index.html'));
-});
+app.use(isAuthenticated, express.static(path.join(__dirname, 'public')));
 
 // 메인 페이지 경로 (인증 필요)
 app.get('/', isAuthenticated, (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
+// 동적 라우트 처리 (로그인 후에만 접근 가능)
+app.get('/:page', isAuthenticated, (req, res) => {
+    const page = req.params.page;
+    res.sendFile(path.join(__dirname, 'public', `${page}.html`), (err) => {
+        if (err) {
+            res.status(404).send('Page not found');
+        }
+    });
 });
 
 // 일정 경로 라우트
