@@ -1,0 +1,13 @@
+# Node.js 관련 파일
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# 환경 변수 파일
+.env
+
+# 로그 파일
+*.log
+
+# 기타 필요 없는 파일들
+.DS_Store
