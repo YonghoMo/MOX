@@ -53,6 +53,18 @@ function isAuthenticated(req, res, next) {
     }
 }
 
+// 로그아웃 라우트
+app.get('/logout', (req, res) => {
+    // 세션을 파기하여 로그아웃 처리
+    req.session.destroy((err) => {
+        if (err) {
+            return res.status(500).send('로그아웃 중 문제가 발생했습니다.');
+        }
+        // 로그아웃 후 로그인 페이지로 리디렉션
+        res.redirect('/login');
+    });
+});
+
 // 로그인 페이지에 필요한 정적 파일들을 로그인 여부와 상관없이 제공
 app.use('/css', express.static(path.join(__dirname, 'public', 'css')));
 app.use('/images', express.static(path.join(__dirname, 'public', 'images')));
