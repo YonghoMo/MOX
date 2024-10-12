@@ -1,16 +1,13 @@
 const mongoose = require('mongoose');
-require('dotenv').config(); // .env 파일을 사용하는 경우에 필요합니다.
 
+// MongoDB 연결 설정 함수
 const connectDB = async () => {
     try {
-        await mongoose.connect(process.env.MONGO_URI, {
-            useNewUrlParser: true,
-            useUnifiedTopology: true,
-        });
-        console.log('MongoDB Connected');
+        await mongoose.connect(process.env.MONGO_URI); // 옵션 제거
+        console.log('MongoDB connected');
     } catch (err) {
-        console.error('MongoDB connection failed', err);
-        process.exit(1);
+        console.error('MongoDB connection error:', err);
+        process.exit(1); // 연결 실패 시 프로세스 종료
     }
 };
 

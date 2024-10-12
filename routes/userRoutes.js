@@ -1,11 +1,11 @@
 const express = require('express');
-const { createUser, getUser } = require('../controllers/userController');
 const router = express.Router();
+const userController = require('../controllers/userController');
 
 // 회원가입 경로
-router.post('/register', createUser);
+router.post('/signup', userController.signup);
 
-// 유저 조회 경로
-router.get('/:id', getUser);
+// 로그인 경로
+router.post('/login', userController.login);
 
 module.exports = router;

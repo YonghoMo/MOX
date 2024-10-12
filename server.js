@@ -7,6 +7,8 @@ const path = require('path');
 const { handleSocketConnection } = require('./controllers/socketController');  // Socket.IO 로직 불러오기
 const connectDB = require('./config/db');
 require('dotenv').config();  // .env 파일에서 환경 변수 로드
+const mongoose = require('mongoose');
+const bodyParser = require('body-parser');
 const userRoutes = require('./routes/userRoutes');
 const scheduleRoutes = require('./routes/scheduleRoutes');
 
@@ -19,9 +21,9 @@ connectDB();
 // JSON 파싱 미들웨어
 app.use(express.json());
 
-// 유저 경로
+// 유저 경로 라우트
 app.use('/api/users', userRoutes);
-// 일정 경로 
+// 일정 경로 라우트
 app.use('/api/schedules', scheduleRoutes);
 
 // HTTP 서버 생성
@@ -47,4 +49,6 @@ handleSocketConnection(io);
 
 // 서버 실행
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+app.listen(PORT, () => {
+    console.log(`Server running on http://localhost:${PORT}`);
+});

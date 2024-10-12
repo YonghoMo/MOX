@@ -1,30 +1,89 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <link href="css/style_mypage.css" rel="stylesheet" type="text/css">
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<html lang="ko">
+  <head>
+    <link href="css/style_mypage.css" rel="stylesheet" type="text/css" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>로그인</title>
-</head>
-<body>
+  </head>
+  <body>
     <div class="main">
-        <div class="container"> <br><br>
-            <a class="logo"><img src="images/logo.png" width="150px" height="150px"></a> <br><br>
-            <input type="text" placeholder="ID" id="id" class="account">
-            <input type="password" placeholder="PASSWORD" id="password" class="account" onkeypress="enterkey(event)"> <br>
-            <button id="loginBtn" class="account" style="text-align: center;" onclick="alert('로그인 실패')">login</button>
-            <button id="loginBtn" class="account" style="text-align: center;" onClick="location.href='sign_up.html'">sign up</button>
-            <p id="alert" class="account" style="text-align: center;"> </p>
-        </div>
+      <div class="container">
+        <br /><br />
+        <a class="logo"
+          ><img src="images/logo.png" width="150px" height="150px"
+        /></a>
+        <br /><br />
+        <input type="text" placeholder="아이디" id="username" class="account" />
+        <input
+          type="password"
+          placeholder="비밀번호"
+          id="password"
+          class="account"
+          onkeypress="enterkey(event)"
+        />
+        <br />
+        <button id="loginBtn" class="account" style="text-align: center">
+          로그인
+        </button>
+        <button
+          id="signupBtn"
+          class="account"
+          style="text-align: center"
+          onClick="location.href='sign_up.html'"
+        >
+          회원가입
+        </button>
+        <p
+          id="alert"
+          class="account"
+          style="text-align: center; color: red"
+        ></p>
+      </div>
     </div>
     <script type="text/javascript">
-        function enterkey(e) {
-            if (e.keyCode == 13) {
-
-            // 엔터키가 눌렸을 때 실행할 내용
-                document.getElementById("loginBtn").click();
-            }
+      function enterkey(e) {
+        if (e.keyCode == 13) {
+          document.getElementById("loginBtn").click();
         }
-    </script>   
-</body>
+      }
+
+      document
+        .getElementById("loginBtn")
+        .addEventListener("click", async function () {
+          const username = document.getElementById("username").value;
+          const password = document.getElementById("password").value;
+
+          if (!username || !password) {
+            document.getElementById("alert").innerText =
+              "아이디와 비밀번호를 입력하세요.";
+            return;
+          }
+
+          try {
+            const response = await fetch("/login", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({ username, password }),
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+              alert("로그인 성공! 메인 페이지로 이동합니다.");
+              window.location.href = "/main"; // 로그인 성공 시 메인 페이지로 이동
+            } else {
+              document.getElementById("alert").innerText =
+                data.message || "로그인에 실패했습니다.";
+            }
+          } catch (error) {
+            console.error("로그인 중 오류 발생:", error);
+            document.getElementById("alert").innerText =
+              "로그인에 실패했습니다. 다시 시도해주세요.";
+          }
+        });
+    </script>
+  </body>
 </html>

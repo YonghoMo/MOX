@@ -1,98 +1,151 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sign Up Page</title>
-  <link href="css/style_mypage.css" rel="stylesheet" type="text/css">
-  <style>
-    #id,
-    #password,
-    #confirm-password,
-    #email {
-      display: flex;
-      justify-content: center;
-      width: 169px;
-      margin-bottom: 10px;
-    }
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="css/style_mypage.css" rel="stylesheet" type="text/css" />
+    <title>회원가입</title>
+    <style>
+      #id,
+      #password,
+      #confirm-password,
+      #email {
+        display: flex;
+        justify-content: center;
+        width: 169px;
+        margin-bottom: 10px;
+      }
 
-    #signup-group-button {
-      background-color: #007bff;
-      color: #fff;
-      border: none;
-      padding-top: 2px;
-      padding-bottom: 2px;
-      border-radius: 4px;
-      cursor: pointer;
-      transition: background-color 0.3s;
-      text-align: center;
-      display: inline-block;
-    }
+      #signup-group-button {
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        padding-top: 2px;
+        padding-bottom: 2px;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+        text-align: center;
+        display: inline-block;
+      }
 
-    #signup-group-button:hover {
-      background-color: #0056b3;
-    }
+      #signup-group-button:hover {
+        background-color: #0056b3;
+      }
 
-    .account {
-      display: block;
-      margin-bottom: 3px;
-      padding: 3px;
-      border: 1px solid lightgray;
-      border-radius: 3px;
-      transform: translate(20%, 0%);
-    }
-  </style>
-</head>
-<body>
+      .account {
+        display: block;
+        margin-bottom: 3px;
+        padding: 3px;
+        border: 1px solid lightgray;
+        border-radius: 3px;
+        transform: translate(20%, 0%);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="main">
+      <div class="logo">
+        <h2>회원가입</h2>
+      </div>
 
-  <div class="main">
-    <div class="logo">
-      <h2>Sign Up</h2>
+      <form id="signup-form">
+        <div id="id">
+          <input
+            type="text"
+            id="username"
+            placeholder="아이디"
+            class="account"
+            required
+          />
+        </div>
+
+        <div id="password">
+          <input
+            type="password"
+            id="password-input"
+            placeholder="비밀번호"
+            class="account"
+            required
+          />
+        </div>
+
+        <div id="confirm-password">
+          <input
+            type="password"
+            id="confirm-password-input"
+            placeholder="비밀번호 확인"
+            class="account"
+            required
+          />
+        </div>
+
+        <div id="email">
+          <input
+            type="email"
+            id="email-input"
+            placeholder="이메일"
+            class="account"
+            required
+          />
+        </div>
+
+        <div>
+          <button type="submit" id="signup-group-button">회원가입</button>
+        </div>
+      </form>
+
+      <p id="error-message" style="color: red"></p>
     </div>
 
-    <div id="id">
-      <input type="text" placeholder="ID" class="account" />
-    </div>
+    <script>
+      document
+        .getElementById("signup-form")
+        .addEventListener("submit", async function (event) {
+          event.preventDefault(); // 폼이 자동으로 제출되는 것을 막음
 
-    <div id="password">
-      <input type="password" placeholder="PASSWORD" class="account" />
-    </div>
+          // 입력 값 가져오기
+          const username = document.getElementById("username").value;
+          const password = document.getElementById("password-input").value;
+          const confirmPassword = document.getElementById(
+            "confirm-password-input"
+          ).value;
+          const email = document.getElementById("email-input").value;
 
-    <div id="confirm-password">
-      <input type="password" placeholder="CONFIRM-PASSWORD" class="account" />
-    </div>
+          // 비밀번호 일치 여부 확인
+          if (password !== confirmPassword) {
+            document.getElementById("error-message").innerText =
+              "비밀번호가 일치하지 않습니다.";
+            return;
+          }
 
-    <div id="email">
-      <input type="email" placeholder="EMAIL" class="account" />
-    </div>
+          try {
+            const response = await fetch("/signup", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                username: username,
+                password: password,
+                email: email,
+              }),
+            });
 
-    <div>
-      <button id="signupBtn" style="text-align: center;">Sign Up</button>
-    </div>
-  </div>
-  <script type="text/javascript">
-    document.getElementById("signupBtn").addEventListener("click", () => {
-      const username = document.querySelector("#id input").value;
-      const password = document.querySelector("#password input").value;
-      const confirmPassword = document.querySelector("#confirm-password input").value;
-      const email = document.querySelector("#email input").value;
-  
-      fetch('/signup', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ username, password, confirmPassword, email }),
-      })
-      .then(response => response.json())
-      .then(data => {
-        alert(data.message);
-        if (data.message === '회원가입 성공!') {
-          window.location.href = '/login'; // 회원가입 성공 후 로그인 페이지로 이동
-        }
-      })
-      .catch(error => console.error('Error:', error));
-    });
-  </script>
-</body>
+            const data = await response.json();
+
+            if (response.ok) {
+              alert("회원가입 성공! 로그인 페이지로 이동합니다.");
+              window.location.href = "/login"; // 성공 시 로그인 페이지로 리다이렉트
+            } else {
+              document.getElementById("error-message").innerText = data.message;
+            }
+          } catch (error) {
+            console.error("회원가입 중 오류 발생:", error);
+            document.getElementById("error-message").innerText =
+              "회원가입에 실패했습니다. 다시 시도해주세요.";
+          }
+        });
+    </script>
+  </body>
 </html>
