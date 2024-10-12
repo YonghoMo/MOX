@@ -62,6 +62,11 @@ function isAuthenticated(req, res, next) {
 // 로그인 후에만 접근 가능한 정적 파일들
 app.use('/public', isAuthenticated, express.static(path.join(__dirname, 'public')));
 
+// 보호된 경로 (index.html 제공 - 인증 필요)
+app.get('/index', isAuthenticated, (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
 // 메인 페이지 경로 (인증 필요)
 app.get('/', isAuthenticated, (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
