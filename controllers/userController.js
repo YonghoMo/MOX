@@ -28,7 +28,6 @@ exports.signup = async (req, res) => {
             username,
             password: hashedPassword,
             nickname,
-            authorId: new mongoose.Types.ObjectId().toString()  // 고유한 authorId 생성
         });
         await newUser.save();
 
@@ -65,7 +64,6 @@ exports.login = async (req, res) => {
             username: user.username,
             nickname: user.nickname,  // 사용자 닉네임 세션에 저장
             _id: user._id,  // 사용자 고유 ID
-            authorId: user.authorId,  // 세션에 authorId 저장
         };
         console.log('로그인 성공, 세션 정보:', req.session.user);  // 세션에 저장된 정보 출력
         res.status(200).json({ message: '로그인 성공!', user: req.session.user });

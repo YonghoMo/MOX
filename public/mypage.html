@@ -123,7 +123,7 @@
             requestsDiv.innerHTML += `
                 <div>
                     <img src="images/default_profile.PNG" width="35px" height="35px" alt="프로필 사진">
-                    ${request.nickname}님의 친구 요청
+                    ${request.requestFrom.nickname}님의 친구 요청
                     <button onclick="acceptFriendRequest('${request._id}')">수락</button>
                     <button onclick="rejectFriendRequest('${request._id}')">거절</button>
                 </div>`;
@@ -135,19 +135,37 @@
 
       // 친구 요청 수락
       async function acceptFriendRequest(requestId) {
-        const response = await fetch(`/api/friends/accept/${requestId}`, {
-          method: "POST",
-        });
-        loadFriendRequests();
-        loadFriends(); // 목록 갱신
+        try {
+          const response = await fetch(`/api/friends/accept/${requestId}`, {
+            method: "POST",
+          });
+          if (response.ok) {
+            console.log("친구 요청 수락 성공");
+            loadFriendRequests();
+            loadFriends(); // 목록 갱신
+          } else {
+            console.error("친구 요청 수락 실패");
+          }
+        } catch (error) {
+          console.error("친구 요청 수락 중 오류 발생:", error);
+        }
       }
 
       // 친구 요청 거절
       async function rejectFriendRequest(requestId) {
-        const response = await fetch(`/api/friends/reject/${requestId}`, {
-          method: "POST",
-        });
-        loadFriendRequests(); // 목록 갱신
+        try {
+          const response = await fetch(`/api/friends/reject/${requestId}`, {
+            method: "POST",
+          });
+          if (response.ok) {
+            console.log("친구 요청 거절 성공");
+            loadFriendRequests(); // 목록 갱신
+          } else {
+            console.error("친구 요청 거절 실패");
+          }
+        } catch (error) {
+          console.error("친구 요청 거절 중 오류 발생:", error);
+        }
       }
 
       // 친구 목록 불러오기 및 렌더링
