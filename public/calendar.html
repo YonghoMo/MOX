@@ -22,7 +22,7 @@
     <!-- 네비게이션 바 -->
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
       <div class="container-fluid">
-        <a class="navbar-brand" href="index.html">
+        <a class="navbar-brand" href="home.html">
           <img src="images/logo.png" alt="" width="40" height="40" />
         </a>
         <button
@@ -39,7 +39,7 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
           <ul class="navbar-nav ms-auto mb-2 mb-lg-0 text-end">
             <li class="nav-item">
-              <a class="nav-link active" aria-current="page" href="index.html"
+              <a class="nav-link active" aria-current="page" href="home.html"
                 >홈</a
               >
             </li>
@@ -160,22 +160,28 @@
         id="commentModal"
         tabindex="-1"
         aria-labelledby="commentModalLabel"
-        aria-hidden="true">
+        aria-hidden="true"
+      >
         <div class="modal-dialog">
           <div class="modal-content">
             <div class="modal-header">
               <h5 class="modal-title" id="commentModalLabel">운동량 설정</h5>
-              <span id="event-time" style="font-size: 0.8rem; color: gray; margin-right: 10px;"></span>
+              <span
+                id="event-time"
+                style="font-size: 0.8rem; color: gray; margin-right: 10px"
+              ></span>
               <button
                 type="button"
                 class="btn-close"
                 data-bs-dismiss="modal"
                 onclick="closeCommentModal()"
-                aria-label="Close"></button>
+                aria-label="Close"
+              ></button>
             </div>
             <div class="modal-body">
               <p id="selected-exercises">
-                선택된 운동 | <span id="selected-exercises-list"></span></p>
+                선택된 운동 | <span id="selected-exercises-list"></span>
+              </p>
 
               <!-- 운동량 설정 공간 -->
               <div id="exercise-amount-settings"></div>
@@ -190,9 +196,11 @@
                   type="text"
                   id="comment-input"
                   class="form-control"
-                  placeholder="댓글을 입력하세요"/>
+                  placeholder="댓글을 입력하세요"
+                />
                 <button class="btn btn-primary" onclick="addComment()">
-                  업로드</button>
+                  업로드
+                </button>
               </div>
             </div>
             <div class="modal-footer">
@@ -200,15 +208,24 @@
                 type="button"
                 class="btn btn-secondary"
                 data-bs-dismiss="modal"
-                onclick="closeCommentModal()">닫기</button>
+                onclick="closeCommentModal()"
+              >
+                닫기
+              </button>
               <button
                 type="button"
                 class="btn btn-primary"
-                onclick="deleteEvent()">일정 삭제</button>
+                onclick="deleteEvent()"
+              >
+                일정 삭제
+              </button>
               <button
                 type="button"
                 class="btn btn-primary"
-                onclick="saveExerciseAmount()">운동량 저장</button>
+                onclick="saveExerciseAmount()"
+              >
+                운동량 저장
+              </button>
             </div>
           </div>
         </div>
