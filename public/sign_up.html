@@ -9,7 +9,7 @@
       #id,
       #password,
       #confirm-password,
-      #email {
+      #nickname {
         display: flex;
         justify-content: center;
         width: 169px;
@@ -80,11 +80,11 @@
           />
         </div>
 
-        <div id="email">
+        <div id="nickname">
           <input
-            type="email"
-            id="email-input"
-            placeholder="이메일"
+            type="text"
+            id="nickname-input"
+            placeholder="닉네임"
             class="account"
             required
           />
@@ -110,7 +110,7 @@
           const confirmPassword = document.getElementById(
             "confirm-password-input"
           ).value;
-          const email = document.getElementById("email-input").value;
+          const nickname = document.getElementById("nickname-input").value;
 
           // 비밀번호 일치 여부 확인
           if (password !== confirmPassword) {
@@ -128,7 +128,7 @@
               body: JSON.stringify({
                 username: username,
                 password: password,
-                email: email,
+                nickname: nickname,
               }),
             });
 

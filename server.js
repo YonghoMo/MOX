@@ -5,6 +5,7 @@ const http = require('http');
 const socketIo = require('socket.io');
 const path = require('path');
 const { handleSocketConnection } = require('./controllers/socketController');  // Socket.IO 로직 불러오기
+const userController = require('./controllers/userController');  // userController 불러오기
 const connectDB = require('./config/db');
 require('dotenv').config();  // .env 파일에서 환경 변수 로드
 const mongoose = require('mongoose');

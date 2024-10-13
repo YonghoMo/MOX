@@ -53,37 +53,29 @@
             <img src="images/default_profile.PNG" href="profile_change.html" alt="프로필 사진"> 
         </p>
         <p>
-            <button onClick="location.href='login.html'">로그인</button>
-        </p>
-        <p>    
+            <!--회원 정보 변경에 들어갈 내용 : 프로필 사진 변경, 비밀번호 변경-->    
             <button onClick="location.href='change_information.html'">회원정보 변경</button>
         </p>
     </div>
     <br>
-    <div class="group-management">
-        <h2>그룹원 관리</h2>
-            <button id="group-button" onClick="location.href='#'">그룹원 추가</button>
-            <button id="group-button" onClick="location.href='#'">그룹원 삭제</button>
+    <div class="friend-management"> 
+        <h2>친구 관리</h2>
+            <!--상대의 닉네임을 입력하여 친구 추가 or 친구 모집 페이지에서 추가-->
+            <button id="group-button" onClick="location.href='#'">친구 추가</button>
+            <button id="group-button" onClick="location.href='#'">친구 삭제</button>
             <br>
             <br>
+            <!--친구 목록 출력-->
             <p>
                 <img src="images/default_profile.PNG" 
-                width="35px" height="35px" alt="프로필 사진">그룹원 1 
+                width="35px" height="35px" alt="프로필 사진"> 친구 1 
             </p>
-                
-            <p>
-                <img src="images/default_profile.PNG" 
-                width="35px" height="35px" alt="프로필 사진">그룹원 2
-            </p>
-            <p>
-                <img src="images/default_profile.PNG" 
-                width="35px" height="35px" alt="프로필 사진">그룹원 3
-            </p>
+            <br>
     </div>
     <br>
     <div class="settings" style="text-align: right;">
         <p>
-            <a href="#">로그아웃</a>
+          <a href="#">로그아웃</a> 
         </p>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>       
