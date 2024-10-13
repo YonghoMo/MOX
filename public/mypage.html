@@ -169,31 +169,43 @@
       }
 
       async function loadFriends() {
-        const response = await fetch("/api/friends", { method: "GET" });
-        const data = await response.json();
-        const friendsDiv = document.getElementById("friend-list");
+        // 1. 로그인한 사용자 ID를 가져오는 fetch 요청
+        const userResponse = await fetch("/api/users/me", { method: "GET" });
+        if (userResponse.ok) {
+          const userData = await userResponse.json();
+          const currentUserId = userData.userId; // 서버에서 로그인한 사용자 ID 받아오기
 
-        // 로그인한 사용자의 ID 가져오기
-        const currentUserId = "your-session-user-id"; // 실제 사용자 ID 세션에서 가져오기
+          // 2. 친구 목록 불러오기
+          const response = await fetch("/api/friends", { method: "GET" });
+          const data = await response.json();
+          const friendsDiv = document.getElementById("friend-list");
 
-        friendsDiv.innerHTML = "";
+          friendsDiv.innerHTML = "";
 
-        data.friends.forEach((friend) => {
-          // 친구의 닉네임을 가져오기
-          let friendNickname;
-          if (friend.requestFrom._id === currentUserId) {
-            friendNickname = friend.requestTo.nickname; // 내가 requestFrom일 때 상대방 닉네임
-          } else {
-            friendNickname = friend.requestFrom.nickname; // 내가 requestTo일 때 상대방 닉네임
-          }
+          // 3. 친구 목록을 돌면서 친구의 닉네임을 결정
+          data.friends.forEach((friend) => {
+            let friendNickname;
 
-          friendsDiv.innerHTML += `
-            <div>
-                <img src="images/default_profile.PNG" width="35px" height="35px" alt="프로필 사진">
-                ${friendNickname}
-                <button onclick="deleteFriend('${friend._id}')">삭제</button>
-            </div>`;
-        });
+            // ID 비교 시 .toString()으로 문자열 변환하여 비교
+            if (
+              friend.requestFrom._id.toString() === currentUserId.toString()
+            ) {
+              friendNickname = friend.requestTo.nickname; // 내가 requestFrom일 때 상대방 닉네임
+            } else {
+              friendNickname = friend.requestFrom.nickname; // 내가 requestTo일 때 상대방 닉네임
+            }
+
+            // 4. 친구 목록에 친구의 닉네임 표시
+            friendsDiv.innerHTML += `
+                <div>
+                    <img src="images/default_profile.PNG" width="35px" height="35px" alt="프로필 사진">
+                    ${friendNickname}
+                    <button onclick="deleteFriend('${friend._id}')">삭제</button>
+                </div>`;
+          });
+        } else {
+          console.error("사용자 ID를 가져오는 데 실패했습니다.");
+        }
       }
 
       // 친구 삭제
