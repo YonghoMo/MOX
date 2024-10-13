@@ -17,6 +17,7 @@ const friendRoutes = require('./routes/friendRoutes');
 const User = require('./models/userModel');
 const session = require('express-session');  // express-session 모듈 불러오기
 const bcrypt = require('bcrypt');
+const cors = require('cors');
 
 // Express 앱 생성
 const app = express();
@@ -38,7 +39,17 @@ connectDB();
 app.use(session({
     secret: process.env.SECRET_KEY,  // 세션을 암호화하는 키
     resave: false,  // 세션이 변경되지 않아도 항상 저장할지 여부
-    saveUninitialized: true  // 초기화되지 않은 세션을 저장할지 여부
+    saveUninitialized: true,  // 초기화되지 않은 세션을 저장할지 여부
+    cookie: {
+        secure: false,  // HTTPS에서만 동작하도록 설정할지 여부 (HTTP에서는 false로 설정)
+        httpOnly: true,  // 클라이언트 측에서 쿠키에 접근하지 못하도록 설정
+        maxAge: 3600000  // 세션 유지 시간 (1시간)
+    }
+}));
+
+app.use(cors({
+    origin: 'http://localhost:5000',  // 클라이언트 도메인
+    credentials: true  // 쿠키 허용
 }));
 
 // JSON 파싱 미들웨어
