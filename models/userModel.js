@@ -10,9 +10,10 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    email: {
+    nickname: {
         type: String,
-        required: true
+        required: true,
+        unique: true  // 닉네임 중복 방지
     }
 });
 

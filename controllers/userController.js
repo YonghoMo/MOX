@@ -3,9 +3,9 @@ const bcrypt = require('bcrypt');
 
 // 회원가입 처리
 exports.signup = async (req, res) => {
-    const { username, password, email } = req.body;
+    const { username, password, nickname } = req.body;
 
-    if (!username || !password || !email) {
+    if (!username || !password || !nickname) {
         return res.status(400).json({ message: '모든 항목을 입력해주세요.' });
     }
 
@@ -13,6 +13,11 @@ exports.signup = async (req, res) => {
         const existingUser = await User.findOne({ username });
         if (existingUser) {
             return res.status(400).json({ message: '이미 사용 중인 아이디입니다.' });
+        }
+
+        const existingNickname = await User.findOne({ nickname });
+        if (existingNickname) {
+            return res.status(400).json({ message: '이미 사용 중인 닉네임입니다.' });
         }
 
         // 비밀번호 해싱
