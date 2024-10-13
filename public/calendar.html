@@ -164,8 +164,8 @@
         <div class="modal-dialog">
           <div class="modal-content">
             <div class="modal-header">
-              <span id="event-time" style="font-size: 0.8rem; color: gray; margin-right: 10px;"></span>
               <h5 class="modal-title" id="commentModalLabel">운동량 설정</h5>
+              <span id="event-time" style="font-size: 0.8rem; color: gray; margin-right: 10px;"></span>
               <button
                 type="button"
                 class="btn-close"
@@ -175,13 +175,10 @@
             </div>
             <div class="modal-body">
               <p id="selected-exercises">
-                선택된 운동 | <span id="selected-exercises-list"></span>
-              </p>
+                선택된 운동 | <span id="selected-exercises-list"></span></p>
 
               <!-- 운동량 설정 공간 -->
-              <div id="exercise-amount-settings">
-                <!-- 운동량 설정 필드가 동적으로 추가됩니다 -->
-              </div>
+              <div id="exercise-amount-settings"></div>
 
               <!-- 댓글 추가 섹션 -->
               <h6>댓글 나누기</h6>
@@ -193,11 +190,9 @@
                   type="text"
                   id="comment-input"
                   class="form-control"
-                  placeholder="댓글을 입력하세요"
-                />
+                  placeholder="댓글을 입력하세요"/>
                 <button class="btn btn-primary" onclick="addComment()">
-                  업로드
-                </button>
+                  업로드</button>
               </div>
             </div>
             <div class="modal-footer">

@@ -157,6 +157,8 @@ function openCommentModal(eventId) {
     const commentModalLabel = document.getElementById('commentModalLabel');
     const eventDateTime = document.getElementById('event-date-time');
     const eventTime = document.getElementById('event-time');  // 시간 표시용 요소
+    const selectedExercisesList = document.getElementById('selected-exercises-list');
+    const selectedExercises = getSelectedExercises();
 
     if (commentModalLabel) {    // 제목 설정
         commentModalLabel.innerText = event.title;
@@ -178,7 +180,7 @@ function openCommentModal(eventId) {
     }
 
     // 선택된 운동 종목 가져오기 및 운동량 설정 초기화
-    const selectedExercises = getSelectedExercises();
+    
     const settingsContainer = document.getElementById('exercise-amount-settings');
     
     if (!settingsContainer) {
