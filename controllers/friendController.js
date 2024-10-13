@@ -104,18 +104,36 @@ exports.rejectFriendRequest = async (req, res) => {
         res.status(500).json({ message: '서버 오류가 발생했습니다.' });
     }
 };
+
+// 친구 삭제
+exports.removeFriend = async (req, res) => {
+    try {
+        const { friendId } = req.params;
+        const friend = await Friend.findByIdAndDelete(friendId);
+        if (!friend) {
+            return res.status(404).json({ message: '친구를 찾을 수 없습니다.' });
+        }
+        res.status(200).json({ message: '친구가 삭제되었습니다.' });
+    } catch (error) {
+        console.error('친구 삭제 중 오류 발생:', error);
+        res.status(500).json({ message: '서버 오류가 발생했습니다.' });
+    }
+};
+
 // 현재 친구 목록
 exports.getFriends = async (req, res) => {
     try {
-        const userId = req.session.user._id;  // 세션에서 사용자 ID 가져오기
+        const userId = req.session.user._id;
 
-        // 수락된 친구 요청 목록 가져오기 (requestFrom 또는 requestTo가 userId인 친구 관계)
+        // 수락된 친구 요청 목록 조회
         const friends = await Friend.find({
             $or: [
                 { requestFrom: userId, status: 'accepted' },
                 { requestTo: userId, status: 'accepted' }
             ]
-        }).populate('requestFrom requestTo', 'username');  // 친구 정보를 가져오기 위해 populate 사용
+        }).populate('requestFrom requestTo', 'nickname');  // 닉네임을 가져오기 위해 populate
+
+        console.log('친구 목록:', friends);  // 로그 추가
 
         res.status(200).json({ friends });
     } catch (error) {

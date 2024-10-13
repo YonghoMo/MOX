@@ -168,20 +168,31 @@
         }
       }
 
-      // 친구 목록 불러오기 및 렌더링
       async function loadFriends() {
         const response = await fetch("/api/friends", { method: "GET" });
         const data = await response.json();
         const friendsDiv = document.getElementById("friend-list");
 
+        // 로그인한 사용자의 ID 가져오기
+        const currentUserId = "your-session-user-id"; // 실제 사용자 ID 세션에서 가져오기
+
         friendsDiv.innerHTML = "";
+
         data.friends.forEach((friend) => {
+          // 친구의 닉네임을 가져오기
+          let friendNickname;
+          if (friend.requestFrom._id === currentUserId) {
+            friendNickname = friend.requestTo.nickname; // 내가 requestFrom일 때 상대방 닉네임
+          } else {
+            friendNickname = friend.requestFrom.nickname; // 내가 requestTo일 때 상대방 닉네임
+          }
+
           friendsDiv.innerHTML += `
-                    <div>
-                        <img src="images/default_profile.PNG" width="35px" height="35px" alt="프로필 사진">
-                        ${friend.nickname}
-                        <button onclick="deleteFriend('${friend._id}')">삭제</button>
-                    </div>`;
+            <div>
+                <img src="images/default_profile.PNG" width="35px" height="35px" alt="프로필 사진">
+                ${friendNickname}
+                <button onclick="deleteFriend('${friend._id}')">삭제</button>
+            </div>`;
         });
       }
 
