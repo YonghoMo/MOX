@@ -45,7 +45,7 @@
             <li class="nav-item">
               <a class="nav-link" href="mypage.html">마이페이지</a>
             </li>
-            <li class="nav-item"></li>
+            <li class="nav-item">
               <a class="nav-link" href="friends.html">친구</a>
             </li>
             <li class="nav-item">
@@ -163,7 +163,7 @@
                     <div id="collapse${index}" class="accordion-collapse collapse" aria-labelledby="heading${index}" data-bs-parent="#recruitAccordion">
                         <div class="accordion-body">
                             <p>${recruit.description}</p>
-                            <button class="btn btn-primary" onclick="sendFriendRequest('${recruit._id}')">친구 추가</button>
+                            <button class="btn btn-primary" onclick="sendFriendRequest('${recruit.authorId}')">친구 추가</button>
                             <button class="btn btn-danger" onclick="deleteRecruit('${recruit._id}')">글 삭제</button>
                         </div>
                     </div>
@@ -172,15 +172,16 @@
         });
       }
 
-      // 친구 추가 요청 함수
-      async function sendFriendRequest(recruitId) {
+      // 친구 요청 보내기 함수
+      async function sendFriendRequest(friendName) {
         try {
           const response = await fetch("/api/friends/request", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
             },
-            body: JSON.stringify({ recruitId }),
+            credentials: "include", // 쿠키와 세션 정보를 포함하여 요청
+            body: JSON.stringify({ friendName }), // 전달할 데이터
           });
 
           const data = await response.json();
@@ -217,6 +218,15 @@
           }
         }
       }
+
+      // 인증된 사용자 정보 반환
+      router.get("/me", (req, res) => {
+        if (req.session.user) {
+          return res.json({ userId: req.session.user.authorId }); // 세션에 저장된 사용자 ID 반환
+        } else {
+          return res.status(401).json({ message: "로그인이 필요합니다." });
+        }
+      });
 
       // 페이지 로딩 시 모집 글 목록 불러오기
       loadFriendRecruits();
