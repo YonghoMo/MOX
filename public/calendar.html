@@ -161,7 +161,7 @@
         tabindex="-1"
         aria-labelledby="commentModalLabel"
         aria-hidden="true"
-      >
+        >
         <div class="modal-dialog">
           <div class="modal-content">
             <div class="modal-header">
@@ -171,8 +171,8 @@
                 class="btn-close"
                 data-bs-dismiss="modal"
                 onclick="closeCommentModal()"
-                aria-label="Close"
-              ></button>
+                aria-label="Close">
+              </button>
             </div>
             <div class="modal-body">
               <p id="selected-exercises">
@@ -206,8 +206,16 @@
                 type="button"
                 class="btn btn-secondary"
                 data-bs-dismiss="modal"
+                onclick="closeCommentModal()"
               >
                 닫기
+              </button>
+              <button
+                type="button"
+                class="btn btn-primary"
+                onclick="deleteEvent()"
+              >
+                일정 삭제
               </button>
               <button
                 type="button"

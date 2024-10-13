@@ -10,9 +10,19 @@ const exerciseLibrary = [
     '에어 스쿼트', '바벨 백 스쿼트', '레그 프레스', '트레드밀'
 ];
 
-// 캘린더 생성 코드 수정
+
+/* 캘린더 생성 코드 */
 function generateCalendar(month, year) {
+    // 디버깅 로그
+    console.log("Calendar generated for month: ", month, "year: ", year);
+
     const calendar = document.getElementById('calendar');
+    if(!calendar) {
+        console.error('캘린더 요소를 찾을 수 없습니다.');
+        return;
+    }
+
+    // 캘린더 초기화
     calendar.innerHTML = '';
 
     const firstDay = new Date(year, month).getDay();
@@ -43,6 +53,9 @@ function generateCalendar(month, year) {
                     </div>`;
             });
         }
+        else {
+            console.log("No events for this date.")
+        }
 
         calendar.innerHTML += `
             <div class="${dayClass}" data-date="${dateKey}" onclick="${eventList.length > 0 ? `openCommentModal('${eventList[0].id}')` : `openAddEventModal('${dateKey}')`}">
@@ -52,6 +65,9 @@ function generateCalendar(month, year) {
     }
 }
 
+
+/* 일정 추가 모달 */
+// 일정 추가 모달 열기
 function openAddEventModal(dateKey) {
     // 모달에 날짜 값을 설정
     document.getElementById('event-date').value = dateKey;
@@ -59,7 +75,6 @@ function openAddEventModal(dateKey) {
     const modal = new bootstrap.Modal(document.getElementById('addEventModal'));
     modal.show();
 }
-
 // 운동 종목을 체크박스로 추가
 function populateExerciseCheckboxes() {
     const checkboxGroup = document.getElementById('exercise-checkbox-group');
@@ -79,7 +94,6 @@ function populateExerciseCheckboxes() {
         checkboxGroup.appendChild(document.createElement('br'));
     });
 }
-
 // 페이지 로드 시 체크박스 추가
 document.addEventListener('DOMContentLoaded', populateExerciseCheckboxes);
 
@@ -107,6 +121,8 @@ function saveEvent() {
     }
 }
 
+
+/* 일정 삭제 기능 */
 function deleteEvent() {
     if (confirm('정말 이 일정을 삭제하시겠습니까?')) {
         // 현재 보고 있는 일정 삭제
@@ -124,15 +140,51 @@ function deleteEvent() {
     }
 }
 
-function openCommentModal() {
+
+/* 댓글 모달 */
+// 댓글 모달 열기
+function openCommentModal(eventId) {
+    // 현재 보고 있는 일정의 ID 설정
+    currentEventId = eventId;
+    const event = events[eventId];
+    // 일정 데이터가 존재하는지 확인
+    if (!event) {
+        console.error('일정을 찾을 수 없습니다.');
+        return; // 유효하지 않은 이벤트라면 모달을 열지 않음
+    }
+    else {
+        // 모달 일정 제목과 정보 설정
+        const commentModalLabel = document.getElementById('commentModalLabel');
+        const eventDateTime = document.getElementById('event-date-time');
+
+        if (commentModalLabel) {
+            commentModalLabel.innerText = event.title;
+        } else {
+            console.error("commentModalLabel 요소를 찾을 수 없습니다.");
+        }
+
+        if (eventDateTime) {
+            eventDateTime.innerText = event.date;
+        } else {
+            console.error("event-date-time 요소를 찾을 수 없습니다.");
+        }
+
+        // 댓글 리스트 업데이트
+        updateCommentList(eventId);
+    } 
+
+    // 선택된 운동 종목 가져오기
     const selectedExercises = getSelectedExercises(); // 선택된 운동 종목 가져오기
     const selectedList = document.getElementById('selected-exercises-list');
-    selectedList.innerHTML = selectedExercises.join(', '); // 선택된 운동 종목을 모달에 표시
+    selectedList.innerHTML = selectedExercises.length > 0
+        ? selectedExercises.join(', ')  // 선택된 운동 종목을 모달에 표시
+        : '선택된 운동이 없습니다.';     // 없으면 기본 메세지 표시
 
+    // 운동량 설정 컨테이너 초기화
     const settingsContainer = document.getElementById('exercise-amount-settings');
-    settingsContainer.innerHTML = ''; // 기존 설정 필드 초기화
+    settingsContainer.innerHTML = ''; // 기존 설정 필드 초기화  
 
-    // 선택된 운동 종목에 따라 동적으로 운동량 설정 필드를 생성
+    // 선택된 운동 종목에 따라 동적으로 운동량 설정 필드 생성
     selectedExercises.forEach(exercise => {
         const fieldSet = document.createElement('fieldset');
         const legend = document.createElement('legend');
@@ -186,7 +238,7 @@ function openCommentModal() {
     const modal = new bootstrap.Modal(document.getElementById('commentModal'));
     modal.show();
 }
-
+// 선택한 운동 종목 가져오기
 function getSelectedExercises() {
     const checkboxes = document.querySelectorAll('.exercise-checkbox:checked');
     const selectedExercises = [];
@@ -195,7 +247,7 @@ function getSelectedExercises() {
     });
     return selectedExercises;
 }
-
+// 코멘트 모달 닫기
 function closeCommentModal() {
     const modal = bootstrap.Modal.getInstance(document.getElementById('commentModal'));
 
@@ -208,35 +260,41 @@ function closeCommentModal() {
     document.body.classList.remove('modal-open'); // 모달 오픈 상태 클래스 제거
     document.body.style = ''; // body에 적용된 스타일 초기화
 }
-
+// 코멘트 추가하기
 function addComment() {
-    const eventKey = document.getElementById('event-date-time').innerText.split(' ')[0];
+    //const eventKey = document.getElementById('event-date-time').innerText.split(' ')[0];
     const commentInput = document.getElementById('comment-input');
     const newComment = commentInput.value.trim();
 
     if (newComment !== '') {
+        // 현재 일정 ID에 대한 댓글이 없으면 배열 생성
         if (!comments[currentEventId]) {
-            comments[currentEventId] = []; // 해당 일정에 대한 댓글이 없으면 배열 생성
+            comments[currentEventId] = []; 
         }
 
         comments[currentEventId].push(newComment); // 새 댓글 추가
         updateCommentList(currentEventId); // 댓글 리스트 업데이트
         commentInput.value = ''; // 입력 필드 비우기
     }
+    else {
+        alert("댓글을 입력하세요.");
+    }
 }
-
-function updateCommentList(eventKey) {
+// 코멘트 리스트 업데이트하기
+function updateCommentList(eventId) {
     const commentList = document.getElementById('comment-list');
     commentList.innerHTML = ''; // 기존 리스트 비우기
 
-    if (comments[eventKey] && comments[eventKey].length > 0) {
-        comments[eventKey].forEach((comment) => {
+    if (comments[eventId] && comments[eventId].length > 0) {
+        // 댓글 있는 경우 모달의 댓글 리스트에 추가
+        comments[eventId].forEach((comment) => {
             const listItem = document.createElement('li');
             listItem.classList.add('list-group-item');
             listItem.textContent = comment;
             commentList.appendChild(listItem);
         });
     } else {
+        // 댓글 없는 경우 기본 메세지 표시
         const noComments = document.createElement('li');
         noComments.classList.add('list-group-item');
         noComments.textContent = '아직 댓글이 없습니다.';
@@ -244,13 +302,14 @@ function updateCommentList(eventKey) {
     }
 }
 
+
+// 캘린더 기본 기능
 document.getElementById('todayBtn').addEventListener('click', () => {
     const today = new Date();
     currentMonth = today.getMonth();
     currentYear = today.getFullYear();
     generateCalendar(currentMonth, currentYear);
 });
-
 document.getElementById('prevMonthBtn').addEventListener('click', () => {
     currentMonth--;
     if (currentMonth < 0) {
@@ -259,7 +318,6 @@ document.getElementById('prevMonthBtn').addEventListener('click', () => {
     }
     generateCalendar(currentMonth, currentYear);
 });
-
 document.getElementById('nextMonthBtn').addEventListener('click', () => {
     currentMonth++;
     if (currentMonth > 11) {
@@ -269,5 +327,9 @@ document.getElementById('nextMonthBtn').addEventListener('click', () => {
     generateCalendar(currentMonth, currentYear);
 });
 
-// 처음 페이지 로드 시 캘린더 생성
-generateCalendar(currentMonth, currentYear);
+// 패이지 로드 시 캘린더 생성
+document.addEventListener('DOMContentLoaded', () => {
+    console.log("페이지 로드 완료. 캘린더 생성 시작.");
+    generateCalendar(currentMonth, currentYear); // 캘린더 생성
+});
+
