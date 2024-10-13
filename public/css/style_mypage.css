@@ -107,21 +107,27 @@ body {
 }
 
 #loginBtn {
-  width: 71%;
-  background-color: #007bff;
-  border-color: transparent;
-  color: white;
-  transform: translate(20%, 0%);
-}
-
-#signupBtn {
-  width: 71%;
+  width: 60%;
   border-radius: 4px;
   background-color: #007bff;
   border-color: transparent;
   color: white;
-  transform: translate(-3.0%, 0%);
+  transform: translate(0%, 0%);
 }
+
+#signupBtn {
+  width: 60%;
+  border-radius: 4px;
+  background-color: #007bff;
+  border-color: transparent;
+  color: white;
+  transform: translate(0%, 0%);
+}
+
+#loginBtn:hover {
+  background-color: #0056b3;
+}
+
 
 #signupBtn:hover {
   background-color: #0056b3;
