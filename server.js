@@ -38,11 +38,11 @@ connectDB();
 // 세션 설정
 app.use(session({
     secret: process.env.SECRET_KEY,  // 세션을 암호화하는 키
-    resave: false,  // 세션이 변경되지 않아도 항상 저장할지 여부
-    saveUninitialized: true,  // 초기화되지 않은 세션을 저장할지 여부
+    resave: false,
+    saveUninitialized: false,
     cookie: {
-        secure: false,  // HTTPS에서만 동작하도록 설정할지 여부 (HTTP에서는 false로 설정)
-        httpOnly: true,  // 클라이언트 측에서 쿠키에 접근하지 못하도록 설정
+        secure: false,  // HTTPS가 아닌 경우 false로 설정
+        httpOnly: true,  // 클라이언트에서 쿠키에 접근하지 못하도록 설정
         maxAge: 3600000  // 세션 유지 시간 (1시간)
     }
 }));
@@ -110,6 +110,8 @@ app.use(isAuthenticated, express.static(path.join(__dirname, 'public')));
 app.get('/', isAuthenticated, (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
+
+
 
 app.get('/api/users/me', (req, res) => {
     if (req.session.user) {

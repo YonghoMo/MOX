@@ -23,7 +23,12 @@ exports.signup = async (req, res) => {
         // 비밀번호 해싱
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        const newUser = new User({ username, password: hashedPassword, nickname });
+        const newUser = new User({
+            username,
+            password: hashedPassword,
+            nickname,
+            authorId: new mongoose.Types.ObjectId().toString()  // 고유한 authorId 생성
+        });
         await newUser.save();
 
         res.status(201).json({ message: '회원가입 성공!' });
@@ -58,7 +63,7 @@ exports.login = async (req, res) => {
         req.session.user = {
             username: user.username,
             nickname: user.nickname,  // 사용자 닉네임 세션에 저장
-            _id: user._id,  //친구 모집 글 자체 ID
+            _id: user._id,  // 사용자 고유 ID
             authorId: user.authorId,  // 세션에 authorId 저장
         };
         console.log('로그인 성공, 세션 정보:', req.session.user);  // 세션에 저장된 정보 출력
