@@ -1,7 +1,6 @@
 const express = require('express');
-const friendController = require('../controllers/friendController');
-
 const router = express.Router();
+const friendController = require('../controllers/friendController');
 
 // 친구 요청 관련 경로
 router.post('/request', friendController.sendFriendRequest);  // 친구 요청 보내기

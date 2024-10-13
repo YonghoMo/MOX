@@ -48,7 +48,7 @@ app.use(session({
 }));
 
 app.use(cors({
-    origin: 'http://localhost:5000',  // 클라이언트 도메인
+    origin: 'http://localhost:5000/',  // 클라이언트 도메인
     credentials: true  // 쿠키 허용
 }));
 
@@ -56,42 +56,11 @@ app.use(cors({
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// 모든 정적 파일 제공
+app.use(express.static(path.join(__dirname, 'public')));
+
 // Socket.IO 연결 처리 (socketController.js의 handleSocketConnection 호출)
 handleSocketConnection(io);
-
-// 로그인 여부 확인 미들웨어
-function isAuthenticated(req, res, next) {
-    if (req.session.user) {
-        next();  // 로그인되어 있으면 다음 미들웨어로 진행
-    } else {
-        res.redirect('/login');  // 로그인 안 된 경우 로그인 페이지로 리디렉션
-    }
-}
-
-// 로그아웃 라우트
-app.get('/logout', (req, res) => {
-    // 세션을 파기하여 로그아웃 처리
-    req.session.destroy((err) => {
-        if (err) {
-            return res.status(500).send('로그아웃 중 문제가 발생했습니다.');
-        }
-        // 로그아웃 후 로그인 페이지로 리디렉션
-        res.redirect('/login');
-    });
-});
-
-// 로그인 페이지에 필요한 정적 파일들을 로그인 여부와 상관없이 제공
-app.use('/css', express.static(path.join(__dirname, 'public', 'css')));
-app.use('/images', express.static(path.join(__dirname, 'public', 'images')));
-app.use('/js', express.static(path.join(__dirname, 'public', 'js')));
-app.use('/favicon.ico', express.static(path.join(__dirname, 'public', 'favicon.ico')));
-
-// 유저 경로 라우트
-app.use('/api/users', userRoutes);
-
-// 친구 경로 라우트
-app.use('/api/friends', friendRoutes);
-app.use('/api/recruits', recruitRoutes);
 
 // 로그인 페이지 제공
 app.get('/login', (req, res) => {
@@ -103,15 +72,46 @@ app.get('/signup', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'sign_up.html'));
 });
 
-// 모든 정적 파일 제공 (로그인 후에만 접근 가능)
-app.use(isAuthenticated, express.static(path.join(__dirname, 'public')));
+function isAuthenticated(req, res, next) {
+    if (req.session.user) {
+        next();  // 로그인되어 있으면 다음 미들웨어로 진행
+    } else {
+        res.redirect('/login');  // 로그인 안 된 경우 로그인 페이지로 리디렉션
+    }
+}
 
-// 메인 페이지 경로 (인증 필요)
-app.get('/', isAuthenticated, (req, res) => {
+// 메인 페이지는 인증된 사용자만 접근 가능
+app.get('/main', isAuthenticated, (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
+app.get('/', (req, res) => {
+    if (req.session.user) {
+        res.redirect('/main');  // 로그인된 경우 메인 페이지로 리디렉션
+    } else {
+        res.sendFile(path.join(__dirname, 'public', 'login.html'));  // 로그인 안 된 경우 로그인 페이지 제공
+    }
+});
 
+app.get('/api/auth/check', (req, res) => {
+    if (req.session.user) {
+        res.json({ loggedIn: true, username: req.session.user.username });
+    } else {
+        res.json({ loggedIn: false });
+    }
+});
+
+// 친구 요청 목록 라우팅
+app.use('/api/friends', friendRoutes);
+
+// 유저 경로 라우트
+app.use('/api/users', userRoutes);
+
+// 친구 모집 글 라우트
+app.use('/api/recruits', recruitRoutes);
+
+// 일정 경로 라우트
+app.use('/api/schedules', scheduleRoutes);
 
 app.get('/api/users/me', (req, res) => {
     if (req.session.user) {
@@ -121,12 +121,20 @@ app.get('/api/users/me', (req, res) => {
     }
 });
 
-
-// 일정 경로 라우트
-app.use('/api/schedules', scheduleRoutes);
+// 로그아웃 처리
+app.get('/logout', (req, res) => {
+    // 세션을 파기하여 로그아웃 처리
+    req.session.destroy((err) => {
+        if (err) {
+            return res.status(500).send('로그아웃 중 문제가 발생했습니다.');
+        }
+        // 로그아웃 후 로그인 페이지로 리디렉션
+        res.redirect('/login');
+    });
+});
 
 // 서버 실행
 const PORT = process.env.PORT || 5000;
-server.listen(PORT, () => {  // 수정된 부분
+server.listen(PORT, () => {
     console.log(`Server running on http://localhost:${PORT}`);
 });

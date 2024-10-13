@@ -102,22 +102,35 @@
     <script>
       // 친구 요청 목록 불러오기 및 렌더링
       async function loadFriendRequests() {
-        const response = await fetch("/api/friends/requests", {
-          method: "GET",
-        });
-        const data = await response.json();
-        const requestsDiv = document.getElementById("friend-requests");
+        try {
+          const response = await fetch("/api/friends/requests", {
+            method: "GET",
+          });
+          const data = await response.json();
 
-        requestsDiv.innerHTML = "";
-        data.requests.forEach((request) => {
-          requestsDiv.innerHTML += `
-                    <div>
-                        <img src="images/default_profile.PNG" width="35px" height="35px" alt="프로필 사진">
-                        ${request.nickname}님의 친구 요청
-                        <button onclick="acceptFriendRequest('${request.authorId}')">수락</button>
-                        <button onclick="rejectFriendRequest('${request.authorId}')">거절</button>
-                    </div>`;
-        });
+          console.log("친구 요청 데이터:", data); // 서버에서 받은 데이터를 로그로 확인
+
+          const requestsDiv = document.getElementById("friend-requests");
+          requestsDiv.innerHTML = "";
+
+          // 예외 처리: data.requests가 undefined일 경우 처리
+          if (!data.requests || data.requests.length === 0) {
+            requestsDiv.innerHTML = "<p>받은 친구 요청이 없습니다.</p>";
+            return;
+          }
+
+          data.requests.forEach((request) => {
+            requestsDiv.innerHTML += `
+                <div>
+                    <img src="images/default_profile.PNG" width="35px" height="35px" alt="프로필 사진">
+                    ${request.nickname}님의 친구 요청
+                    <button onclick="acceptFriendRequest('${request._id}')">수락</button>
+                    <button onclick="rejectFriendRequest('${request._id}')">거절</button>
+                </div>`;
+          });
+        } catch (error) {
+          console.error("친구 요청 목록 불러오기 오류:", error);
+        }
       }
 
       // 친구 요청 수락

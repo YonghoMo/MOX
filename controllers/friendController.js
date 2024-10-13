@@ -1,10 +1,11 @@
 const Friend = require('../models/friendModel');
 const User = require('../models/userModel');  // User 모델 불러오기
+const mongoose = require('mongoose');
 
 
 exports.sendFriendRequest = async (req, res) => {
     const { friendName } = req.body;
-    const userId = req.session.user ? req.session.user.id : null;  // 세션에서 사용자 ID 가져오기
+    const userId = req.session.user ? req.session.user.authorId : null;  // 세션에서 사용자 ID 가져오기
 
     // 사용자 ID가 없으면 로그인 오류 반환
     if (!userId) {
@@ -41,14 +42,18 @@ exports.sendFriendRequest = async (req, res) => {
 // 받은 친구 요청 목록 조회
 exports.getFriendRequests = async (req, res) => {
     try {
-        // 세션에서 사용자 ID 가져오기
-        const userId = req.session.user.id;
+        const userId = req.session.user._id;
 
-        // DB에서 받은 친구 요청 목록 가져오기
-        const requests = await Friend.find({ requestTo: userId });
+        // DB에서 현재 로그인한 사용자가 받은 친구 요청을 찾음
+        const requests = await Friend.find({ requestTo: userId, status: 'pending' });
+
+        if (!requests.length) {
+            return res.status(404).json({ message: '받은 친구 요청이 없습니다.' });
+        }
+
         res.status(200).json({ requests });
     } catch (error) {
-        console.error('친구 요청 목록 조회 중 오류 발생:', error);
+        console.error('친구 요청 목록 불러오기 오류:', error);
         res.status(500).json({ message: '서버 오류가 발생했습니다.' });
     }
 };
@@ -82,7 +87,7 @@ exports.removeFriend = async (req, res) => {
 // 현재 친구 목록
 exports.getFriends = async (req, res) => {
     try {
-        const userId = req.session.user.id;  // 세션에서 사용자 ID 가져오기
+        const userId = req.session.user._id;  // 세션에서 사용자 ID 가져오기
 
         // 수락된 친구 요청 목록 가져오기 (requestFrom 또는 requestTo가 userId인 친구 관계)
         const friends = await Friend.find({
