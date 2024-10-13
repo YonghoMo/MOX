@@ -152,91 +152,114 @@ function openCommentModal(eventId) {
         console.error('일정을 찾을 수 없습니다.');
         return; // 유효하지 않은 이벤트라면 모달을 열지 않음
     }
-    else {
-        // 모달 일정 제목과 정보 설정
-        const commentModalLabel = document.getElementById('commentModalLabel');
-        const eventDateTime = document.getElementById('event-date-time');
+    
+    // 모달 일정 제목과 정보 설정
+    const commentModalLabel = document.getElementById('commentModalLabel');
+    const eventDateTime = document.getElementById('event-date-time');
+    const eventTime = document.getElementById('event-time');  // 시간 표시용 요소
 
-        if (commentModalLabel) {
-            commentModalLabel.innerText = event.title;
-        } else {
-            console.error("commentModalLabel 요소를 찾을 수 없습니다.");
-        }
+    if (commentModalLabel) {    // 제목 설정
+        commentModalLabel.innerText = event.title;
+    } else {
+        console.error("commentModalLabel 요소를 찾을 수 없습니다.");
+    }
 
-        if (eventDateTime) {
-            eventDateTime.innerText = event.date;
-        } else {
-            console.error("event-date-time 요소를 찾을 수 없습니다.");
-        }
+    if (eventDateTime) {        // 일정 날짜 설정
+        eventDateTime.innerText = event.date;
+    } else {
+        console.error("event-date-time 요소를 찾을 수 없습니다.");
+    }
 
-        // 댓글 리스트 업데이트
-        updateCommentList(eventId);
-    } 
+    // 일정 시간이 있다면 시간도 추가로 표시
+    if (eventTime && event.startTime && event.endTime) {
+        eventTime.innerText = `${event.startTime} - ${event.endTime}`;  // 일정 시간 표시
+    } else {
+        eventTime.innerText = "";  // 시간 정보가 없을 경우 비워둠
+    }
 
-    // 선택된 운동 종목 가져오기
-    const selectedExercises = getSelectedExercises(); // 선택된 운동 종목 가져오기
-    const selectedList = document.getElementById('selected-exercises-list');
-    selectedList.innerHTML = selectedExercises.length > 0
-        ? selectedExercises.join(', ')  // 선택된 운동 종목을 모달에 표시
-        : '선택된 운동이 없습니다.';     // 없으면 기본 메세지 표시
-
-    // 운동량 설정 컨테이너 초기화
+    // 선택된 운동 종목 가져오기 및 운동량 설정 초기화
+    const selectedExercises = getSelectedExercises();
     const settingsContainer = document.getElementById('exercise-amount-settings');
-    settingsContainer.innerHTML = ''; // 기존 설정 필드 초기화  
+    
+    if (!settingsContainer) {
+        console.error('exercise-amount-settings 요소를 찾을 수 없습니다.');
+        return;
+    }
+    settingsContainer.innerHTML = ''; // 기존 설정 필드 초기화
 
-    // 선택된 운동 종목에 따라 동적으로 운동량 설정 필드 생성
-    selectedExercises.forEach(exercise => {
-        const fieldSet = document.createElement('fieldset');
-        const legend = document.createElement('legend');
-        legend.textContent = `${exercise}`;  // 운동 이름
-        fieldSet.appendChild(legend);
+    selectedExercises.forEach((exercise) => {
+        const exerciseBox = document.createElement('div');
+        exerciseBox.classList.add('exercise-box');
 
-        if (exercise === '트레드밀') {
-            // 유산소 운동 (시간 설정)
-            const timeLabel = document.createElement('label');
-            timeLabel.textContent = '운동 시간 (분)';
-            const timeInput = document.createElement('input');
-            timeInput.type = 'number';
-            timeInput.id = `amount-${exercise}`;
-            timeInput.placeholder = '예: 30';
-            fieldSet.appendChild(timeLabel);
-            fieldSet.appendChild(timeInput);
-        } else if (exercise === '웨이트') {
-            // 무게와 횟수 설정
-            const weightLabel = document.createElement('label');
-            weightLabel.textContent = '무게 (kg)';
-            const weightInput = document.createElement('input');
-            weightInput.type = 'number';
-            weightInput.id = `weight-${exercise}`;
-            weightInput.placeholder = '예: 50';
-            fieldSet.appendChild(weightLabel);
-            fieldSet.appendChild(weightInput);
-            
-            const repsLabel = document.createElement('label');
-            repsLabel.textContent = '횟수';
-            const repsInput = document.createElement('input');
-            repsInput.type = 'number';
-            repsInput.id = `reps-${exercise}`;
-            repsInput.placeholder = '예: 10';
-            fieldSet.appendChild(repsLabel);
-            fieldSet.appendChild(repsInput);
-        } else {
-            // 기본 횟수 설정
-            const repsLabel = document.createElement('label');
-            repsLabel.textContent = '횟수';
-            const repsInput = document.createElement('input');
-            repsInput.type = 'number';
-            repsInput.id = `reps-${exercise}`;
-            repsInput.placeholder = '예: 15';
-            fieldSet.appendChild(repsLabel);
-            fieldSet.appendChild(repsInput);
-        }
+        // 운동 이름 표시
+        const exerciseTitle = document.createElement('h5');
+        exerciseTitle.textContent = exercise;
+        exerciseBox.appendChild(exerciseTitle);
 
-        settingsContainer.appendChild(fieldSet);
+        // 세트와 반복 횟수 입력 테이블
+        const setTable = document.createElement('table');
+        const setHeader = `<tr><th>세트</th><th>횟수</th><th>완료</th></tr>`;
+        setTable.innerHTML = setHeader;
+
+        // 기본 세트 추가
+        addSet(setTable, exercise);
+
+        // 세트 추가/삭제 버튼
+        const setButtonsContainer = document.createElement('div');
+        setButtonsContainer.classList.add('d-flex', 'justify-content-between', 'mt-3');
+
+        const addSetButton = document.createElement('button');
+        addSetButton.classList.add('btn', 'btn-primary');
+        addSetButton.textContent = '세트 추가';
+        addSetButton.onclick = () => addSet(setTable, exercise);
+
+        const removeSetButton = document.createElement('button');
+        removeSetButton.classList.add('btn', 'btn-secondary');
+        removeSetButton.textContent = '세트 삭제';
+        removeSetButton.onclick = () => removeSet(setTable);
+
+        setButtonsContainer.appendChild(addSetButton);
+        setButtonsContainer.appendChild(removeSetButton);
+
+        // 박스 추가
+        exerciseBox.appendChild(setTable);
+        exerciseBox.appendChild(setButtonsContainer);
+        settingsContainer.appendChild(exerciseBox);
     });
 
-    const modal = new bootstrap.Modal(document.getElementById('commentModal'));
-    modal.show();
+    // 모달 열기
+    const modalElement = document.getElementById('commentModal');
+    if (modalElement) {
+        const modal = new bootstrap.Modal(modalElement);
+        modal.show();  // 모달을 화면에 표시
+    } else {
+        console.error('commentModal 요소를 찾을 수 없습니다.');
+    }
+}
+// 세트 추가 기능 (수정됨)
+function addSet(setTable, exercise) {
+    const setNumber = setTable.querySelectorAll('tr').length; // 세트 번호 계산
+    const setRow = document.createElement('tr');
+
+    setRow.innerHTML = `
+        <td>${setNumber}</td>
+        <td><input type="number" id="reps-${exercise}-${setNumber}" placeholder="횟수" /></td>
+        <td><input type="checkbox" id="done-${exercise}-${setNumber}" /></td>
+    `;
+    setTable.appendChild(setRow);
+}
+// 세트 삭제 기능 (수정됨)
+function removeSet(setTable) {
+    const sets = setTable.querySelectorAll('tr');
+    if (sets.length > 1) {  // 헤더 제외하고 세트가 있는 경우에만 실행
+        const lastSetRow = sets[sets.length - 1];  // 마지막 세트 가져오기
+        const doneCheckbox = lastSetRow.querySelector('input[type="checkbox"]');  // 완료 체크박스 찾기
+
+        if (doneCheckbox && !doneCheckbox.checked) {
+            // 체크박스가 체크되지 않은 경우에만 세트 삭제
+            setTable.removeChild(lastSetRow);
+        }
+    }
 }
 // 선택한 운동 종목 가져오기
 function getSelectedExercises() {

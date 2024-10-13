@@ -160,19 +160,18 @@
         id="commentModal"
         tabindex="-1"
         aria-labelledby="commentModalLabel"
-        aria-hidden="true"
-        >
+        aria-hidden="true">
         <div class="modal-dialog">
           <div class="modal-content">
             <div class="modal-header">
+              <span id="event-time" style="font-size: 0.8rem; color: gray; margin-right: 10px;"></span>
               <h5 class="modal-title" id="commentModalLabel">운동량 설정</h5>
               <button
                 type="button"
                 class="btn-close"
                 data-bs-dismiss="modal"
                 onclick="closeCommentModal()"
-                aria-label="Close">
-              </button>
+                aria-label="Close"></button>
             </div>
             <div class="modal-body">
               <p id="selected-exercises">
@@ -206,24 +205,15 @@
                 type="button"
                 class="btn btn-secondary"
                 data-bs-dismiss="modal"
-                onclick="closeCommentModal()"
-              >
-                닫기
-              </button>
+                onclick="closeCommentModal()">닫기</button>
               <button
                 type="button"
                 class="btn btn-primary"
-                onclick="deleteEvent()"
-              >
-                일정 삭제
-              </button>
+                onclick="deleteEvent()">일정 삭제</button>
               <button
                 type="button"
                 class="btn btn-primary"
-                onclick="saveExerciseAmount()"
-              >
-                운동량 저장
-              </button>
+                onclick="saveExerciseAmount()">운동량 저장</button>
             </div>
           </div>
         </div>
