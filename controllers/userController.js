@@ -23,7 +23,7 @@ exports.signup = async (req, res) => {
         // 비밀번호 해싱
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        const newUser = new User({ username, password: hashedPassword, email });
+        const newUser = new User({ username, password: hashedPassword, nickname });
         await newUser.save();
 
         res.status(201).json({ message: '회원가입 성공!' });
