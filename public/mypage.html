@@ -1,143 +1,170 @@
 <!DOCTYPE html>
+<html lang="ko">
   <head>
-      <meta charset="UTF-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-      <link href="css/style_mypage.css" rel="stylesheet" type="text/css">
-      <title>마이페이지</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+      crossorigin="anonymous"
+    />
+    <link href="css/style_mypage.css" rel="stylesheet" type="text/css" />
+    <title>마이페이지</title>
   </head>
-  <body> 
-        <nav class="navbar navbar-expand-lg navbar-light bg-light">
-          <div class="container-fluid">
-            <a class="navbar-brand" href="index.html">
-              <img src="images/logo.png" alt="" width="40" height="40" />
-            </a>
-            <button
-              class="navbar-toggler"
-              type="button"
-              data-bs-toggle="collapse"
-              data-bs-target="#navbarSupportedContent"
-              aria-controls="navbarSupportedContent"
-              aria-expanded="false"
-              aria-label="Toggle navigation"
-            >
-              <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarSupportedContent">
-              <ul class="navbar-nav ms-auto mb-2 mb-lg-0 text-end">
-                <li class="nav-item">
-                  <a class="nav-link active" aria-current="page" href="index.html">홈</a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link" href="calendar.html">캘린더</a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link" href="challenge.html">챌린지</a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link" href="ex_library.html">라이브러리</a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link" href="mypage.html">마이페이지</a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link" href="friends.html">친구</a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link" href="/logout">로그아웃</a>
-                </li>
-              </ul>
-            </div>
-          </div>
-        </nav>
-      <br>
-      <div class="profile">
-          <p>
-              <img src="images/default_profile.PNG" href="profile_change.html" alt="프로필 사진"> 
-          </p>
-          <p>
-              <!--회원 정보 변경에 들어갈 내용 : 프로필 사진 변경, 비밀번호 변경-->    
-              <button onClick="location.href='change_info.html'">회원정보 변경</button>
-          </p>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="index.html">
+          <img src="images/logo.png" alt="" width="40" height="40" />
+        </a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarSupportedContent"
+          aria-controls="navbarSupportedContent"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav ms-auto mb-2 mb-lg-0 text-end">
+            <li class="nav-item">
+              <a class="nav-link active" aria-current="page" href="index.html"
+                >홈</a
+              >
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="calendar.html">캘린더</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="challenge.html">챌린지</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="ex_library.html">라이브러리</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="mypage.html">마이페이지</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="friends.html">친구</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/logout">로그아웃</a>
+            </li>
+          </ul>
+        </div>
       </div>
-      <br>
-      <div class="container mt-5">
-        <h2>친구 관리</h2>
-        
-        <!-- 친구 요청 목록 -->
-        <h3>받은 친구 요청</h3>
-        <div id="friend-requests"></div>
-
-        <!-- 현재 친구 목록 -->
-        <h3>현재 친구 목록</h3>
-        <div id="friend-list"></div>
+    </nav>
+    <br />
+    <div class="profile">
+      <p>
+        <img
+          src="images/default_profile.PNG"
+          href="profile_change.html"
+          alt="프로필 사진"
+        />
+      </p>
+      <p>
+        <!--회원 정보 변경에 들어갈 내용 : 프로필 사진 변경, 비밀번호 변경-->
+        <button onClick="location.href='change_info.html'">
+          회원정보 변경
+        </button>
+      </p>
     </div>
-        <br>
-      <br>
-      <div class="settings" style="text-align: right;">
-          <p>
-            <a href="/logout">로그아웃</a> 
-          </p>
-      </div>
-      <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-      
-      <script>
-        // 친구 요청 목록 불러오기 및 렌더링
-        async function loadFriendRequests() {
-            const response = await fetch('/api/friends/requests', { method: 'GET' });
-            const data = await response.json();
-            const requestsDiv = document.getElementById('friend-requests');
-            
-            requestsDiv.innerHTML = '';
-            data.requests.forEach(request => {
-                requestsDiv.innerHTML += `
+    <br />
+    <div class="container mt-5">
+      <h2>친구 관리</h2>
+
+      <!-- 친구 요청 목록 -->
+      <h3>받은 친구 요청</h3>
+      <div id="friend-requests"></div>
+
+      <!-- 현재 친구 목록 -->
+      <h3>현재 친구 목록</h3>
+      <div id="friend-list"></div>
+    </div>
+    <br />
+    <br />
+    <div class="settings" style="text-align: right">
+      <p>
+        <a href="/logout">로그아웃</a>
+      </p>
+    </div>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+      crossorigin="anonymous"
+    ></script>
+
+    <script>
+      // 친구 요청 목록 불러오기 및 렌더링
+      async function loadFriendRequests() {
+        const response = await fetch("/api/friends/requests", {
+          method: "GET",
+        });
+        const data = await response.json();
+        const requestsDiv = document.getElementById("friend-requests");
+
+        requestsDiv.innerHTML = "";
+        data.requests.forEach((request) => {
+          requestsDiv.innerHTML += `
                     <div>
                         <img src="images/default_profile.PNG" width="35px" height="35px" alt="프로필 사진">
                         ${request.nickname}님의 친구 요청
                         <button onclick="acceptFriendRequest('${request.authorId}')">수락</button>
                         <button onclick="rejectFriendRequest('${request.authorId}')">거절</button>
                     </div>`;
-            });
-        }
+        });
+      }
 
-        // 친구 요청 수락
-        async function acceptFriendRequest(requestId) {
-            const response = await fetch(`/api/friends/accept/${requestId}`, { method: 'POST' });
-            loadFriendRequests(); loadFriends();  // 목록 갱신
-        }
+      // 친구 요청 수락
+      async function acceptFriendRequest(requestId) {
+        const response = await fetch(`/api/friends/accept/${requestId}`, {
+          method: "POST",
+        });
+        loadFriendRequests();
+        loadFriends(); // 목록 갱신
+      }
 
-        // 친구 요청 거절
-        async function rejectFriendRequest(requestId) {
-            const response = await fetch(`/api/friends/reject/${requestId}`, { method: 'POST' });
-            loadFriendRequests();  // 목록 갱신
-        }
+      // 친구 요청 거절
+      async function rejectFriendRequest(requestId) {
+        const response = await fetch(`/api/friends/reject/${requestId}`, {
+          method: "POST",
+        });
+        loadFriendRequests(); // 목록 갱신
+      }
 
-        // 친구 목록 불러오기 및 렌더링
-        async function loadFriends() {
-            const response = await fetch('/api/friends', { method: 'GET' });
-            const data = await response.json();
-            const friendsDiv = document.getElementById('friend-list');
-            
-            friendsDiv.innerHTML = '';
-            data.friends.forEach(friend => {
-                friendsDiv.innerHTML += `
+      // 친구 목록 불러오기 및 렌더링
+      async function loadFriends() {
+        const response = await fetch("/api/friends", { method: "GET" });
+        const data = await response.json();
+        const friendsDiv = document.getElementById("friend-list");
+
+        friendsDiv.innerHTML = "";
+        data.friends.forEach((friend) => {
+          friendsDiv.innerHTML += `
                     <div>
                         <img src="images/default_profile.PNG" width="35px" height="35px" alt="프로필 사진">
                         ${friend.nickname}
                         <button onclick="deleteFriend('${friend._id}')">삭제</button>
                     </div>`;
-            });
-        }
+        });
+      }
 
-        // 친구 삭제
-        async function deleteFriend(friendId) {
-            const response = await fetch(`/api/friends/${friendId}`, { method: 'DELETE' });
-            loadFriends();  // 목록 갱신
-        }
+      // 친구 삭제
+      async function deleteFriend(friendId) {
+        const response = await fetch(`/api/friends/${friendId}`, {
+          method: "DELETE",
+        });
+        loadFriends(); // 목록 갱신
+      }
 
-        // 페이지 로딩 시 친구 요청 및 친구 목록 불러오기
-        loadFriendRequests();
-        loadFriends();
+      // 페이지 로딩 시 친구 요청 및 친구 목록 불러오기
+      loadFriendRequests();
+      loadFriends();
     </script>
   </body>
 </html>
