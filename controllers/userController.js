@@ -55,10 +55,15 @@ exports.login = async (req, res) => {
         }
 
         // 로그인 성공 시 세션에 사용자 정보 저장
-        req.session.user = user;  // 세션에 사용자 정보 저장
-        res.status(200).json({ message: '로그인 성공!' });
+        req.session.user = {
+            username: user.username,
+            nickname: user.nickname,  // 사용자 닉네임 세션에 저장
+            _id: user._id
+        };
+
+        res.status(200).json({ message: '로그인 성공!', user: req.session.user });
     } catch (error) {
-        console.error('로그인 중 오류:', error);
-        res.status(500).json({ message: '서버 오류가 발생했습니다. 다시 시도해주세요.' });
+        console.error('로그인 오류 발생:', error);
+        res.status(500).json({ message: '서버 오류가 발생했습니다.' });
     }
 };

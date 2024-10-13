@@ -12,6 +12,9 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const userRoutes = require('./routes/userRoutes');
 const scheduleRoutes = require('./routes/scheduleRoutes');
+const recruitRoutes = require('./routes/recruitRoutes');
+const friendRoutes = require('./routes/friendRoutes');
+const User = require('./models/userModel');
 const session = require('express-session');  // express-session 모듈 불러오기
 const bcrypt = require('bcrypt');
 
@@ -75,6 +78,10 @@ app.use('/favicon.ico', express.static(path.join(__dirname, 'public', 'favicon.i
 // 유저 경로 라우트
 app.use('/api/users', userRoutes);
 
+// 친구 경로 라우트
+app.use('/api/friends', friendRoutes);
+app.use('/api/recruits', recruitRoutes);
+
 // 로그인 페이지 제공
 app.get('/login', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'login.html'));
@@ -93,15 +100,14 @@ app.get('/', isAuthenticated, (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-// 동적 라우트 처리 (로그인 후에만 접근 가능)
-app.get('/:page', isAuthenticated, (req, res) => {
-    const page = req.params.page;
-    res.sendFile(path.join(__dirname, 'public', `${page}.html`), (err) => {
-        if (err) {
-            res.status(404).send('Page not found');
-        }
-    });
+app.get('/api/users/me', (req, res) => {
+    if (req.session.user) {
+        return res.json({ userId: req.session.user._id }); // 세션에서 사용자 ID 반환
+    } else {
+        return res.status(401).json({ message: '로그인이 필요합니다.' }); // 로그인이 안 된 경우
+    }
 });
+
 
 // 일정 경로 라우트
 app.use('/api/schedules', scheduleRoutes);
