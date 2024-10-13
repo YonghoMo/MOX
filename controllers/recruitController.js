@@ -41,3 +41,19 @@ exports.getRecruits = async (req, res) => {
         res.status(500).json({ message: '서버에서 오류가 발생했습니다.', error: error.message });
     }
 };
+
+// 친구 모집 글 삭제하기
+exports.deleteRecruit = async (req, res) => {
+    const recruitId = req.params.id;  // URL에서 recruitId를 가져옴
+
+    try {
+        const result = await Recruit.findByIdAndDelete(recruitId);
+        if (!result) {
+            return res.status(404).json({ message: '모집 글을 찾을 수 없습니다.' });
+        }
+        res.status(200).json({ message: '모집 글이 삭제되었습니다.' });
+    } catch (error) {
+        console.error('모집 글 삭제 중 오류 발생:', error);
+        res.status(500).json({ message: '서버 오류가 발생했습니다.' });
+    }
+};
