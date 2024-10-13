@@ -46,7 +46,7 @@ body {
   background-color: #007bff;
   color: #fff;
   border: none;
-  padding: 10px 20px;
+  padding: 7px 8px;
   border-radius: 4px;
   cursor: pointer;
   transition: background-color 0.3s;
@@ -141,6 +141,7 @@ body {
   background-color: #007bff;
   color: #fff;
   border: none;
+  font-size: 14px;
   padding-top: 2px;
   padding-bottom: 2px; 
   border-radius: 4px;
