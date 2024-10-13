@@ -179,15 +179,26 @@ function openCommentModal(eventId) {
         eventTime.innerText = "";  // 시간 정보가 없을 경우 비워둠
     }
 
-    // 선택된 운동 종목 가져오기 및 운동량 설정 초기화
+     // 선택된 운동 이름 표시
+    if (selectedExercisesList) {
+        if (selectedExercises && selectedExercises.length > 0) {
+            selectedExercisesList.innerText = selectedExercises.join(', ');  // 운동 이름을 표시
+        } else {
+            selectedExercisesList.innerText = "선택된 운동이 없습니다.";   // 선택된 운동 없을 때 비워둠
+        }
+    } else {
+        console.error("selected-exercises-list 요소를 찾을 수 없습니다.");
+    }
     
+    // 운동 세트 정보 추가
     const settingsContainer = document.getElementById('exercise-amount-settings');
-    
-    if (!settingsContainer) {
+    if(settingsContainer) {
+        const settingsContainer = document.getElementById('exercise-amount-settings');
+        settingsContainer.innerHTML = '';   // 기존 설정 필드 초기화
+    } else {
         console.error('exercise-amount-settings 요소를 찾을 수 없습니다.');
         return;
     }
-    settingsContainer.innerHTML = ''; // 기존 설정 필드 초기화
 
     selectedExercises.forEach((exercise) => {
         const exerciseBox = document.createElement('div');

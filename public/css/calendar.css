@@ -167,16 +167,17 @@ h2#month-year {
 
 .exercise-box {
   border: 1px solid #ddd;
-  padding: 10px;
-  margin-bottom: 15px;
+  padding: 15px;
+  margin-bottom: 20px;
   border-radius: 8px;
   background-color: #f9f9f9;
 }
 
 .exercise-box h5 {
-  margin-bottom: 10px;
-  font-size: 1.1rem;
+  margin-bottom: 15px;
+  font-size: 1.2rem;
   font-weight: bold;
+  color: #333;
 }
 
 .set-controls {
@@ -209,6 +210,20 @@ h2#month-year {
 
 .set-buttons button {
   width: 48%;
+  font-size: 0.9rem;
+  padding: 10px;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+}
+
+.set-buttons button.btn-secondary {
+  background-color: #6c757d;
+  color: white;
+}
+
+.set-buttons button:hover {
+  opacity: 0.9;
 }
 
 #exercise-amount-settings {
@@ -216,12 +231,77 @@ h2#month-year {
 }
 
 button {
-  font-size: 0.9rem;
-  padding: 8px;
+  font-size: 1rem;
+  padding: 10px;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+}
+button.btn-primary {
+  background-color: #007bff;
+  color: white;
+}
+
+button.btn-primary:hover {
+  opacity: 0.9;
+}
+
+button.btn-secondary {
+  background-color: #6c757d;
+  color: white;
+}
+
+button.btn-secondary:hover {
+  opacity: 0.9;
 }
 
 #comment-list {
   max-height: 150px;
   overflow-y: auto;
   margin-top: 15px;
+}
+
+.table-wrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  padding: 5px;
+  border-bottom: 1px solid #eaeaea;
+}
+
+.table-wrapper label {
+  margin-right: 15px;
+  font-size: 0.9rem;
+  color: #555;
+}
+
+.table-wrapper input[type="number"] {
+  width: 60px;
+  padding: 6px;
+  font-size: 0.9rem;
+  margin-right: 15px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.table-wrapper input[type="checkbox"] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-left: 15px;
+}
+
+.table-wrapper input[type="checkbox"]:checked {
+  background-color: #007bff;
+  border-color: #007bff;
+  background-image: url('data:image/svg+xml;base64,...'); /* 체크 표시 */
+  background-size: 16px 16px;
+  background-position: center;
+  background-repeat: no-repeat;
 }
