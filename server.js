@@ -12,6 +12,9 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const userRoutes = require('./routes/userRoutes');
 const scheduleRoutes = require('./routes/scheduleRoutes');
+const recruitRoutes = require('./routes/recruitRoutes');
+const friendRoutes = require('./routes/friendRoutes');
+const User = require('./models/userModel');
 const session = require('express-session');  // express-session 모듈 불러오기
 const bcrypt = require('bcrypt');
 
@@ -75,6 +78,10 @@ app.use('/favicon.ico', express.static(path.join(__dirname, 'public', 'favicon.i
 // 유저 경로 라우트
 app.use('/api/users', userRoutes);
 
+// 친구 경로 라우트
+app.use('/api/friends', friendRoutes);
+app.use('/api/recruits', recruitRoutes);
+
 // 로그인 페이지 제공
 app.get('/login', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'login.html'));
@@ -91,16 +98,6 @@ app.use(isAuthenticated, express.static(path.join(__dirname, 'public')));
 // 메인 페이지 경로 (인증 필요)
 app.get('/', isAuthenticated, (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
-});
-
-// 동적 라우트 처리 (로그인 후에만 접근 가능)
-app.get('/:page', isAuthenticated, (req, res) => {
-    const page = req.params.page;
-    res.sendFile(path.join(__dirname, 'public', `${page}.html`), (err) => {
-        if (err) {
-            res.status(404).send('Page not found');
-        }
-    });
 });
 
 // 일정 경로 라우트
