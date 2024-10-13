@@ -48,7 +48,7 @@ app.use(session({
 }));
 
 app.use(cors({
-    origin: 'http://localhost:5000/',  // 클라이언트 도메인
+    origin: 'http://localhost:5000',  // 클라이언트 도메인
     credentials: true  // 쿠키 허용
 }));
 
@@ -62,43 +62,9 @@ app.use(express.static(path.join(__dirname, 'public')));
 // Socket.IO 연결 처리 (socketController.js의 handleSocketConnection 호출)
 handleSocketConnection(io);
 
-// 로그인 페이지 제공
-app.get('/login', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'login.html'));
-});
-
-// 회원가입 페이지 제공 (GET 요청)
-app.get('/signup', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'sign_up.html'));
-});
-
-function isAuthenticated(req, res, next) {
-    if (req.session.user) {
-        next();  // 로그인되어 있으면 다음 미들웨어로 진행
-    } else {
-        res.redirect('/login');  // 로그인 안 된 경우 로그인 페이지로 리디렉션
-    }
-}
-
-// 메인 페이지는 인증된 사용자만 접근 가능
-app.get('/main', isAuthenticated, (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'index.html'));
-});
-
+// 첫 페이지로 리디렉션
 app.get('/', (req, res) => {
-    if (req.session.user) {
-        res.redirect('/main');  // 로그인된 경우 메인 페이지로 리디렉션
-    } else {
-        res.sendFile(path.join(__dirname, 'public', 'login.html'));  // 로그인 안 된 경우 로그인 페이지 제공
-    }
-});
-
-app.get('/api/auth/check', (req, res) => {
-    if (req.session.user) {
-        res.json({ loggedIn: true, username: req.session.user.username });
-    } else {
-        res.json({ loggedIn: false });
-    }
+    res.redirect('/login.html');  // '/login.html'로 리디렉션
 });
 
 // 친구 요청 목록 라우팅
@@ -129,9 +95,10 @@ app.get('/logout', (req, res) => {
             return res.status(500).send('로그아웃 중 문제가 발생했습니다.');
         }
         // 로그아웃 후 로그인 페이지로 리디렉션
-        res.redirect('/login');
+        res.redirect('/login.html');
     });
 });
+
 
 // 서버 실행
 const PORT = process.env.PORT || 5000;
