@@ -100,6 +100,15 @@ app.get('/', isAuthenticated, (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
+app.get('/api/users/me', (req, res) => {
+    if (req.session.user) {
+        return res.json({ userId: req.session.user._id }); // 세션에서 사용자 ID 반환
+    } else {
+        return res.status(401).json({ message: '로그인이 필요합니다.' }); // 로그인이 안 된 경우
+    }
+});
+
+
 // 일정 경로 라우트
 app.use('/api/schedules', scheduleRoutes);
 

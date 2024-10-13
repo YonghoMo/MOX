@@ -4,7 +4,7 @@ const Recruit = require('../models/recruitModel');
 exports.createRecruit = async (req, res) => {
     try {
         // 세션에서 사용자 정보 가져오기
-        const { username, nickname } = req.session.user;
+        const { username, nickname, _id: userId } = req.session.user; // 사용자 ID도 가져옴
         if (!username || !nickname) {
             return res.status(401).json({ message: '로그인이 필요합니다.' });
         }
@@ -19,6 +19,7 @@ exports.createRecruit = async (req, res) => {
         const newRecruit = new Recruit({
             title,
             description,
+            authorId: userId, // authorId에 사용자 ID 저장
             authorUsername: username,  // 세션에서 가져온 사용자 username
             authorNickname: nickname,  // 세션에서 가져온 사용자 nickname
         });
@@ -45,12 +46,23 @@ exports.getRecruits = async (req, res) => {
 // 친구 모집 글 삭제하기
 exports.deleteRecruit = async (req, res) => {
     const recruitId = req.params.id;  // URL에서 recruitId를 가져옴
+    const userId = req.session.user ? req.session.user._id : null;  // 세션에서 현재 사용자의 ID 가져옴
+
+    console.log("모집 글 ID:", recruitId);  // 삭제할 글의 ID
+    console.log("현재 사용자 ID:", userId);  // 세션에서 가져온 사용자 ID
 
     try {
-        const result = await Recruit.findByIdAndDelete(recruitId);
-        if (!result) {
+        const recruit = await Recruit.findById(recruitId);
+        if (!recruit) {
             return res.status(404).json({ message: '모집 글을 찾을 수 없습니다.' });
         }
+
+        // 작성자 ID가 일치하는지 확인
+        if (!recruit.authorId || recruit.authorId.toString() !== userId.toString()) {
+            return res.status(403).json({ message: '자신의 글만 삭제할 수 있습니다.' });
+        }
+
+        await Recruit.findByIdAndDelete(recruitId);  // 모집 글 삭제
         res.status(200).json({ message: '모집 글이 삭제되었습니다.' });
     } catch (error) {
         console.error('모집 글 삭제 중 오류 발생:', error);
