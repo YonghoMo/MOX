@@ -219,15 +219,6 @@
         }
       }
 
-      // 인증된 사용자 정보 반환
-      router.get("/me", (req, res) => {
-        if (req.session.user) {
-          return res.json({ userId: req.session.user.authorId }); // 세션에 저장된 사용자 ID 반환
-        } else {
-          return res.status(401).json({ message: "로그인이 필요합니다." });
-        }
-      });
-
       // 페이지 로딩 시 모집 글 목록 불러오기
       loadFriendRecruits();
     </script>

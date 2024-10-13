@@ -46,7 +46,7 @@ exports.getRecruits = async (req, res) => {
 // 친구 모집 글 삭제하기
 exports.deleteRecruit = async (req, res) => {
     const recruitId = req.params.id;  // URL에서 recruitId를 가져옴
-    const userId = req.session.user ? req.session.user._id : null;  // 세션에서 현재 사용자의 ID 가져옴
+    const userId = req.session.user;  // 세션에서 현재 사용자의 ID 가져옴
 
     console.log("모집 글 ID:", recruitId);  // 삭제할 글의 ID
     console.log("현재 사용자 ID:", userId);  // 세션에서 가져온 사용자 ID
