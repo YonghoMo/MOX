@@ -12,11 +12,11 @@ exports.getExercises = async (req, res) => {
     }
 };
 
-// 개별 운동 종목 조회 (exerciseId로 조회)
+// 특정 운동 종목 조회 (exerciseId로 조회)
 exports.getExerciseById = async (req, res) => {
     try {
-        const { exerciseId } = req.params;  // URL에서 exerciseId 가져오기
-        const exercise = await Exercise.findOne({ exerciseId });
+        const { exerciseId } = req.params;         // URL에서 exerciseId 가져오기
+        const exercise = await Exercise.findById({ exerciseId });       
         
         if (!exercise) {
             return res.status(404).json({ error: '운동 종목을 찾을 수 없습니다.' });
