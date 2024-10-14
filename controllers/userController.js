@@ -4,9 +4,9 @@ const bcrypt = require('bcrypt');
 
 // 회원가입 처리
 exports.signup = async (req, res) => {
-    const { username, password, nickname } = req.body;
+    const { username, password, nickname, height, weight } = req.body;
 
-    if (!username || !password || !nickname) {
+    if (!username || !password || !nickname || !height || !weight) {
         return res.status(400).json({ message: '모든 항목을 입력해주세요.' });
     }
 
@@ -28,6 +28,8 @@ exports.signup = async (req, res) => {
             username,
             password: hashedPassword,
             nickname,
+            height,
+            weight
         });
         await newUser.save();
 

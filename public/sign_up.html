@@ -89,7 +89,22 @@
             required
           />
         </div>
-
+        <div id="height">
+          <input
+            type="number"
+            id="height-input"
+            placeholder="키(cm)"
+            class="account"
+          />
+        </div>
+        <div id="weight">
+          <input
+            type="number"
+            id="weight-input"
+            placeholder="몸무게(kg)"
+            class="account"
+          />
+        </div>
         <div>
           <button type="submit" id="signup-group-button">회원가입</button>
         </div>
@@ -107,10 +122,10 @@
           // 입력된 값 가져오기
           const username = document.getElementById("username").value;
           const password = document.getElementById("password-input").value;
-          const confirmPassword = document.getElementById(
-            "confirm-password-input"
-          ).value;
+          const confirmPassword = document.getElementById("confirm-password-input").value;
           const nickname = document.getElementById("nickname-input").value;
+          const height = document.getElementById("height-input").value;
+          const weight = document.getElementById("weight-input").value;
 
           // 비밀번호 일치 여부 확인
           if (password !== confirmPassword) {
@@ -129,6 +144,8 @@
                 username: username,
                 password: password,
                 nickname: nickname,
+                height: height,
+                weight: weight
               }),
             });
 
