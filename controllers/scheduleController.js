@@ -6,12 +6,12 @@ exports.createSchedule = async (req, res) => {
 
     try {
         // 새 일정 생성
-        const newschedule = new Schedule({ 
+        const newschedule = new Schedule({
             title,
-            date, 
-            startTime, 
-            endTime, 
-            userId 
+            date,
+            startTime,
+            endTime,
+            userId
         });
         await newschedule.save();  // DB에 저장
         res.status(201).json({ message: 'Schedule created', scheduleId: newSchedule._id });
@@ -26,11 +26,11 @@ exports.readSchedule = async (req, res) => {
     try {
         const { id } = req.params;  // URL에서 eventId 가져오기
         const schedule = await Schedule.findById(id);  // _id로 일정 찾기
-        
+
         if (!schedule) {
             return res.status(404).json({ error: '일정을 찾을 수 없습니다.' });
         }
-        
+
         res.json(schedule);
     } catch (err) {
         console.error('일정 조회 실패:', err.message);
@@ -42,7 +42,7 @@ exports.readSchedule = async (req, res) => {
 exports.updateSchedule = async (req, res) => {
     try {
         const { id } = req.params;    // _id 가져오기
-        const { exerciseType, weight, repetitions, time } = req.body;  
+        const { exerciseType, weight, repetitions, time } = req.body;
 
         // _id로 일정 식별
         const schedule = await Schedule.findById(id);
@@ -50,7 +50,7 @@ exports.updateSchedule = async (req, res) => {
         if (!schedule) {
             return res.status(404).json({ error: '일정을 찾을 수 없습니다.' });
         }
-        
+
         // 운동량 업데이트
         schedule.exerciseType = {
             type: exerciseType,
@@ -58,7 +58,7 @@ exports.updateSchedule = async (req, res) => {
             repetitions: exerciseType !== '유산소' ? repetitions : undefined,
             time: exerciseType === '유산소' ? time : undefined
         };
-        
+
         await schedule.save();
         res.status(200).json({ message: '운동량이 성공적으로 저장되었습니다.' });
     } catch (err) {
@@ -81,5 +81,21 @@ exports.deleteSchedule = async (req, res) => {
     } catch (err) {
         console.error('일정 삭제 실패:', err.message);
         res.status(500).json({ error: '일정 삭제에 실패했습니다.' });
+    }
+};
+
+exports.readSchedulesByUser = async (req, res) => {
+    try {
+        const { userId } = req.params;  // URL에서 userId 가져오기
+        const schedules = await Schedule.find({ userId });  // userId로 모든 일정 조회
+
+        if (!schedules) {
+            return res.status(404).json({ error: '일정을 찾을 수 없습니다.' });
+        }
+
+        res.json(schedules);
+    } catch (err) {
+        console.error('일정 조회 실패:', err.message);
+        res.status(500).json({ error: '일정 조회에 실패했습니다.' });
     }
 };

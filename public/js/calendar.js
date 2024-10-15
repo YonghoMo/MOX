@@ -17,7 +17,7 @@ function generateCalendar(month, year) {
     console.log("Calendar generated for month: ", month, "year: ", year);
 
     const calendar = document.getElementById('calendar');
-    if(!calendar) {
+    if (!calendar) {
         console.error('캘린더 요소를 찾을 수 없습니다.');
         return;
     }
@@ -84,11 +84,11 @@ function populateExerciseCheckboxes() {
         checkbox.value = exercise;
         checkbox.id = `exercise-${exercise}`;
         checkbox.classList.add('exercise-checkbox');
-        
+
         const label = document.createElement('label');
         label.htmlFor = `exercise-${exercise}`;
         label.textContent = exercise;
-        
+
         checkboxGroup.appendChild(checkbox);
         checkboxGroup.appendChild(label);
         checkboxGroup.appendChild(document.createElement('br'));
@@ -152,7 +152,7 @@ function openCommentModal(eventId) {
         console.error('일정을 찾을 수 없습니다.');
         return; // 유효하지 않은 이벤트라면 모달을 열지 않음
     }
-    
+
     // 모달 일정 제목과 정보 설정
     const commentModalLabel = document.getElementById('commentModalLabel');
     const eventDateTime = document.getElementById('event-date-time');
@@ -179,7 +179,7 @@ function openCommentModal(eventId) {
         eventTime.innerText = "";  // 시간 정보가 없을 경우 비워둠
     }
 
-     // 선택된 운동 이름 표시
+    // 선택된 운동 이름 표시
     if (selectedExercisesList) {
         if (selectedExercises && selectedExercises.length > 0) {
             selectedExercisesList.innerText = selectedExercises.join(', ');  // 운동 이름을 표시
@@ -189,10 +189,10 @@ function openCommentModal(eventId) {
     } else {
         console.error("selected-exercises-list 요소를 찾을 수 없습니다.");
     }
-    
+
     // 운동 세트 정보 추가
     const settingsContainer = document.getElementById('exercise-amount-settings');
-    if(settingsContainer) {
+    if (settingsContainer) {
         const settingsContainer = document.getElementById('exercise-amount-settings');
         settingsContainer.innerHTML = '';   // 기존 설정 필드 초기화
     } else {
@@ -305,7 +305,7 @@ function addComment() {
     if (newComment !== '') {
         // 현재 일정 ID에 대한 댓글이 없으면 배열 생성
         if (!comments[currentEventId]) {
-            comments[currentEventId] = []; 
+            comments[currentEventId] = [];
         }
 
         comments[currentEventId].push(newComment); // 새 댓글 추가
@@ -369,3 +369,38 @@ document.addEventListener('DOMContentLoaded', () => {
     generateCalendar(currentMonth, currentYear); // 캘린더 생성
 });
 
+async function loadUserSchedules(userId) {
+    try {
+        const response = await fetch(`/api/schedules/user/${userId}`);
+        const schedules = await response.json();
+
+        if (schedules && schedules.length > 0) {
+            schedules.forEach(schedule => {
+                // 일정 데이터를 캘린더에 추가
+                events[schedule._id] = {
+                    id: schedule._id,
+                    title: schedule.title,
+                    date: schedule.date.split('T')[0],
+                    startTime: schedule.startTime,
+                    endTime: schedule.endTime
+                };
+            });
+
+            // 캘린더 갱신
+            generateCalendar(currentMonth, currentYear);
+        }
+    } catch (error) {
+        console.error('사용자 일정 불러오기 실패:', error);
+    }
+}
+
+document.addEventListener('DOMContentLoaded', async () => {
+    // 사용자 정보 가져오기
+    const response = await fetch('/api/users/me');
+    if (response.ok) {
+        const { userId } = await response.json();
+        await loadUserSchedules(userId);
+    } else {
+        console.error('로그인된 사용자 정보를 가져오지 못했습니다.');
+    }
+});
