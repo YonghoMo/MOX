@@ -1,11 +1,7 @@
 const mongoose = require('mongoose');
 
+// 운동 종목 스키마 정의
 const exerciseSchema = new mongoose.Schema({
-    exerciseId: { 
-        type: String, 
-        default: () => new mongoose.Types.ObjectId().toString(),  // 고유한 운동 ID 자동 생성
-        unique: true 
-    },
     name: { 
         type: String, 
         required: true 
@@ -15,25 +11,20 @@ const exerciseSchema = new mongoose.Schema({
         required: true, 
         enum: ['웨이트', '유산소', '맨몸운동'] 
     },  // 운동 카테고리
-    exerciseType: {
-        type: { 
-            type: String, 
-            required: true, 
-            enum: ['무게/횟수', '시간', '횟수'] 
-        },  // 운동량 타입 종류
-        weight: { 
-            type: Number, 
-            default: null 
-        },  // 무게 (웨이트용)
-        repetitions: { 
-            type: Number, 
-            default: null 
-        },  // 횟수 (웨이트/맨몸운동용)
-        time: { 
-            type: Number, 
-            default: null 
-        }  // 시간 (유산소용)
-    }
+    weight: { 
+        type: Number, 
+        default: null 
+    },  // 무게 (웨이트용)
+    repetitions: { 
+        type: Number, 
+        default: null 
+    },  // 횟수 (웨이트/맨몸운동용)
+    time: { 
+        type: Number, 
+        default: null 
+    }  // 시간 (유산소용)
+}, {
+    timestamps: true,  // 생성 및 수정 시간 자동 기록
 });
 
 module.exports = mongoose.model('Exercise', exerciseSchema);
