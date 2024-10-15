@@ -15,6 +15,8 @@ const userSchema = new mongoose.Schema({
         required: true,
         unique: true  // 닉네임 중복 방지
     },
+    height: { type: Number, required: false }, 
+    weight: { type: Number, required: false },
 });
 
 module.exports = mongoose.model('User', userSchema);

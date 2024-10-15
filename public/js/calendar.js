@@ -1,371 +1,276 @@
-let currentMonth = new Date().getMonth();
-let currentYear = new Date().getFullYear();
-let currentEventId = '';
-const today = new Date();
-const events = {}; // 일정을 저장할 객체
-const comments = {}; // 각 일정별 댓글 저장 객체
+let userId;
 
-const exerciseLibrary = [
-    '런닝', '수영', '요가', '웨이트', '윗몸 일으키기', '크런치', '레그 레이즈', '플랭크',
-    '에어 스쿼트', '바벨 백 스쿼트', '레그 프레스', '트레드밀'
-];
+// 페이지 로드 시 서버에서 세션을 통해 userId를 받아옴
+window.onload = function () {
+    axios
+        .get("/api/users/me")
+        .then((response) => {
+            userId = response.data.userId;
+            generateCalendar(); // 달력 생성
+        })
+        .catch((error) => {
+            console.error("User ID를 불러오는 중 오류가 발생했습니다.", error);
+            alert("로그인이 필요합니다.");
+            window.location.href = "/login.html"; // 로그인 페이지로 이동
+        });
+};
 
+// 달력 생성 함수
+function generateCalendar() {
+    const calendar = document.getElementById("calendar");
+    calendar.innerHTML = ""; // 기존 달력 초기화
 
-/* 캘린더 생성 코드 */
-function generateCalendar(month, year) {
-    // 디버깅 로그
-    console.log("Calendar generated for month: ", month, "year: ", year);
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = now.getMonth();
 
-    const calendar = document.getElementById('calendar');
-    if(!calendar) {
-        console.error('캘린더 요소를 찾을 수 없습니다.');
-        return;
+    const firstDayOfMonth = new Date(year, month, 1).getDay(); // 이번 달 첫 요일
+    const daysInMonth = new Date(year, month + 1, 0).getDate(); // 이번 달 마지막 날짜
+
+    // 빈 셀 추가 (첫 번째 요일 전까지)
+    for (let i = 0; i < firstDayOfMonth; i++) {
+        const emptyCell = document.createElement("div");
+        emptyCell.classList.add("day");
+        calendar.appendChild(emptyCell);
     }
 
-    // 캘린더 초기화
-    calendar.innerHTML = '';
+    // 날짜 셀 생성
+    for (let day = 1; day <= daysInMonth; day++) {
+        const dayCell = document.createElement("div");
+        dayCell.classList.add("day");
 
-    const firstDay = new Date(year, month).getDay();
-    const daysInMonth = new Date(year, month + 1, 0).getDate();
+        const dayNumber = document.createElement("div");
+        dayNumber.classList.add("day-number");
+        dayNumber.textContent = day;
+        dayCell.appendChild(dayNumber);
 
-    document.getElementById('month-year').innerText = `${year}-${String(month + 1).padStart(2, '0')}`;
-
-    for (let i = 0; i < firstDay; i++) {
-        calendar.innerHTML += '<div class="day empty"></div>';
+        calendar.appendChild(dayCell);
     }
 
-    for (let i = 1; i <= daysInMonth; i++) {
-        let dayClass = 'day';
-        const dateKey = `${year}-${String(month + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
-
-        if (year === today.getFullYear() && month === today.getMonth() && i === today.getDate()) {
-            dayClass += ' today';
-        }
-
-        // 일정 표시 (삭제 버튼 제외)
-        let eventText = '';
-        const eventList = Object.values(events).filter(event => event.date === dateKey);
-        if (eventList.length > 0) {
-            eventList.forEach(event => {
-                eventText += `
-                    <div class="event" onclick="openCommentModal(${event.id})">
-                        ${event.title} <!-- 삭제 버튼을 캘린더에서 숨기기 -->
-                    </div>`;
-            });
-        }
-        else {
-            console.log("No events for this date.")
-        }
-
-        calendar.innerHTML += `
-            <div class="${dayClass}" data-date="${dateKey}" onclick="${eventList.length > 0 ? `openCommentModal('${eventList[0].id}')` : `openAddEventModal('${dateKey}')`}">
-                <div class="date">${i}</div>
-                ${eventText}
-            </div>`;
-    }
+    loadEvents(); // 일정 불러오기
 }
 
-
-/* 일정 추가 모달 */
-// 일정 추가 모달 열기
-function openAddEventModal(dateKey) {
-    // 모달에 날짜 값을 설정
-    document.getElementById('event-date').value = dateKey;
-    // 일정 추가 모달 열기
-    const modal = new bootstrap.Modal(document.getElementById('addEventModal'));
-    modal.show();
-}
-// 운동 종목을 체크박스로 추가
-function populateExerciseCheckboxes() {
-    const checkboxGroup = document.getElementById('exercise-checkbox-group');
-    exerciseLibrary.forEach(exercise => {
-        const checkbox = document.createElement('input');
-        checkbox.type = 'checkbox';
-        checkbox.value = exercise;
-        checkbox.id = `exercise-${exercise}`;
-        checkbox.classList.add('exercise-checkbox');
-        
-        const label = document.createElement('label');
-        label.htmlFor = `exercise-${exercise}`;
-        label.textContent = exercise;
-        
-        checkboxGroup.appendChild(checkbox);
-        checkboxGroup.appendChild(label);
-        checkboxGroup.appendChild(document.createElement('br'));
-    });
-}
-// 페이지 로드 시 체크박스 추가
-document.addEventListener('DOMContentLoaded', populateExerciseCheckboxes);
-
+// 일정 저장
 function saveEvent() {
-    const title = document.getElementById('event-title').value;
-    const date = document.getElementById('event-date').value;
-    const startTime = document.getElementById('start-time').value;
-    const endTime = document.getElementById('end-time').value;
+    const title = document.getElementById("event-title").value;
+    const date = document.getElementById("event-date").value;
+    const startTime = document.getElementById("start-time").value;
+    const endTime = document.getElementById("end-time").value;
+    const exercises = document.getElementById("exercises").value.split(",");
 
-    if (title && date) {
-        // 고유 ID 생성
-        const eventId = Date.now();
+    if (title && date && startTime && endTime) {
+        axios
+            .post("/api/events", {
+                title,
+                date,
+                startTime,
+                endTime,
+                exercises,
+                userId,
+            })
+            .then((response) => {
+                if (response.data.success) {
+                    alert("일정이 저장되었습니다.");
+                    generateCalendar(); // 저장 후 일정 새로고침
 
-        // 일정 데이터를 저장
-        events[eventId] = { id: eventId, title, date, startTime, endTime };
-
-        // 캘린더 업데이트
-        generateCalendar(currentMonth, currentYear);
-
-        // 모달 창 닫기
-        const modal = bootstrap.Modal.getInstance(document.getElementById('addEventModal'));
-        modal.hide();
+                    // 모달 창 닫기
+                    const addEventModal = bootstrap.Modal.getInstance(document.getElementById("addEventModal"));
+                    addEventModal.hide(); // 모달 닫기
+                } else {
+                    alert("일정 저장에 실패했습니다.");
+                }
+            })
+            .catch((error) => {
+                console.error(error);
+                alert("일정 저장 중 오류가 발생했습니다.");
+            });
     } else {
-        alert('일정 제목과 날짜는 필수입니다.');
+        alert("모든 필드를 입력해주세요.");
     }
 }
 
-
-/* 일정 삭제 기능 */
-function deleteEvent() {
-    if (confirm('정말 이 일정을 삭제하시겠습니까?')) {
-        // 현재 보고 있는 일정 삭제
-        delete events[currentEventId]; // 전역 변수로 저장된 일정 ID를 사용
-        generateCalendar(currentMonth, currentYear); // 캘린더 갱신
-
-        // 모달 닫기
-        const modal = bootstrap.Modal.getInstance(document.getElementById('commentModal'));
-        modal.hide();
-
-        // 강제적으로 모달과 백드롭 제거
-        document.querySelectorAll('.modal-backdrop').forEach(backdrop => backdrop.remove()); // 백드롭 제거
-        document.body.classList.remove('modal-open'); // 모달 오픈 상태 클래스 제거
-        document.body.style = ''; // body에 적용된 스타일 초기화
-    }
+// 일정 삭제
+function deleteEvent(eventId) {
+    axios
+        .delete(`/api/events/${eventId}`)
+        .then((response) => {
+            if (response.data.success) {
+                alert("일정이 삭제되었습니다.");
+                generateCalendar(); // 삭제 후 일정 새로고침
+            } else {
+                alert("일정 삭제에 실패했습니다.");
+            }
+        })
+        .catch((error) => {
+            console.error("일정 삭제 중 오류가 발생했습니다.");
+        });
 }
 
+// 서버에서 일정 불러오기
+function loadEvents() {
+    axios
+        .get(`/api/events?userId=${userId}`)
+        .then((response) => {
+            const events = response.data.events;
+            displayEvents(events);
+        })
+        .catch((error) => {
+            console.error("일정 불러오기 중 오류가 발생했습니다.", error);
+            alert("일정 불러오기 중 오류가 발생했습니다.");
+        });
+}
 
-/* 댓글 모달 */
-// 댓글 모달 열기
-function openCommentModal(eventId) {
-    // 현재 보고 있는 일정의 ID 설정
-    currentEventId = eventId;
-    const event = events[eventId];
-    // 일정 데이터가 존재하는지 확인
-    if (!event) {
-        console.error('일정을 찾을 수 없습니다.');
-        return; // 유효하지 않은 이벤트라면 모달을 열지 않음
-    }
-    
-    // 모달 일정 제목과 정보 설정
-    const commentModalLabel = document.getElementById('commentModalLabel');
-    const eventDateTime = document.getElementById('event-date-time');
-    const eventTime = document.getElementById('event-time');  // 시간 표시용 요소
-    const selectedExercisesList = document.getElementById('selected-exercises-list');
-    const selectedExercises = getSelectedExercises();
+// 일정 달력에 표시 및 클릭 시 모달로 상세 정보 보기
+function displayEvents(events) {
+    events.forEach((event) => {
+        const eventDate = new Date(event.date);
+        const day = eventDate.getDate();
+        const dayCells = document.querySelectorAll(".day");
 
-    if (commentModalLabel) {    // 제목 설정
-        commentModalLabel.innerText = event.title;
-    } else {
-        console.error("commentModalLabel 요소를 찾을 수 없습니다.");
-    }
+        dayCells.forEach((cell) => {
+            const dayNumber = cell.querySelector(".day-number");
+            if (dayNumber && parseInt(dayNumber.textContent) === day) {
+                // PC/태블릿용 일정 제목 추가
+                const eventTitle = document.createElement("div");
+                eventTitle.classList.add("event-title");
+                eventTitle.textContent = event.title;
+                eventTitle.dataset.eventId = event._id;
 
-    if (eventDateTime) {        // 일정 날짜 설정
-        eventDateTime.innerText = event.date;
-    } else {
-        console.error("event-date-time 요소를 찾을 수 없습니다.");
-    }
+                // 기본 색상 파란색 설정
+                const savedColor = localStorage.getItem(`eventColor_${event._id}`) || "#007bff";
+                eventTitle.style.backgroundColor = savedColor;
 
-    // 일정 시간이 있다면 시간도 추가로 표시
-    if (eventTime && event.startTime && event.endTime) {
-        eventTime.innerText = `${event.startTime} - ${event.endTime}`;  // 일정 시간 표시
-    } else {
-        eventTime.innerText = "";  // 시간 정보가 없을 경우 비워둠
-    }
+                eventTitle.onclick = function () {
+                    showEventDetails(event); // 제목 클릭 시 상세 정보 모달 표시
+                };
 
-     // 선택된 운동 이름 표시
-    if (selectedExercisesList) {
-        if (selectedExercises && selectedExercises.length > 0) {
-            selectedExercisesList.innerText = selectedExercises.join(', ');  // 운동 이름을 표시
-        } else {
-            selectedExercisesList.innerText = "선택된 운동이 없습니다.";   // 선택된 운동 없을 때 비워둠
-        }
-    } else {
-        console.error("selected-exercises-list 요소를 찾을 수 없습니다.");
-    }
-    
-    // 운동 세트 정보 추가
-    const settingsContainer = document.getElementById('exercise-amount-settings');
-    if(settingsContainer) {
-        const settingsContainer = document.getElementById('exercise-amount-settings');
-        settingsContainer.innerHTML = '';   // 기존 설정 필드 초기화
-    } else {
-        console.error('exercise-amount-settings 요소를 찾을 수 없습니다.');
-        return;
-    }
+                // 모바일용 일정 동그라미 추가
+                const eventCircle = document.createElement("div");
+                eventCircle.classList.add("event-circle");
+                eventCircle.style.backgroundColor = savedColor; // 저장된 색상이 있으면 적용
+                eventCircle.onclick = function () {
+                    showEventDetails(event); // 동그라미 클릭 시 상세 정보 모달 표시
+                };
 
-    selectedExercises.forEach((exercise) => {
-        const exerciseBox = document.createElement('div');
-        exerciseBox.classList.add('exercise-box');
-
-        // 운동 이름 표시
-        const exerciseTitle = document.createElement('h5');
-        exerciseTitle.textContent = exercise;
-        exerciseBox.appendChild(exerciseTitle);
-
-        // 세트와 반복 횟수 입력 테이블
-        const setTable = document.createElement('table');
-        const setHeader = `<tr><th>세트</th><th>횟수</th><th>완료</th></tr>`;
-        setTable.innerHTML = setHeader;
-
-        // 기본 세트 추가
-        addSet(setTable, exercise);
-
-        // 세트 추가/삭제 버튼
-        const setButtonsContainer = document.createElement('div');
-        setButtonsContainer.classList.add('d-flex', 'justify-content-between', 'mt-3');
-
-        const addSetButton = document.createElement('button');
-        addSetButton.classList.add('btn', 'btn-primary');
-        addSetButton.textContent = '세트 추가';
-        addSetButton.onclick = () => addSet(setTable, exercise);
-
-        const removeSetButton = document.createElement('button');
-        removeSetButton.classList.add('btn', 'btn-secondary');
-        removeSetButton.textContent = '세트 삭제';
-        removeSetButton.onclick = () => removeSet(setTable);
-
-        setButtonsContainer.appendChild(addSetButton);
-        setButtonsContainer.appendChild(removeSetButton);
-
-        // 박스 추가
-        exerciseBox.appendChild(setTable);
-        exerciseBox.appendChild(setButtonsContainer);
-        settingsContainer.appendChild(exerciseBox);
+                // PC/태블릿에서는 제목, 모바일에서는 동그라미 추가
+                cell.appendChild(eventTitle);
+                cell.appendChild(eventCircle);
+            }
+        });
     });
+}
 
-    // 모달 열기
-    const modalElement = document.getElementById('commentModal');
-    if (modalElement) {
-        const modal = new bootstrap.Modal(modalElement);
-        modal.show();  // 모달을 화면에 표시
+// 댓글 저장 기능
+function saveComment(eventId) {
+    const newComment = document.getElementById("new-comment").value; // 댓글 입력값
+
+    if (newComment) {
+        // 서버에 댓글 저장 요청
+        axios.post(`/api/events/${eventId}/comments`, {
+            userId: userId, // 현재 로그인한 사용자 ID
+            comment: newComment // 새로운 댓글
+        })
+            .then((response) => {
+                if (response.data.success) {
+                    alert("댓글이 저장되었습니다.");
+                    loadComments(eventId); // 댓글 목록 새로고침
+                    document.getElementById("new-comment").value = ''; // 댓글 입력창 초기화
+                } else {
+                    alert("댓글 저장에 실패했습니다.");
+                }
+            })
+            .catch((error) => {
+                console.error("댓글 저장 중 오류가 발생했습니다.", error);
+                alert("댓글 저장 중 오류가 발생했습니다.");
+            });
     } else {
-        console.error('commentModal 요소를 찾을 수 없습니다.');
-    }
-}
-// 세트 추가 기능 (수정됨)
-function addSet(setTable, exercise) {
-    const setNumber = setTable.querySelectorAll('tr').length; // 세트 번호 계산
-    const setRow = document.createElement('tr');
-
-    setRow.innerHTML = `
-        <td>${setNumber}</td>
-        <td><input type="number" id="reps-${exercise}-${setNumber}" placeholder="횟수" /></td>
-        <td><input type="checkbox" id="done-${exercise}-${setNumber}" /></td>
-    `;
-    setTable.appendChild(setRow);
-}
-// 세트 삭제 기능 (수정됨)
-function removeSet(setTable) {
-    const sets = setTable.querySelectorAll('tr');
-    if (sets.length > 1) {  // 헤더 제외하고 세트가 있는 경우에만 실행
-        const lastSetRow = sets[sets.length - 1];  // 마지막 세트 가져오기
-        const doneCheckbox = lastSetRow.querySelector('input[type="checkbox"]');  // 완료 체크박스 찾기
-
-        if (doneCheckbox && !doneCheckbox.checked) {
-            // 체크박스가 체크되지 않은 경우에만 세트 삭제
-            setTable.removeChild(lastSetRow);
-        }
-    }
-}
-// 선택한 운동 종목 가져오기
-function getSelectedExercises() {
-    const checkboxes = document.querySelectorAll('.exercise-checkbox:checked');
-    const selectedExercises = [];
-    checkboxes.forEach(checkbox => {
-        selectedExercises.push(checkbox.value);
-    });
-    return selectedExercises;
-}
-// 코멘트 모달 닫기
-function closeCommentModal() {
-    const modal = bootstrap.Modal.getInstance(document.getElementById('commentModal'));
-
-    if (modal) {
-        modal.hide(); // 모달 닫기
-    }
-
-    // 강제적으로 모달과 백드롭 제거
-    document.querySelectorAll('.modal-backdrop').forEach(backdrop => backdrop.remove()); // 백드롭 제거
-    document.body.classList.remove('modal-open'); // 모달 오픈 상태 클래스 제거
-    document.body.style = ''; // body에 적용된 스타일 초기화
-}
-// 코멘트 추가하기
-function addComment() {
-    //const eventKey = document.getElementById('event-date-time').innerText.split(' ')[0];
-    const commentInput = document.getElementById('comment-input');
-    const newComment = commentInput.value.trim();
-
-    if (newComment !== '') {
-        // 현재 일정 ID에 대한 댓글이 없으면 배열 생성
-        if (!comments[currentEventId]) {
-            comments[currentEventId] = []; 
-        }
-
-        comments[currentEventId].push(newComment); // 새 댓글 추가
-        updateCommentList(currentEventId); // 댓글 리스트 업데이트
-        commentInput.value = ''; // 입력 필드 비우기
-    }
-    else {
         alert("댓글을 입력하세요.");
     }
 }
-// 코멘트 리스트 업데이트하기
-function updateCommentList(eventId) {
-    const commentList = document.getElementById('comment-list');
-    commentList.innerHTML = ''; // 기존 리스트 비우기
 
-    if (comments[eventId] && comments[eventId].length > 0) {
-        // 댓글 있는 경우 모달의 댓글 리스트에 추가
-        comments[eventId].forEach((comment) => {
-            const listItem = document.createElement('li');
-            listItem.classList.add('list-group-item');
-            listItem.textContent = comment;
-            commentList.appendChild(listItem);
+
+// 댓글 불러오기 기능
+function loadComments(eventId) {
+    axios.get(`/api/events/${eventId}/comments`)
+        .then((response) => {
+            const commentsList = document.getElementById("comments-list");
+            commentsList.innerHTML = ""; // 기존 댓글 초기화
+            response.data.comments.forEach((comment) => {
+                const commentItem = document.createElement("li");
+                commentItem.textContent = `${comment.nickname}: ${comment.text}`; // 닉네임과 댓글 내용 표시
+                commentsList.appendChild(commentItem);
+            });
+        })
+        .catch((error) => {
+            console.error("댓글 불러오기 중 오류가 발생했습니다.", error);
         });
-    } else {
-        // 댓글 없는 경우 기본 메세지 표시
-        const noComments = document.createElement('li');
-        noComments.classList.add('list-group-item');
-        noComments.textContent = '아직 댓글이 없습니다.';
-        commentList.appendChild(noComments);
-    }
 }
 
+// 색상 변경 핸들러 함수
+function handleColorChange(eventId) {
+    const colorPicker = document.getElementById("event-color-picker");
+    const selectedColor = colorPicker.value;
 
-// 캘린더 기본 기능
-document.getElementById('todayBtn').addEventListener('click', () => {
-    const today = new Date();
-    currentMonth = today.getMonth();
-    currentYear = today.getFullYear();
-    generateCalendar(currentMonth, currentYear);
-});
-document.getElementById('prevMonthBtn').addEventListener('click', () => {
-    currentMonth--;
-    if (currentMonth < 0) {
-        currentMonth = 11;
-        currentYear--;
-    }
-    generateCalendar(currentMonth, currentYear);
-});
-document.getElementById('nextMonthBtn').addEventListener('click', () => {
-    currentMonth++;
-    if (currentMonth > 11) {
-        currentMonth = 0;
-        currentYear++;
-    }
-    generateCalendar(currentMonth, currentYear);
+    // 로컬 스토리지에 선택한 색상 저장
+    localStorage.setItem(`eventColor_${eventId}`, selectedColor);
+
+    // 변경된 색상을 화면에 적용
+    applyEventColor(eventId, selectedColor);
+}
+
+// 일정 상세 정보 모달에 표시
+function showEventDetails(event) {
+    document.getElementById("viewEventTitle").textContent = event.title;
+    document.getElementById("viewEventDate").textContent = event.date;
+    document.getElementById("viewEventTime").textContent = event.startTime + " - " + event.endTime;
+    document.getElementById("viewEventExercises").textContent = event.exercises.join(", ");
+
+    // 이벤트 ID 저장
+    document.getElementById("viewEventTitle").dataset.eventId = event._id; // 이벤트 ID 저장
+
+    // 댓글 불러오기
+    loadComments(event._id);
+
+    // 모달 안의 색상 선택기에서 로컬 스토리지에 저장된 색상 불러오기
+    const colorPicker = document.getElementById("event-color-picker");
+    colorPicker.value = localStorage.getItem(`eventColor_${event._id}`) || "#007bff"; // 기본 파란색
+
+    // 색상 변경 이벤트 리스너 등록 (중복 방지)
+    colorPicker.removeEventListener('input', handleColorChange); // 기존 리스너 제거
+    colorPicker.addEventListener('input', function handleColorChange() {
+        const selectedColor = colorPicker.value;
+        localStorage.setItem(`eventColor_${event._id}`, selectedColor); // 로컬 스토리지에 저장
+        applyEventColor(event._id, selectedColor); // 변경된 색상 적용
+    });
+
+    // 모달을 띄우는 코드
+    const viewEventModal = new bootstrap.Modal(document.getElementById("viewEventModal"));
+    viewEventModal.show();
+}
+
+// 특정 일정에 색상 적용
+function applyEventColor(eventId, color) {
+    const dayCells = document.querySelectorAll('.day');
+    dayCells.forEach((cell) => {
+        const eventTitles = cell.querySelectorAll('.event-title');
+        const eventCircles = cell.querySelectorAll('.event-circle'); // 동그라미도 함께 선택
+        eventTitles.forEach((eventTitle) => {
+            if (eventTitle.dataset.eventId === eventId.toString()) {
+                eventTitle.style.backgroundColor = color; // 일정 배경색 적용
+            }
+        });
+        eventCircles.forEach((eventCircle) => {
+            if (eventCircle.parentNode.querySelector('.event-title').dataset.eventId === eventId.toString()) {
+                eventCircle.style.backgroundColor = color; // 동그라미 색상 적용
+            }
+        });
+    });
+}
+
+// 댓글 저장 버튼 클릭 이벤트 추가
+document.getElementById("saveCommentBtn").addEventListener("click", function () {
+    const eventId = document.getElementById("viewEventTitle").dataset.eventId; // 모달에서 이벤트 ID 가져오기
+    saveComment(eventId); // 댓글 저장 함수 호출
 });
 
-// 패이지 로드 시 캘린더 생성
-document.addEventListener('DOMContentLoaded', () => {
-    console.log("페이지 로드 완료. 캘린더 생성 시작.");
-    generateCalendar(currentMonth, currentYear); // 캘린더 생성
-});
-
+document.getElementById("saveEventBtn").addEventListener("click", saveEvent);

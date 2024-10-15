@@ -11,9 +11,10 @@ require('dotenv').config();  // .env 파일에서 환경 변수 로드
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const userRoutes = require('./routes/userRoutes');
-const scheduleRoutes = require('./routes/scheduleRoutes');
 const recruitRoutes = require('./routes/recruitRoutes');
 const friendRoutes = require('./routes/friendRoutes');
+const eventRoutes = require('./routes/eventRoutes');
+const commentRoutes = require('./routes/commentRoutes');
 const User = require('./models/userModel');
 const session = require('express-session');  // express-session 모듈 불러오기
 const bcrypt = require('bcrypt');
@@ -76,8 +77,11 @@ app.use('/api/users', userRoutes);
 // 친구 모집 글 라우트
 app.use('/api/recruits', recruitRoutes);
 
-// 일정 경로 라우트
-app.use('/api/schedules', scheduleRoutes);
+// 캘린더 라우트
+app.use('/api/events', eventRoutes);
+
+// 댓글 라우트 사용
+app.use('/api', commentRoutes);
 
 app.get('/api/users/me', (req, res) => {
     if (req.session.user) {
