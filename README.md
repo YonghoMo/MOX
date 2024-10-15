@@ -12,4 +12,5 @@ Manage Our eXercise
    - Node.js
    - VS Code
    - Express, Socket.io
-   - MongoDB
+   - MongoDB Atlas
+   - CloudType.io
