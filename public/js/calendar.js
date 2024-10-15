@@ -72,6 +72,10 @@ function saveEvent() {
                 if (response.data.success) {
                     alert("일정이 저장되었습니다.");
                     generateCalendar(); // 저장 후 일정 새로고침
+
+                    // 모달 창 닫기
+                    const addEventModal = bootstrap.Modal.getInstance(document.getElementById("addEventModal"));
+                    addEventModal.hide(); // 모달 닫기
                 } else {
                     alert("일정 저장에 실패했습니다.");
                 }
@@ -130,10 +134,10 @@ function displayEvents(events) {
                 const eventTitle = document.createElement("div");
                 eventTitle.classList.add("event-title");
                 eventTitle.textContent = event.title;
-                eventTitle.dataset.eventId = event.id;
+                eventTitle.dataset.eventId = event._id;
 
                 // 기본 색상 파란색 설정
-                const savedColor = localStorage.getItem(`eventColor_${event.id}`) || "#007bff";
+                const savedColor = localStorage.getItem(`eventColor_${event._id}`) || "#007bff";
                 eventTitle.style.backgroundColor = savedColor;
 
                 eventTitle.onclick = function () {
@@ -158,25 +162,34 @@ function displayEvents(events) {
 
 // 댓글 저장 기능
 function saveComment(eventId) {
-    const newComment = document.getElementById("new-comment").value;
+    const newComment = document.getElementById("new-comment").value; // 댓글 입력값
 
     if (newComment) {
-        axios.post(`/api/events/${eventId}/comments`, { userId, comment: newComment })
+        // 서버에 댓글 저장 요청
+        axios.post(`/api/events/${eventId}/comments`, {
+            userId: userId, // 현재 로그인한 사용자 ID
+            comment: newComment // 새로운 댓글
+        })
             .then((response) => {
                 if (response.data.success) {
                     alert("댓글이 저장되었습니다.");
-                    loadComments(eventId); // 댓글 새로고침
+                    loadComments(eventId); // 댓글 목록 새로고침
+                    document.getElementById("new-comment").value = ''; // 댓글 입력창 초기화
                 } else {
                     alert("댓글 저장에 실패했습니다.");
                 }
             })
             .catch((error) => {
                 console.error("댓글 저장 중 오류가 발생했습니다.", error);
+                alert("댓글 저장 중 오류가 발생했습니다.");
             });
+    } else {
+        alert("댓글을 입력하세요.");
     }
 }
 
-// 댓글 불러오기 및 표시
+
+// 댓글 불러오기 기능
 function loadComments(eventId) {
     axios.get(`/api/events/${eventId}/comments`)
         .then((response) => {
@@ -184,7 +197,7 @@ function loadComments(eventId) {
             commentsList.innerHTML = ""; // 기존 댓글 초기화
             response.data.comments.forEach((comment) => {
                 const commentItem = document.createElement("li");
-                commentItem.textContent = `${comment.nickname}: ${comment.text}`; // 닉네임과 댓글 표시
+                commentItem.textContent = `${comment.nickname}: ${comment.text}`; // 닉네임과 댓글 내용 표시
                 commentsList.appendChild(commentItem);
             });
         })
@@ -212,19 +225,22 @@ function showEventDetails(event) {
     document.getElementById("viewEventTime").textContent = event.startTime + " - " + event.endTime;
     document.getElementById("viewEventExercises").textContent = event.exercises.join(", ");
 
+    // 이벤트 ID 저장
+    document.getElementById("viewEventTitle").dataset.eventId = event._id; // 이벤트 ID 저장
+
     // 댓글 불러오기
-    loadComments(event.id);
+    loadComments(event._id);
 
     // 모달 안의 색상 선택기에서 로컬 스토리지에 저장된 색상 불러오기
     const colorPicker = document.getElementById("event-color-picker");
-    colorPicker.value = localStorage.getItem(`eventColor_${event.id}`) || "#007bff"; // 기본 파란색
+    colorPicker.value = localStorage.getItem(`eventColor_${event._id}`) || "#007bff"; // 기본 파란색
 
     // 색상 변경 이벤트 리스너 등록 (중복 방지)
     colorPicker.removeEventListener('input', handleColorChange); // 기존 리스너 제거
     colorPicker.addEventListener('input', function handleColorChange() {
         const selectedColor = colorPicker.value;
-        localStorage.setItem(`eventColor_${event.id}`, selectedColor); // 로컬 스토리지에 저장
-        applyEventColor(event.id, selectedColor); // 변경된 색상 적용
+        localStorage.setItem(`eventColor_${event._id}`, selectedColor); // 로컬 스토리지에 저장
+        applyEventColor(event._id, selectedColor); // 변경된 색상 적용
     });
 
     // 모달을 띄우는 코드
@@ -250,5 +266,11 @@ function applyEventColor(eventId, color) {
         });
     });
 }
+
+// 댓글 저장 버튼 클릭 이벤트 추가
+document.getElementById("saveCommentBtn").addEventListener("click", function () {
+    const eventId = document.getElementById("viewEventTitle").dataset.eventId; // 모달에서 이벤트 ID 가져오기
+    saveComment(eventId); // 댓글 저장 함수 호출
+});
 
 document.getElementById("saveEventBtn").addEventListener("click", saveEvent);

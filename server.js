@@ -14,6 +14,7 @@ const userRoutes = require('./routes/userRoutes');
 const recruitRoutes = require('./routes/recruitRoutes');
 const friendRoutes = require('./routes/friendRoutes');
 const eventRoutes = require('./routes/eventRoutes');
+const commentRoutes = require('./routes/commentRoutes');
 const User = require('./models/userModel');
 const session = require('express-session');  // express-session 모듈 불러오기
 const bcrypt = require('bcrypt');
@@ -78,6 +79,9 @@ app.use('/api/recruits', recruitRoutes);
 
 // 캘린더 라우트
 app.use('/api/events', eventRoutes);
+
+// 댓글 라우트 사용
+app.use('/api', commentRoutes);
 
 app.get('/api/users/me', (req, res) => {
     if (req.session.user) {
