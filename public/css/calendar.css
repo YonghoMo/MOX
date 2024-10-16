@@ -1,0 +1,144 @@
+body {
+    background: url('../images/background_image.png') no-repeat center center fixed;
+    background-size: cover;
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;  /* 화면 전체 높이를 차지하도록 설정 */
+    display: flex;
+    flex-direction: column; /* 세로 방향으로 정렬 */
+}
+
+.container {
+    background: rgba(255, 255, 255, 0.9);  /* 흰색 배경에 약간 투명한 효과 추가 */
+    padding: 20px;
+    border-radius: 10px;
+    margin-top: 50px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    max-width: 90%;
+    flex: 1;  /* 컨텐츠 영역이 화면을 차지하도록 설정 */
+    max-height: 650px; /* 캘린더 높이 제한 */
+    height: auto; /* 높이를 유연하게 변경하여 화면에 맞게 */
+}
+
+header {
+    background-color: #333;
+    color: white;
+    padding: 10px;
+    text-align: center;
+}
+
+nav ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    text-align: center;
+}
+
+nav ul li {
+    display: inline;
+    margin: 0 15px;
+}
+
+nav ul li a {
+    color: white;
+    text-decoration: none;
+}
+
+#calendar {
+    display: grid;
+    margin: 50px auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    width: 80;
+    min-height: 400px;
+    grid-template-columns: repeat(7, 1fr); /* 7일의 열 생성 */
+    gap: 5px;
+    }
+
+#event-color-picker {
+    width: 30px; /* 원하는 크기로 설정 */
+    height: 30px; /* 너비와 같게 설정하여 정사각형으로 만듦 */
+    padding: 0; /* 불필요한 여백 제거 */
+}
+
+.event-title {
+    display: block;
+    cursor: pointer; /* 클릭 가능하도록 커서 변경 */
+    background-color: #f0f8ff; /* 일정 배경색 지정 */
+    padding: 5px;
+    border-radius: 5px;
+    position: absolute;
+    bottom: 5px; /* 칸의 오른쪽 아래에 위치 */
+    right: 5px;
+    font-size: 12px; /* 폰트 크기를 작게 */
+    white-space: nowrap; /* 한 줄로 표시 */
+    overflow: hidden; /* 넘치는 텍스트 숨김 */
+    text-overflow: ellipsis; /* 넘치는 텍스트는 ...으로 표시 */
+    max-width: calc(100% - 10px); /* 일정이 칸 안에 맞게 표시 */
+}
+                
+.day {
+    border: 1px solid #ddd;
+    padding: 10px;
+    height: 100px;
+    position: relative;
+}
+            
+.day-number {
+    font-weight: bold;
+    position: absolute;
+    top: 5px;
+    left: 5px;
+}
+        
+.event-circle {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%; /* 동그라미 모양을 만들기 위해 사용 */
+    background-color: #007bff; /* 이 부분이 동그라미의 색상 (파란색) */
+    position: absolute;
+    bottom: 5px;
+    right: 5px; /* 위치 지정 */
+    display: none;
+}
+
+footer {
+    text-align: center;
+    padding: 10px 0;
+    color: #fff;
+    margin-top: auto;
+}
+
+footer p {
+    margin: 0;
+    line-height: 1.5; 
+    color: #000;
+    font-weight: 400;
+    font-size: 16px;
+}
+
+
+/* 모바일 환경에 맞춘 스타일 조정 */
+@media (max-width: 768px) {
+    #calendar {
+        grid-template-columns: repeat(
+            7,
+            1fr
+        ); /* 작은 화면에서는 7일씩 표시 */
+    }
+                
+    .day {
+        height: 80px; /* 모바일에서 셀의 높이를 조금 더 높임 */
+    }
+                
+    .event-circle {
+        display: block; /* 모바일에서는 동그라미 표시 */
+    }
+                
+    .event-title {
+        display: none;
+    }
+}
