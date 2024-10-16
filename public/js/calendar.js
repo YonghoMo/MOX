@@ -273,4 +273,35 @@ document.getElementById("saveCommentBtn").addEventListener("click", function () 
     saveComment(eventId); // 댓글 저장 함수 호출
 });
 
+
+
+// 운동 종목 조회 함수 (서버에서 운동 종목을 가져와서 모달에 열로 표시)
+async function fetchAndDisplayExercisesInModal() {
+    try {
+        const response = await axios.get('/exercises');  // 전체 운동 종목 조회 API 호출
+        const exercises = response.data;
+
+        const exerciseListContainer = document.getElementById('exercise-list-container');
+        exerciseListContainer.innerHTML = '';  // 기존 리스트 초기화
+
+        exercises.forEach(exercise => {
+            const exerciseItem = document.createElement('div');
+            exerciseItem.classList.add('col-12');  // 한 열에 하나씩 표시되도록 설정
+            exerciseItem.textContent = `${exercise.name} (${exercise.category} - ${exercise.metricType.join(', ')})`;
+            exerciseListContainer.appendChild(exerciseItem);
+        });
+    } catch (error) {
+        console.error('운동 종목 조회 중 오류가 발생했습니다:', error);
+    }
+}
+
+// 일정 추가 모달이 열릴 때 운동 종목 리스트를 불러와 표시
+function showAddEventModal() {
+    fetchAndDisplayExercisesInModal();  // 운동 종목 리스트를 모달에 표시
+    const addEventModal = new bootstrap.Modal(document.getElementById("addEventModal"));
+    addEventModal.show();
+}
+
+
+
 document.getElementById("saveEventBtn").addEventListener("click", saveEvent);
