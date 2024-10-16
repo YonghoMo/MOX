@@ -15,6 +15,7 @@ const recruitRoutes = require('./routes/recruitRoutes');
 const friendRoutes = require('./routes/friendRoutes');
 const eventRoutes = require('./routes/eventRoutes');
 const commentRoutes = require('./routes/commentRoutes');
+const exerciseRoutes = require('./routes/exerciseRoutes'); 
 const User = require('./models/userModel');
 const session = require('express-session');  // express-session 모듈 불러오기
 const bcrypt = require('bcrypt');
