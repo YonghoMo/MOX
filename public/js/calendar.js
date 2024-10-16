@@ -287,11 +287,15 @@ async function fetchAndDisplayExercisesInModal() {
         exercises.forEach(exercise => {
             const exerciseItem = document.createElement('div');
             exerciseItem.classList.add('col-12');  // 한 열에 하나씩 표시되도록 설정
-            exerciseItem.textContent = `${exercise.name} (${exercise.category} - ${exercise.metricType.join(', ')})`;
+            const metricType = exercise.metricType ? exercise.metricType.join(', ') : 'Not specified';  // metricType이 없는 경우 처리
+            exerciseItem.textContent = `${exercise.name} (${exercise.category} - ${metricType})`;
             exerciseListContainer.appendChild(exerciseItem);
         });
     } catch (error) {
         console.error('운동 종목 조회 중 오류가 발생했습니다:', error);
+        if (error.response) {
+            console.error('응답 데이터:', error.response.data);
+        }
     }
 }
 
@@ -301,7 +305,6 @@ function showAddEventModal() {
     const addEventModal = new bootstrap.Modal(document.getElementById("addEventModal"));
     addEventModal.show();
 }
-
 
 
 document.getElementById("saveEventBtn").addEventListener("click", saveEvent);
