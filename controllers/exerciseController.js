@@ -4,7 +4,11 @@ const Exercise = require('../models/exerciseModel');
 exports.getAllExercises = async (req, res) => {
   try {
     const exercises = await Exercise.find({});  // 전체 운동 조회
-    res.status(200).json(exercises);            // 조회한 데이터를 클라이언트로 응답
+    
+    // 서버에서 데이터가 제대로 불러와졌는지 확인
+    console.log("운동 종목 데이터: ", exercises);
+
+    res.json(exercises);        // 조회한 데이터를 클라이언트로 응답
   } catch (error) {
     console.error("운동 종목 조회 중 오류: ", error);
     res.status(500).json({ message: '운동 종목을 불러오는 중 오류 발생', error });

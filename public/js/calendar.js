@@ -50,6 +50,76 @@ function generateCalendar() {
     loadEvents(); // 일정 불러오기
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// 운동 종목 불러오기
+async function loadExercises() {
+    const exerciseListContainer = document.getElementById('exercise-list-container');
+    
+    try {
+        // 운동 종목을 가져오는 API 호출
+        const response = await fetch('/api/exercises');
+        const exercises = await response.json();
+    
+        // 운동 종목을 체크박스 형식으로 추가
+        exerciseListContainer.innerHTML = ''; // 기존 내용 제거
+        exercises.forEach(exercise => {
+            const checkbox = document.createElement('input');
+            checkbox.type = 'checkbox';
+            checkbox.id = `exercise-${exercise._id}`;
+            checkbox.name = 'exercises';
+            checkbox.value = exercise._id;
+    
+            const label = document.createElement('label');
+            label.htmlFor = `exercise-${exercise._id}`;
+            label.innerText = `${exercise.name} (${exercise.category})`;
+    
+            const div = document.createElement('div');
+            div.appendChild(checkbox);
+            div.appendChild(label);
+            exerciseListContainer.appendChild(div);
+        });
+    } catch (error) {
+        console.error('운동 종목 불러오기 중 오류 발생:', error);
+    }
+}
+
+// 모달이 열릴 때 운동 종목 불러오기
+document.getElementById('addEventModal').addEventListener('shown.bs.modal', loadExercises);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // 일정 저장
 function saveEvent() {
     const title = document.getElementById("event-title").value;
@@ -273,31 +343,37 @@ document.getElementById("saveCommentBtn").addEventListener("click", function () 
     saveComment(eventId); // 댓글 저장 함수 호출
 });
 
-
-
 // 운동 종목 조회 함수 (서버에서 운동 종목을 가져와서 모달에 열로 표시)
 async function fetchAndDisplayExercisesInModal() {
     try {
-        const response = await axios.get('/api/exercises');  // 전체 운동 종목 조회 API 호출
+        const response = await axios.get('/api/exercises');  // 전체 운동 종목 조회 API 호출        
         const exercises = response.data;
-
         console.log("운동 종목 데이터:", exercises);
 
-        const exercisesListContainer = document.getElementById('exercises-list-container');
+        // 운동 종목 리스트가 표시될 공간을 찾음
+        const exercisesListContainer = document.getElementById('exercise-list-container');
         exercisesListContainer.innerHTML = '';  // 기존 리스트 초기화
 
+        // 운동 종목 데이터를 반복하여 화면에 표시
         exercises.forEach(exercise => {
             const exerciseItem = document.createElement('div');
             exerciseItem.classList.add('col-12');  // 한 열에 하나씩 표시되도록 설정
-            const measurementTypes = exercises.measurementTypes ? exercise.metricType.join(', ') : 'Not specified';  // measurementTypes가 없는 경우 처리
-            exerciseItem.textContent = `${exercises.name} (${exercises.category})`;
+            const measurementTypes = exercise.measurementTypes 
+                ? exercise.measurementTypes.join(', ') 
+                : 'Not specified';                              // measurementTypes가 없는 경우 처리
+
+            exerciseItem.textContent = `${exercise.name} - ${exercise.category}`;
+            
+            // 운동 종목 클릭 시 선택 기능 추가
+            exerciseItem.addEventListener('click', () => {
+                // 선택된 운동 종목 정보를 처리하는 로직)
+                console.log('선택된 운동: ${exercise.name}');
+            });
+            
             exercisesListContainer.appendChild(exerciseItem);
         });
     } catch (error) {
         console.error('운동 종목 조회 중 오류가 발생했습니다:', error);
-        if (error.response) {
-            console.error('응답 데이터:', error.response.data);
-        }
     }
 }
 
@@ -308,6 +384,7 @@ function showAddEventModal() {
     addEventModal.show();
 }
 
+// 운동 종목 추가
 function addExercise() {
     const exerciseName = document.getElementById("exercise-name").value;
     const exerciseCategory = document.getElementById("exercise-category").value;
@@ -355,6 +432,12 @@ document.querySelector("[data-bs-target='#addExerciseModal']").addEventListener(
     document.getElementById("exercise-category").value = '';
     document.getElementById("exercise-type").value = '';
 });
+
+
+
+
+
+
 
 
 

@@ -128,8 +128,8 @@
                 <input type="time" class="form-control" id="end-time" />
               </div>
               <div class="mb-3">
-                <label for="exercises-list-container" class="form-label">운동 종목</label>
-                <div id="exercise-list-container" class="row" style="max-height: 200px"; overflow-y: auto;>
+                <label for="exercises-list" class="form-label">운동 종목</label>
+                <div id="exercise-list-container" class="form-control" class="row" style="max-height: 170px; overflow-y: auto;"">
                   <!--운동 종목 리스트가 이곳에 새로 열로 표시됩니다-->
                 </div>
               </div>
@@ -255,32 +255,34 @@
     </footer>
 
 
-
+    
+    <!--
     <script>
       // 서버에서 운동 종목을 조회하여 화면에 출력하는 함수
+    // 페이지가 로드되면 운동 종목 조회
       async function fetchExercises() {
-        try {
-            const response = await fetch('/api/exercises');  // 운동 종목 조회 API 호출 (경로 수정 확인)
-            const exercises = await response.json();
+          try {
+              const response = await fetch('/exercises');  // 운동 종목 조회 API 호출
+              const exercises = await response.json();
 
-            const exerciseListContainer = document.getElementById('exercise-list-container');  // 운동 종목 리스트가 표시될 컨테이너
-            exerciseListContainer.innerHTML = '';  // 기존 리스트 초기화
-
-            exercises.forEach(exercise => {
-                const exerciseItem = document.createElement('div');
-                exerciseItem.classList.add('col-12');  // 세로로 정렬되도록 설정
-                const measurementTypes = exercise.metricType ? exercise.metricType.join(', ') : 'Not specified';  // 운동량 타입 표시
-                exerciseItem.textContent = `${exercise.name} (${exercise.category} - ${measurementTypes})`;  // 운동 이름과 카테고리, 운동량 타입 표시
-                exerciseListContainer.appendChild(exerciseItem);  // 운동 종목 추가
-            });
-        } catch (error) {
-            console.error('전체 운동 종목 조회 중 오류가 발생했습니다:', error);  // 오류 처리
-        }
+              const exerciseList = document.getElementById('exercise-list');
+              exercises.forEach(exercise => {
+                  const row = document.createElement('tr');
+                  row.innerHTML = `
+                      <td>${exercise.name}</td>
+                      <td>${exercise.category}</td>
+                      <td>${exercise.metricType.join(', ')}</td>
+                  `;
+                  exerciseList.appendChild(row);
+              });
+          } catch (error) {
+              console.error('전체 운동 종목 조회 중 오류가 발생했습니다:', error);
+          }
       }
-      // 페이지가 로드되면 운동 종목 조회
+      
       window.onload = fetchExercises;
     </script>
-
+-->
 
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
