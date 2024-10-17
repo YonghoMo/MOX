@@ -307,4 +307,59 @@ function showAddEventModal() {
 }
 
 
+
+
+
+
+
+function addExercise() {
+    const exerciseName = document.getElementById("exercise-name").value;
+    const exerciseCategory = document.getElementById("exercise-category").value;
+    const exerciseType = document.getElementById("exercise-type").value.split(",").map(type => type.trim());
+
+    if (exerciseName && exerciseCategory && exerciseType.length > 0) {
+        axios.post("/api/exercises", {
+            name: exerciseName,
+            category: exerciseCategory,
+            measurementTypes: exerciseType
+        })
+        .then((response) => {
+            if (response.data.success) {
+                alert("운동 종목이 성공적으로 추가되었습니다.");
+                // 필드 초기화
+                document.getElementById("exercise-name").value = '';
+                document.getElementById("exercise-category").value = '';
+                document.getElementById("exercise-type").value = '';
+
+                // 모달 닫기
+                const addExerciseModal = bootstrap.Modal.getInstance(document.getElementById("addExerciseModal"));
+                addExerciseModal.hide();
+            } else {
+                alert("운동 종목 추가에 실패했습니다.");
+            }
+        })
+        .catch((error) => {
+            console.error("운동 종목 추가 중 오류가 발생했습니다:", error);
+        });
+    } else {
+        alert("모든 필드를 입력해주세요.");
+    }
+}
+// 모달이 열릴 때 입력 필드 초기화
+document.querySelector("[data-bs-target='#addExerciseModal']").addEventListener("click", () => {
+    document.getElementById("exercise-name").value = '';
+    document.getElementById("exercise-category").value = '';
+    document.getElementById("exercise-type").value = '';
+});
+
+// 운동 종목 추가 버튼 클릭 시 운동 종목 저장 함수 호출
+document.getElementById("addExerciseBtn").addEventListener("click", addExercise);
+
+
+
+
+
+
+
+
 document.getElementById("saveEventBtn").addEventListener("click", saveEvent);

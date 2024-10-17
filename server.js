@@ -69,6 +69,9 @@ app.get('/', (req, res) => {
     res.redirect('/login.html');  // '/login.html'로 리디렉션
 });
 
+// 운동 종목 관련 라우트 (추가된 부분)
+app.use('/api/exercises', exerciseRoutes);  // 운동 종목 관련 API 라우트 설정
+
 // 친구 요청 목록 라우팅
 app.use('/api/friends', friendRoutes);
 
