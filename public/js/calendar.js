@@ -50,22 +50,6 @@ function generateCalendar() {
     loadEvents(); // 일정 불러오기
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 // 운동 종목 불러오기
 async function loadExercises() {
     const exerciseListContainer = document.getElementById('exercise-list-container');
@@ -100,25 +84,6 @@ async function loadExercises() {
 
 // 모달이 열릴 때 운동 종목 불러오기
 document.getElementById('addEventModal').addEventListener('shown.bs.modal', loadExercises);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 // 일정 저장
 function saveEvent() {
@@ -432,13 +397,5 @@ document.querySelector("[data-bs-target='#addExerciseModal']").addEventListener(
     document.getElementById("exercise-category").value = '';
     document.getElementById("exercise-type").value = '';
 });
-
-
-
-
-
-
-
-
 
 document.getElementById("saveEventBtn").addEventListener("click", saveEvent);

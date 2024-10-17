@@ -13,8 +13,6 @@ router.get('/', async (req, res) => {
     }
 });
 
-
-
 // 특정 운동 종목 조회
 router.get('/:id', exerciseController.getExerciseById);
 
