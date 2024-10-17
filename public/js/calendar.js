@@ -278,18 +278,20 @@ document.getElementById("saveCommentBtn").addEventListener("click", function () 
 // 운동 종목 조회 함수 (서버에서 운동 종목을 가져와서 모달에 열로 표시)
 async function fetchAndDisplayExercisesInModal() {
     try {
-        const response = await axios.get('/exercises');  // 전체 운동 종목 조회 API 호출
+        const response = await axios.get('/api/exercises');  // 전체 운동 종목 조회 API 호출
         const exercises = response.data;
 
-        const exerciseListContainer = document.getElementById('exercise-list-container');
-        exerciseListContainer.innerHTML = '';  // 기존 리스트 초기화
+        console.log("운동 종목 데이터:", exercises);
+
+        const exercisesListContainer = document.getElementById('exercises-list-container');
+        exercisesListContainer.innerHTML = '';  // 기존 리스트 초기화
 
         exercises.forEach(exercise => {
             const exerciseItem = document.createElement('div');
             exerciseItem.classList.add('col-12');  // 한 열에 하나씩 표시되도록 설정
-            const metricType = exercise.metricType ? exercise.metricType.join(', ') : 'Not specified';  // metricType이 없는 경우 처리
-            exerciseItem.textContent = `${exercise.name} (${exercise.category} - ${metricType})`;
-            exerciseListContainer.appendChild(exerciseItem);
+            const measurementTypes = exercises.measurementTypes ? exercise.metricType.join(', ') : 'Not specified';  // measurementTypes가 없는 경우 처리
+            exerciseItem.textContent = `${exercises.name} (${exercises.category})`;
+            exercisesListContainer.appendChild(exerciseItem);
         });
     } catch (error) {
         console.error('운동 종목 조회 중 오류가 발생했습니다:', error);
@@ -306,28 +308,27 @@ function showAddEventModal() {
     addEventModal.show();
 }
 
-
-
-
-
-
-
 function addExercise() {
     const exerciseName = document.getElementById("exercise-name").value;
     const exerciseCategory = document.getElementById("exercise-category").value;
     const exerciseType = document.getElementById("exercise-type").value.split(",").map(type => type.trim());
 
+    console.log({
+        name: exerciseName,
+        category: exerciseCategory,
+        measurementTypes: exerciseType
+    });
+
     if (exerciseName && exerciseCategory && exerciseType.length > 0) {
         axios.post("/api/exercises", {
             name: exerciseName,
             category: exerciseCategory,
-            measurementTypes: exerciseType
+            measurementTypes: exerciseType  // 배열로 전송
         })
         .then((response) => {
             if (response.data.success) {
                 alert("운동 종목이 성공적으로 추가되었습니다.");
-                // 필드 초기화
-                document.getElementById("exercise-name").value = '';
+                document.getElementById("exercise-name").value = '';  // 입력 필드 초기화
                 document.getElementById("exercise-category").value = '';
                 document.getElementById("exercise-type").value = '';
 
@@ -345,20 +346,15 @@ function addExercise() {
         alert("모든 필드를 입력해주세요.");
     }
 }
+
+// 운동 종목 추가 버튼 클릭 시 운동 종목 저장 함수 호출
+document.getElementById("addExerciseBtn").addEventListener("click", addExercise);
 // 모달이 열릴 때 입력 필드 초기화
 document.querySelector("[data-bs-target='#addExerciseModal']").addEventListener("click", () => {
     document.getElementById("exercise-name").value = '';
     document.getElementById("exercise-category").value = '';
     document.getElementById("exercise-type").value = '';
 });
-
-// 운동 종목 추가 버튼 클릭 시 운동 종목 저장 함수 호출
-document.getElementById("addExerciseBtn").addEventListener("click", addExercise);
-
-
-
-
-
 
 
 

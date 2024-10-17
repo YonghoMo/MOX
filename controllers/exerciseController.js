@@ -3,9 +3,10 @@ const Exercise = require('../models/exerciseModel');
 // 모든 운동 종목 조회
 exports.getAllExercises = async (req, res) => {
   try {
-    const exercises = await Exercise.find({});
-    res.status(200).json(exercises);
+    const exercises = await Exercise.find({});  // 전체 운동 조회
+    res.status(200).json(exercises);            // 조회한 데이터를 클라이언트로 응답
   } catch (error) {
+    console.error("운동 종목 조회 중 오류: ", error);
     res.status(500).json({ message: '운동 종목을 불러오는 중 오류 발생', error });
   }
 };
@@ -36,6 +37,7 @@ exports.addExercise = async (req, res) => {
     }
 
     try {
+        // 데이터베이스에 운동 종목 저장
         const newExercise = new Exercise({ name, category, measurementTypes });
         await newExercise.save();
 
@@ -44,8 +46,7 @@ exports.addExercise = async (req, res) => {
             message: "운동 종목이 성공적으로 추가되었습니다."
         });
     } catch (error) {
-        console.error("운동 종목 추가 중 오류:", error);
-        alert("exerciseController.js 500 오류!");
+        console.error("운동 종목 추가 중 서버 오류 발생:", error);
         return res.status(500).json({
             success: false,
             message: "서버에서 운동 종목을 추가하는 중 오류가 발생했습니다."

@@ -8,7 +8,7 @@ router.get('/', exerciseController.getAllExercises);
 // 특정 운동 종목 조회
 router.get('/:id', exerciseController.getExerciseById);
 
-// 새로운 운동 종목 추가 (제작자만 사용)
-router.post('/', exerciseController.createExercise);
+// 운동 종목 추가 경로
+router.post('/', exerciseController.addExercise);
 
 module.exports = router;
