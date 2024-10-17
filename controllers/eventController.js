@@ -1,5 +1,6 @@
 // controllers/eventController.js
 const Event = require('../models/eventModel');
+const Exercise = require('../models/exerciseModel');
 
 // 일정 등록
 exports.createEvent = async (req, res) => {
@@ -46,5 +47,23 @@ exports.deleteEvent = async (req, res) => {
         res.status(200).json({ success: true, message: '일정이 삭제되었습니다.' });
     } catch (error) {
         res.status(500).json({ success: false, message: error.message });
+    }
+};
+
+exports.getEventExercises = async (req, res) => {
+    try {
+        const eventId = req.params.eventId;
+        
+        // populate를 사용하여 exercises 필드에 운동 종목의 상세 정보를 채움
+        const event = await Event.findById(eventId).populate('exercises');
+
+        if (!event) {
+            return res.status(404).json({ success: false, message: 'Event not found' });
+        }
+
+        res.json({ success: true, exercises: event.exercises });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ success: false, message: 'Error retrieving event exercises' });
     }
 };

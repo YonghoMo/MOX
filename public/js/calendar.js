@@ -93,8 +93,9 @@ function saveEvent() {
     const endTime = document.getElementById("end-time").value;
     
      // 운동 선택을 체크박스로 변경
-     const checkedExercises = document.querySelectorAll('input[name="exerciseCheckbox"]:checked');
-     const exercises = Array.from(checkedExercises).map(checkbox => checkbox.value); // 체크된 운동의 value 값을 배열로 변환
+    const checkedExercises = document.querySelectorAll('input[name="exercises"]:checked');
+    const exercises = Array.from(checkedExercises).map(checkbox => checkbox.value); // 체크된 운동의 value 값을 배열로 변환
+
 
     if (title && date && startTime && endTime) {
         axios
@@ -257,29 +258,73 @@ function handleColorChange(eventId) {
 }
 
 // 일정 상세 정보 모달에 표시
-function showEventDetails(event) {
+async function showEventDetails(event) {
     document.getElementById("viewEventTitle").textContent = event.title;
     document.getElementById("viewEventDate").textContent = event.date;
     document.getElementById("viewEventTime").textContent = event.startTime + " - " + event.endTime;
-    document.getElementById("viewEventExercises").textContent = event.exercises.join(", ");
 
-    // 이벤트 ID 저장
-    document.getElementById("viewEventTitle").dataset.eventId = event._id; // 이벤트 ID 저장
+    // 운동 종목이 표시될 부분 초기화
+    const exerciseListContainer = document.getElementById("viewEventExercises");
+    exerciseListContainer.innerHTML = ''; // 기존 내용을 초기화
 
-    // 댓글 불러오기
-    loadComments(event._id);
+    // 운동 종목이 있을 때만 처리
+    if (Array.isArray(event.exercises) && event.exercises.length > 0) {
+        try {
+            const response = await axios.post('/api/exercises/multiple', {
+                exerciseIds: event.exercises // 운동 ID 배열을 서버로 전송
+            });
+            const exercises = response.data;
 
-    // 모달 안의 색상 선택기에서 로컬 스토리지에 저장된 색상 불러오기
-    const colorPicker = document.getElementById("event-color-picker");
-    colorPicker.value = localStorage.getItem(`eventColor_${event._id}`) || "#007bff"; // 기본 파란색
+            exercises.forEach(exercise => {
+                const exerciseBox = document.createElement('div');
+                exerciseBox.classList.add('exercise-box');
 
-    // 색상 변경 이벤트 리스너 등록 (중복 방지)
-    colorPicker.removeEventListener('input', handleColorChange); // 기존 리스너 제거
-    colorPicker.addEventListener('input', function handleColorChange() {
-        const selectedColor = colorPicker.value;
-        localStorage.setItem(`eventColor_${event._id}`, selectedColor); // 로컬 스토리지에 저장
-        applyEventColor(event._id, selectedColor); // 변경된 색상 적용
-    });
+                // 상단: 운동 이름
+                const titleDiv = document.createElement('div');
+                titleDiv.classList.add('exercise-title');
+                titleDiv.textContent = `${exercise.name} (${exercise.category})`;
+                exerciseBox.appendChild(titleDiv);
+
+                // 중단: 운동량 타입 설정 및 완료 체크 공간
+                const measureDiv = document.createElement('div');
+                measureDiv.classList.add('exercise-measure');
+                // measurementTypes가 존재하지 않을 경우를 처리
+                const measurementTypesText = exercise.measurementTypes 
+                    ? exercise.measurementTypes.join(', ') 
+                    : '운동량 정보 없음';  // measurementTypes가 없을 경우 기본 텍스트 설정
+
+                measureDiv.innerHTML = `
+                    <span>운동량 타입: ${measurementTypesText}</span>
+                    <div class="exercise-sets">
+                        <input type="number" class="set-value" placeholder="운동량 입력" />
+                        <input type="checkbox" class="set-complete" /> 완료
+                    </div>
+                `;
+                exerciseBox.appendChild(measureDiv);
+
+                // 하단: 세트 추가/삭제 버튼
+                const controlsDiv = document.createElement('div');
+                controlsDiv.classList.add('exercise-controls');
+                controlsDiv.innerHTML = `
+                    <button class="add-set-btn">세트 추가</button>
+                    <button class="delete-set-btn">세트 삭제</button>
+                `;
+                exerciseBox.appendChild(controlsDiv);
+
+                // 운동 종목 박스를 모달에 추가
+                exerciseListContainer.appendChild(exerciseBox);
+
+                // 세트 추가/삭제 핸들러 설정
+                setupSetHandlers(exerciseBox);
+                console.log(event.exercises); // 운동 종목 데이터를 콘솔에 출력
+            });
+        
+        } catch (error) {
+            console.error('운동 정보 불러오기 중 오류 발생: ', error);
+        }
+    } else {
+        exerciseListContainer.textContent = '운동 종목 정보가 없습니다.';
+    }
 
     // 모달을 띄우는 코드
     const viewEventModal = new bootstrap.Modal(document.getElementById("viewEventModal"));
@@ -409,6 +454,87 @@ document.getElementById("saveEventBtn").addEventListener("click", saveEvent);
 
 
 
+function showSelectedExercisesInModal(eventExercises) {
+    const exerciseListContainer = document.getElementById('event-exercise-list');
+    exerciseListContainer.innerHTML = ''; // 기존 내용을 초기화
+
+    // 각 운동 종목을 상단, 중단, 하단 구조로 표시
+    eventExercises.forEach(exercise => {
+        const exerciseBox = document.createElement('div');
+        exerciseBox.classList.add('exercise-box');
+
+        // 상단: 운동 이름
+        const titleDiv = document.createElement('div');
+        titleDiv.classList.add('exercise-title');
+        titleDiv.textContent = `${exercise.name} (${exercise.category})`;
+        exerciseBox.appendChild(titleDiv);
+
+        // 중단: 운동량 타입 설정 및 완료 체크 공간
+        const measureDiv = document.createElement('div');
+        measureDiv.classList.add('exercise-measure');
+        measureDiv.innerHTML = `
+            <span>${exercise.measurementTypes.join(', ')}</span>
+            <div class="exercise-sets">
+                <input type="number" class="set-value" placeholder="운동량 입력" />
+                <input type="checkbox" class="set-complete" /> 완료
+            </div>
+        `;
+        exerciseBox.appendChild(measureDiv);
+
+        // 하단: 세트 추가/삭제 버튼
+        const controlsDiv = document.createElement('div');
+        controlsDiv.classList.add('exercise-controls');
+        controlsDiv.innerHTML = `
+            <button class="add-set-btn">세트 추가</button>
+            <button class="delete-set-btn">세트 삭제</button>
+        `;
+        exerciseBox.appendChild(controlsDiv);
+
+        // 박스를 모달에 추가
+        exerciseListContainer.appendChild(exerciseBox);
+
+        // 세트 추가/삭제 버튼에 대한 핸들러 설정
+        setupSetHandlers(exerciseBox);
+    });
+}
+
+// 세트 추가/삭제 핸들러
+function setupSetHandlers(exerciseBox) {
+    const addSetBtn = exerciseBox.querySelector('.add-set-btn');
+    const deleteSetBtn = exerciseBox.querySelector('.delete-set-btn');
+    const setsDiv = exerciseBox.querySelector('.exercise-sets');
+
+    // 세트 추가
+    addSetBtn.addEventListener('click', () => {
+        const setRow = document.createElement('div');
+        setRow.classList.add('set-row');
+        setRow.innerHTML = `
+            <input type="number" class="set-value" placeholder="운동량 입력" />
+            <input type="checkbox" class="set-complete" /> 완료
+        `;
+        setsDiv.appendChild(setRow);
+    });
+
+    // 세트 삭제
+    deleteSetBtn.addEventListener('click', () => {
+        if (setsDiv.children.length > 1) {
+            setsDiv.removeChild(setsDiv.lastChild);
+        }
+    });
+}
+
+// 세부 일정 모달을 열 때 선택된 운동 종목 정보 가져오기
+async function fetchAndDisplayExercises(eventId) {
+    try {
+        const response = await axios.get(`/api/events/${eventId}/exercises`);
+        const exercises = response.data;
+
+        // 운동 정보 모달에 표시
+        showSelectedExercisesInModal(exercises);
+    } catch (error) {
+        console.error('운동 정보 불러오기 오류:', error);
+    }
+}
 
 
 

@@ -19,4 +19,7 @@ router.get('/:id', exerciseController.getExerciseById);
 // 운동 종목 추가
 router.post('/', exerciseController.addExercise);
 
+// 선택한 여러 운동 종목에 대한 정보 가져오기
+router.post('/multiple', exerciseController.getMultipleExercises);
+
 module.exports = router;

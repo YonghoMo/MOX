@@ -57,3 +57,17 @@ exports.addExercise = async (req, res) => {
         });
     }
 };
+
+// 여러 운동 종목에 대한 정보를 가져오는 컨트롤러 함수
+exports.getMultipleExercises = async (req, res) => {
+  const { exerciseIds } = req.body;  // 요청으로부터 운동 ID 배열을 가져옴
+
+  try {
+      // MongoDB에서 해당 운동 ID들에 대한 정보 조회
+      const exercises = await Exercise.find({ '_id': { $in: exerciseIds } });
+      res.status(200).json(exercises);
+  } catch (error) {
+      console.error('운동 종목 조회 중 오류 발생:', error);
+      res.status(500).json({ message: '운동 종목 조회 중 오류 발생' });
+  }
+};
