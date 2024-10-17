@@ -68,16 +68,16 @@
           </div>
         </div>
       </nav>
-
+      <div class="container-fluid text-center mt-3">
+        <p id="welcome-message" class="fs-4"></p>
+      </div>
       <section class="center_section container">
         <!-- flex-column은 모바일에서 세로 배치, flex-md-row는 더 큰 화면에서 가로 배치 -->
         <div class="d-flex flex-column flex-md-row">
           <div class="col-12 col-md-6 flex-grow-1 p-2">
             <!-- '오늘의 일정' 카드 -->
             <div class="card h-100">
-              <div class="card-header">
-                오늘의 일정
-              </div>
+              <div class="card-header">오늘의 일정</div>
               <div class="card-body">
                 <p class="card-text">오늘 해야 할 일 목록</p>
               </div>
@@ -86,9 +86,7 @@
           <div class="col-12 col-md-6 flex-grow-1 p-2">
             <!-- '접속 중인 친구' 카드 -->
             <div class="card h-100">
-              <div class="card-header">
-                접속 중인 친구
-              </div>
+              <div class="card-header">접속 중인 친구</div>
               <div class="card-body">
                 <p class="card-text">현재 접속 중인 친구</p>
               </div>
@@ -98,7 +96,10 @@
 
         <!-- '오늘의 운동 일정 추가' 버튼 -->
         <article>
-          <button class="ex_today btn btn-primary mx-auto" onclick="location.href='calendar.html'">
+          <button
+            class="ex_today btn btn-primary mx-auto"
+            onclick="location.href='calendar.html'"
+          >
             오늘의 운동 일정 추가
           </button>
         </article>
@@ -120,11 +121,32 @@
       <p>Copyright 2024 Team Mox</p>
       <p>All right reserved</p>
     </footer>
+    <script>
+      async function loadUserInfo() {
+        try {
+          const userResponse = await fetch("/api/users/me", { method: "GET" });
+          if (userResponse.ok) {
+            const userData = await userResponse.json();
+            const nickname = userData.nickname; // 서버에서 로그인한 사용자 닉네임 받아오기
 
-    <script
-      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-      integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
-      crossorigin="anonymous"
-    ></script>
+            // 닉네임을 화면에 표시
+            document.getElementById(
+              "welcome-message"
+            ).textContent = `${nickname}님 환영합니다`;
+          } else {
+            document.getElementById("welcome-message").textContent =
+              "로그인이 필요합니다";
+            console.error("사용자 정보를 가져오는 데 실패했습니다.");
+          }
+        } catch (error) {
+          console.error("사용자 정보를 가져오는 중 오류 발생:", error);
+        }
+      }
+
+      // 페이지 로딩 시 사용자 정보를 불러옴
+      loadUserInfo();
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   </body>
 </html>
