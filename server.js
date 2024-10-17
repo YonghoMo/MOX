@@ -15,7 +15,8 @@ const recruitRoutes = require('./routes/recruitRoutes');
 const friendRoutes = require('./routes/friendRoutes');
 const eventRoutes = require('./routes/eventRoutes');
 const commentRoutes = require('./routes/commentRoutes');
-const exerciseRoutes = require('./routes/exerciseRoutes'); 
+const exerciseRoutes = require('./routes/exerciseRoutes'); // 추가!!!!!!!!!!!!!!!!!!!!
+const workoutLogRoutes = require('./routes/workoutLogRoutes'); // 추가!!!!!!!!!!!!!!!!!
 const User = require('./models/userModel');
 const session = require('express-session');  // express-session 모듈 불러오기
 const bcrypt = require('bcrypt');
@@ -69,8 +70,10 @@ app.get('/', (req, res) => {
     res.redirect('/login.html');  // '/login.html'로 리디렉션
 });
 
-// 운동 종목 관련 라우트 (추가된 부분)
-app.use('/api/exercises', exerciseRoutes);  // 운동 종목 관련 API 라우트 설정
+// 운동 종목 관련 라우팅 
+app.use('/api/exercises', exerciseRoutes);      // 추가!!!!!!!!!!!!!!!!!!!!!!!!!
+// 운동 기록 관련 라우팅                          // 추가!!!!!!!!!!!!!!!!!!!!!!!!!!!
+app.use('/api', workoutLogRoutes);
 
 // 친구 요청 목록 라우팅
 app.use('/api/friends', friendRoutes);

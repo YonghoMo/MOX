@@ -91,7 +91,10 @@ function saveEvent() {
     const date = document.getElementById("event-date").value;
     const startTime = document.getElementById("start-time").value;
     const endTime = document.getElementById("end-time").value;
-    const exercises = document.getElementById("exercises").value.split(",");
+    
+     // 운동 선택을 체크박스로 변경
+     const checkedExercises = document.querySelectorAll('input[name="exerciseCheckbox"]:checked');
+     const exercises = Array.from(checkedExercises).map(checkbox => checkbox.value); // 체크된 운동의 value 값을 배열로 변환
 
     if (title && date && startTime && endTime) {
         axios
@@ -399,3 +402,16 @@ document.querySelector("[data-bs-target='#addExerciseModal']").addEventListener(
 });
 
 document.getElementById("saveEventBtn").addEventListener("click", saveEvent);
+
+
+
+
+
+
+
+
+
+
+
+
+
