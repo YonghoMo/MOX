@@ -515,11 +515,15 @@ function setupSetHandlers(exerciseBox) {
         setsDiv.appendChild(setRow);
     });
 
-    // 세트 삭제
+    // 세트 삭제(완료된 세트는 삭제하지 않음)
     deleteSetBtn.addEventListener('click', () => {
-        if (setsDiv.children.length > 1) {
-            setsDiv.removeChild(setsDiv.lastChild);
-        }
+        const setRows = setsDiv.querySelectorAll('.set-row');
+        setRows.forEach(row => {
+            const isComplete = row.querySelector('.set-complete').checked;
+            if (!isComplete) {
+                row.remove();  // 완료되지 않은 세트만 삭제
+            }
+        });
     });
 }
 
