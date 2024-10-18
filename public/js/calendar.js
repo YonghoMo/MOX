@@ -293,13 +293,35 @@ async function showEventDetails(event) {
                     ? exercise.measurementTypes.join(', ') 
                     : '운동량 정보 없음';  // measurementTypes가 없을 경우 기본 텍스트 설정
 
-                measureDiv.innerHTML = `
-                    <span>운동량 타입: ${measurementTypesText}</span>
-                    <div class="exercise-sets">
-                        <input type="number" class="set-value" placeholder="운동량 입력" />
-                        <input type="checkbox" class="set-complete" /> 완료
-                    </div>
-                `;
+                // 웨이트일 경우 무게와 횟수 입력 박스를 가로로 배치
+                if (exercise.category === '웨이트') {
+                    measureDiv.innerHTML = `
+                        <span>운동량 타입: ${measurementTypesText}</span>
+                        <div class="weight-reps-container">
+                            <input type="number" class="weight-value" placeholder="무게 (kg)" />
+                            <input type="number" class="reps-value" placeholder="횟수 (회)" />
+                            <input type="checkbox" class="set-complete" /> 완료
+                        </div>
+                    `;
+                } else if (exercise.category === '유산소') {
+                    // 유산소일 경우 시간 입력(mm:ss) 설정
+                    measureDiv.innerHTML = `
+                        <span>운동량 타입: ${measurementTypesText}</span>
+                        <div class="cardio-time-container">
+                            <input type="text" class="time-value" placeholder="시간 (mm:ss)" pattern="\\d{2}:\\d{2}" />
+                            <input type="checkbox" class="set-complete" /> 완료
+                        </div>
+                    `;
+                } else if (exercise.category === '맨몸운동') {
+                    // 맨몸운동일 경우 횟수 입력 설정
+                    measureDiv.innerHTML = `
+                        <span>운동량 타입: ${measurementTypesText}</span>
+                        <div class="bodyweight-reps-container">
+                            <input type="number" class="reps-value" placeholder="횟수 (회)" />
+                            <input type="checkbox" class="set-complete" /> 완료
+                        </div>
+                    `;
+                }
                 exerciseBox.appendChild(measureDiv);
 
                 // 하단: 세트 추가/삭제 버튼
@@ -310,6 +332,59 @@ async function showEventDetails(event) {
                     <button class="delete-set-btn">세트 삭제</button>
                 `;
                 exerciseBox.appendChild(controlsDiv);
+
+                // 세트 추가/삭제 기능 구현
+                let setsDiv = measureDiv.querySelector('.exercise-sets'); // 세트가 추가될 div
+                // setsDiv가 없을 경우 생성
+                if (!setsDiv) {
+                    setsDiv = document.createElement('div');
+                    setsDiv.classList.add('exercise-sets');
+                    measureDiv.appendChild(setsDiv);
+                }
+
+                // 세트 추가 기능
+                const addSetBtn = controlsDiv.querySelector('.add-set-btn');
+                addSetBtn.addEventListener('click', () => {
+                    const setRow = document.createElement('div');
+                    setRow.classList.add('set-row');
+
+                    // 웨이트일 경우 무게와 횟수 입력 추가
+                    if (exercise.category === '웨이트') {
+                        setRow.innerHTML = `
+                            <div class="weight-reps-container">
+                                <input type="number" class="weight-value" placeholder="무게 (kg)" />
+                                <input type="number" class="reps-value" placeholder="횟수 (회)" />
+                                <input type="checkbox" class="set-complete" /> 완료
+                            </div>
+                            
+                        `;
+                    } else if (exercise.category === '유산소') {
+                        // 유산소일 경우 시간 입력 추가
+                        setRow.innerHTML = `
+                            <input type="text" class="time-value" placeholder="시간 (mm:ss)" pattern="\\d{2}:\\d{2}" />
+                            <input type="checkbox" class="set-complete" /> 완료
+                        `;
+                    } else if (exercise.category === '맨몸운동') {
+                        // 맨몸운동일 경우 횟수 입력 추가
+                        setRow.innerHTML = `
+                            <input type="number" class="reps-value" placeholder="횟수 (회)" />
+                            <input type="checkbox" class="set-complete" /> 완료
+                        `;
+                    }
+                    setsDiv.appendChild(setRow);
+                });
+
+                // 세트 삭제 기능 (완료되지 않은 세트만 삭제)
+                const deleteSetBtn = controlsDiv.querySelector('.delete-set-btn');
+                deleteSetBtn.addEventListener('click', () => {
+                    const setRows = setsDiv.querySelectorAll('.set-row');
+                    setRows.forEach(row => {
+                        const isComplete = row.querySelector('.set-complete').checked;
+                        if (!isComplete) {
+                            row.remove();  // 완료되지 않은 세트만 삭제
+                        }
+                    });
+                });
 
                 // 운동 종목 박스를 모달에 추가
                 exerciseListContainer.appendChild(exerciseBox);
@@ -448,82 +523,60 @@ document.querySelector("[data-bs-target='#addExerciseModal']").addEventListener(
 
 document.getElementById("saveEventBtn").addEventListener("click", saveEvent);
 
-
-
-
-
-
-
-function showSelectedExercisesInModal(eventExercises) {
-    const exerciseListContainer = document.getElementById('event-exercise-list');
-    exerciseListContainer.innerHTML = ''; // 기존 내용을 초기화
-
-    // 각 운동 종목을 상단, 중단, 하단 구조로 표시
-    eventExercises.forEach(exercise => {
-        const exerciseBox = document.createElement('div');
-        exerciseBox.classList.add('exercise-box');
-
-        // 상단: 운동 이름
-        const titleDiv = document.createElement('div');
-        titleDiv.classList.add('exercise-title');
-        titleDiv.textContent = `${exercise.name} (${exercise.category})`;
-        exerciseBox.appendChild(titleDiv);
-
-        // 중단: 운동량 타입 설정 및 완료 체크 공간
-        const measureDiv = document.createElement('div');
-        measureDiv.classList.add('exercise-measure');
-        measureDiv.innerHTML = `
-            <span>${exercise.measurementTypes.join(', ')}</span>
-            <div class="exercise-sets">
-                <input type="number" class="set-value" placeholder="운동량 입력" />
-                <input type="checkbox" class="set-complete" /> 완료
-            </div>
-        `;
-        exerciseBox.appendChild(measureDiv);
-
-        // 하단: 세트 추가/삭제 버튼
-        const controlsDiv = document.createElement('div');
-        controlsDiv.classList.add('exercise-controls');
-        controlsDiv.innerHTML = `
-            <button class="add-set-btn">세트 추가</button>
-            <button class="delete-set-btn">세트 삭제</button>
-        `;
-        exerciseBox.appendChild(controlsDiv);
-
-        // 박스를 모달에 추가
-        exerciseListContainer.appendChild(exerciseBox);
-
-        // 세트 추가/삭제 버튼에 대한 핸들러 설정
-        setupSetHandlers(exerciseBox);
-    });
-}
-
 // 세트 추가/삭제 핸들러
 function setupSetHandlers(exerciseBox) {
     const addSetBtn = exerciseBox.querySelector('.add-set-btn');
     const deleteSetBtn = exerciseBox.querySelector('.delete-set-btn');
     const setsDiv = exerciseBox.querySelector('.exercise-sets');
 
+    // setsDiv가 없을 경우 생성
+    if (!setsDiv) {
+        setsDiv = document.createElement('div');
+        setsDiv.classList.add('exercise-sets');
+        exerciseBox.appendChild(setsDiv);
+    }
+
     // 세트 추가
     addSetBtn.addEventListener('click', () => {
         const setRow = document.createElement('div');
         setRow.classList.add('set-row');
-        setRow.innerHTML = `
-            <input type="number" class="set-value" placeholder="운동량 입력" />
-            <input type="checkbox" class="set-complete" /> 완료
-        `;
+        // 운동 카테고리에 따른 입력 필드 결정
+        if (exercise.category === '웨이트') {
+            setRow.innerHTML = `
+                <div class="weight-reps-container">
+                    <input type="number" class="weight-value" placeholder="무게 (kg)" />
+                    <input type="number" class="reps-value" placeholder="횟수 (회)" />
+                    <input type="checkbox" class="set-complete" /> 완료
+                </div>
+            `;
+        } else if (exercise.category === '유산소') {
+            setRow.innerHTML = `
+                <input type="text" class="time-value" placeholder="시간 (mm:ss)" />
+                <input type="checkbox" class="set-complete" /> 완료
+            `;
+        } else if (exercise.category === '맨몸운동') {
+            setRow.innerHTML = `
+                <input type="number" class="reps-value" placeholder="횟수 (회)" />
+                <input type="checkbox" class="set-complete" /> 완료
+            `;
+        }
         setsDiv.appendChild(setRow);
     });
 
     // 세트 삭제(완료된 세트는 삭제하지 않음)
     deleteSetBtn.addEventListener('click', () => {
         const setRows = setsDiv.querySelectorAll('.set-row');
-        setRows.forEach(row => {
+        // 가장 마지막 세트를 삭제하는데, 완료된 세트는 삭제되지 않도록 함
+        for (let i = setRows.length - 1; i >= 0; i--) {
+            const row = setRows[i];
             const isComplete = row.querySelector('.set-complete').checked;
+        
+            // 완료되지 않은 세트만 삭제
             if (!isComplete) {
-                row.remove();  // 완료되지 않은 세트만 삭제
+                row.remove();  // 완료되지 않은 마지막 세트만 삭제
+                break;  // 한 번 삭제 후 함수 종료
             }
-        });
+        }
     });
 }
 

@@ -120,6 +120,18 @@ footer p {
     font-size: 16px;
 }
 
+.weight-reps-container {
+    display: flex; /* 가로 배열 */
+    gap: 10px; /* 박스 간격 */
+    align-items: center; /* 박스를 세로 중앙에 맞춤 */
+}
+
+.weight-value, .reps-value {
+    width: 80px; /* 각 박스의 너비 */
+    padding: 5px; /* 패딩 추가 */
+}
+
+
 
 /* 모바일 환경에 맞춘 스타일 조정 */
 @media (max-width: 768px) {
