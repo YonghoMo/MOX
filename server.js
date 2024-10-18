@@ -73,7 +73,7 @@ app.get('/', (req, res) => {
 // 운동 종목 관련 라우팅 
 app.use('/api/exercises', exerciseRoutes);      // 추가!!!!!!!!!!!!!!!!!!!!!!!!!
 // 운동 기록 관련 라우팅                          // 추가!!!!!!!!!!!!!!!!!!!!!!!!!!!
-app.use('/api', workoutLogRoutes);
+app.use('/api/workoutLogs', workoutLogRoutes);
 
 // 친구 요청 목록 라우팅
 app.use('/api/friends', friendRoutes);

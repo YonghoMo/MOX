@@ -278,7 +278,12 @@ async function showEventDetails(event) {
             exercises.forEach(exercise => {
                 const exerciseBox = document.createElement('div');
                 exerciseBox.classList.add('exercise-box');
+                // data-exercise-id 속성에 exercise._id 값을 저장
+                exerciseBox.setAttribute('data-exercise-id', exercise._id);;
+                
+                console.log(`exerciseId: ${exercise._id}`);
 
+                
                 // 상단: 운동 이름
                 const titleDiv = document.createElement('div');
                 titleDiv.classList.add('exercise-title');
@@ -298,8 +303,8 @@ async function showEventDetails(event) {
                     measureDiv.innerHTML = `
                         <span>운동량 타입: ${measurementTypesText}</span>
                         <div class="weight-reps-container">
-                            <input type="number" class="weight-value" placeholder="무게 (kg)" />
-                            <input type="number" class="reps-value" placeholder="횟수 (회)" />
+                            <input type="number" class="weight-value" placeholder="무게(kg)" />
+                            <input type="number" class="reps-value" placeholder="횟수(회)" />
                             <input type="checkbox" class="set-complete" /> 완료
                         </div>
                     `;
@@ -308,7 +313,7 @@ async function showEventDetails(event) {
                     measureDiv.innerHTML = `
                         <span>운동량 타입: ${measurementTypesText}</span>
                         <div class="cardio-time-container">
-                            <input type="text" class="time-value" placeholder="시간 (mm:ss)" pattern="\\d{2}:\\d{2}" />
+                            <input type="text" class="time-value" placeholder="시간(mm:ss)" pattern="\\d{2}:\\d{2}" />
                             <input type="checkbox" class="set-complete" /> 완료
                         </div>
                     `;
@@ -317,7 +322,7 @@ async function showEventDetails(event) {
                     measureDiv.innerHTML = `
                         <span>운동량 타입: ${measurementTypesText}</span>
                         <div class="bodyweight-reps-container">
-                            <input type="number" class="reps-value" placeholder="횟수 (회)" />
+                            <input type="number" class="reps-value" placeholder="횟수(회)" />
                             <input type="checkbox" class="set-complete" /> 완료
                         </div>
                     `;
@@ -376,21 +381,26 @@ async function showEventDetails(event) {
 
                 // 세트 삭제 기능 (완료되지 않은 세트만 삭제)
                 const deleteSetBtn = controlsDiv.querySelector('.delete-set-btn');
-                deleteSetBtn.addEventListener('click', () => {
+                deleteSetBtn.addEventListener('click', () => {                    
                     const setRows = setsDiv.querySelectorAll('.set-row');
-                    setRows.forEach(row => {
+                    for (let i = setRows.length - 1; i >= 0; i--) {
+                        const row = setRows[i];
                         const isComplete = row.querySelector('.set-complete').checked;
+                    
+                        // 완료되지 않은 세트만 삭제
                         if (!isComplete) {
-                            row.remove();  // 완료되지 않은 세트만 삭제
+                            row.remove();  // 완료되지 않은 마지막 세트만 삭제
+                            break;  // 한 번 삭제 후 함수 종료
                         }
-                    });
+                    }
                 });
 
                 // 운동 종목 박스를 모달에 추가
                 exerciseListContainer.appendChild(exerciseBox);
 
                 // 세트 추가/삭제 핸들러 설정
-                setupSetHandlers(exerciseBox);
+                //setupSetHandlers(exerciseBox);
+
                 console.log(event.exercises); // 운동 종목 데이터를 콘솔에 출력
             });
         
@@ -598,3 +608,78 @@ async function fetchAndDisplayExercises(eventId) {
 
 
 
+
+
+
+
+// 운동 기록 저장 버튼 클릭 시 서버로 데이터 전송
+document.getElementById("saveWorkoutLogBtn").addEventListener("click", async function () {
+    const eventId = document.getElementById("viewEventTitle").dataset.eventId;  // 이벤트 ID
+    const date = new Date().toISOString();  // 현재 날짜 저장
+
+    const workoutLogs = [];  // 전체 운동 기록 배열 초기화
+
+    document.querySelectorAll('.exercise-box').forEach((exerciseBox) => {
+        const exerciseId = exerciseBox.dataset.exerciseId;  // 운동 종목 ID 배열
+        const measurementTypes = exerciseBox.querySelector('.exercise-measure span').textContent;  // 운동량 타입
+        const setRows = exerciseBox.querySelectorAll('.set-row');  // 세트 행
+
+        console.log("exerciseId:", exerciseId);  // 콘솔로 확인
+        if (!exerciseId) {
+            console.error("exerciseId가 없습니다:", exerciseBox);
+            return;  // exerciseId가 없으면 실행하지 않음
+        }
+
+        const sets = [];
+
+        // 각 세트별 데이터를 배열에 추가
+        setRows.forEach((setRow, index) => {
+            const setNumber = index + 1;  // 세트 번호
+            const isCompleted = setRow.querySelector('.set-complete').checked; 
+            
+            let setData = {
+                exerciseId: exerciseId,
+                setNumber,      // 세트 번호
+                isCompleted     // 완료 여부
+            };
+
+            // 운동 카테고리에 따라 다른 데이터를 추가
+            if (measurementTypes.includes('무게/횟수')) {
+                setData.weight = setRow.querySelector('.weight-value').value;  // 무게 (kg)
+                setData.reps = setRow.querySelector('.reps-value').value;  // 횟수 (회)
+            } else if (measurementTypes.includes('시간')) {
+                setData.time = setRow.querySelector('.time-value').value;  // 시간 (mm:ss)
+            } else if (measurementTypes.includes('횟수')) {
+                setData.reps = setRow.querySelector('.reps-value').value;  // 횟수 (회)
+            }           
+
+            sets.push(setData);
+        });
+
+        workoutLogs.push({
+            exerciseId: exerciseId,
+            sets: sets
+        });
+    });
+
+    // 서버로 전송할 전체 데이터
+    const workoutLogData = {
+        userId,  // 로그인한 사용자 ID
+        eventId,  // 이벤트 ID
+        workoutLogs,    // 운동 기록
+        date  // 현재 날짜
+    };
+
+    try {
+        const response = await axios.post('/api/workoutLogs/saveWorkoutLog', workoutLogData);
+        console.log("서버 응답: ", response.data);
+        if (response.data.success) {
+            alert('운동 기록이 저장되었습니다.');
+        } else {
+            alert('운동 기록 저장에 실패했습니다.');
+        }
+    } catch (error) {
+        console.error('운동 기록 저장 중 오류 발생:', error);
+        alert('운동 기록 저장 중 오류가 발생했습니다.');
+    }
+});

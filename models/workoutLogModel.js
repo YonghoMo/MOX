@@ -12,25 +12,29 @@ const workoutLogSchema = new mongoose.Schema({
         ref: 'Event',  // Event 참조 (이 운동 기록이 속한 이벤트)
         required: true
     },
-    exerciseId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Exercise',  // Exercise 참조 (운동 종목)
-        required: true
-    },
+    // 세트별 운동 정보
+    workoutLogs: [
+        {
+            exerciseId: {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: 'Exercise',  // Exercise 참조 (운동 종목)
+                required: true
+            },
+            sets: [
+                {
+                    setNumber: { type: Number, required: true },
+                    weight: { type: Number },  // 무게 (웨이트용)
+                    reps: { type: Number },    // 횟수 (웨이트 및 맨몸운동용)
+                    time: { type: String },    // 시간 (유산소용)
+                    isCompleted: { type: Boolean, default: false }  // 완료 여부
+                }
+            ]
+        }
+    ],
     date: {
         type: Date,
         required: true
-    },
-    // 세트별 운동 정보
-    sets: [
-        {
-            setNumber: { type: Number, required: true },  // 세트 번호
-            measureTypes: { type: String, required: true }, // 운동량 타입 (예: '웨이트')
-            value: { type: String, required: true } // 운동량 값 (예: '60kg, 10회')
-        }
-    ]
+    }
 });
 
-const WorkoutLog = mongoose.model('WorkoutLog', workoutLogSchema);
-
-module.exports = WorkoutLog;
+module.exports = mongoose.model('WorkoutLog', workoutLogSchema);
