@@ -2,21 +2,30 @@ const WorkoutLog = require('../models/workoutLogModel');
 const Exercise = require('../models/exerciseModel');
 
 // 운동 기록 생성
-exports.saveWorkoutLog = async (req, res) => {}
+exports.saveWorkoutLog = async (req, res) => {
     const { userId, eventId, workoutLogs, date } = req.body;
     try {
-        
+        const logs = workoutLogs.map(log => ({
+            exerciseId: log.exerciseId,
+            sets: log.sets.map(set => ({
+                setNumber: set.setNumber,
+                weight: set.weight,
+                reps: set.reps,
+                time: set.time,
+                isCompleted: set.isCompleted,
+            }))
+        }));
+
         // workoutLog 생성
         const newworkoutLog = new WorkoutLog({
             userId,
             eventId,
-            workoutLogs,
+            workoutLogs: logs,
             date
         });
 
         // 데이터베이스에 저장
         await newworkoutLog.save();
-
         return res.status(201).json({ success: true, message: '운동 기록이 저장되었습니다.' });
     } catch (error) {
         console.error('운동 기록 저장 중 오류 발생:', error);

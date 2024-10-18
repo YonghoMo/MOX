@@ -259,7 +259,12 @@ function handleColorChange(eventId) {
 
 // 일정 상세 정보 모달에 표시
 async function showEventDetails(event) {
-    document.getElementById("viewEventTitle").textContent = event.title;
+    const eventTitleElement = document.getElementById("viewEventTitle");
+
+    // 제목과 함께 data-event-id 속성에 eventId를 저장
+    eventTitleElement.textContent = event.title;
+    eventTitleElement.setAttribute('data-event-id', event._id);  // 여기서 data-event-id에 eventId를 할당
+    
     document.getElementById("viewEventDate").textContent = event.date;
     document.getElementById("viewEventTime").textContent = event.startTime + " - " + event.endTime;
 
