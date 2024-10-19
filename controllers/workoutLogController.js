@@ -1,27 +1,29 @@
 const WorkoutLog = require('../models/workoutLogModel');
-const Exercise = require('../models/exerciseModel');
 
 // 운동 기록 생성
 exports.saveWorkoutLog = async (req, res) => {
-    const { userId, eventId, workoutLogs, date } = req.body;
+    console.log("서버로 받은 workoutLogs 데이터: ", JSON.stringify(req.body.workoutLogs, null, 2)); // 추가된 로그
+
     try {
-        const logs = workoutLogs.map(log => ({
+        const logs = req.body.workoutLogs.map(log => ({
             exerciseId: log.exerciseId,
-            sets: log.sets.map(set => ({
-                setNumber: set.setNumber,
-                weight: set.weight,
-                reps: set.reps,
-                time: set.time,
-                isCompleted: set.isCompleted,
-            }))
+            sets: log.sets.map(set => {
+                console.log("세트 데이터: ", set);  // 세트 데이터 확인
+                return {
+                    setNumber: set.setNumber,
+                    weight: set.weight,  // weight 값 확인
+                    reps: set.reps,
+                    time: set.time,
+                    isCompleted: set.isCompleted
+                };
+            })
         }));
 
-        // workoutLog 생성
         const newworkoutLog = new WorkoutLog({
-            userId,
-            eventId,
+            userId: req.body.userId,
+            eventId: req.body.eventId,
             workoutLogs: logs,
-            date
+            date: req.body.date
         });
 
         // 데이터베이스에 저장
