@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
 
 // WorkoutLog 스키마
 const workoutLogSchema = new mongoose.Schema({
@@ -33,7 +34,7 @@ const workoutLogSchema = new mongoose.Schema({
     ],
     date: {
         type: Date,
-        required: true
+        defaultL: Date.now
     }
 });
 

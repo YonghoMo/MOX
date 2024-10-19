@@ -641,12 +641,56 @@ document.getElementById("saveWorkoutLogBtn").addEventListener("click", async fun
     }
 });
 
+// 일정 상세 모달을 열 때 선택된 운동 기록 불러오기
+async function fetchWorkoutLog(eventId) {
+    try {
+        const response = await axios.get(`/api/workoutLogs/event/${eventId}`);
+        const workoutLog = response.data;
 
+        if (workoutLog) {
+            displayWorkoutLogInModal(workoutLog);  // 운동 기록을 모달에 표시하는 함수 호출
+        } else {
+            console.error("운동 기록을 찾을 수 없습니다.");
+        }
+    } catch (error) {
+        console.error("운동 기록 불러오기 중 오류 발생:", error);
+    }
+}
 
+// 운동 기록을 모달에 표시하는 함수
+function displayWorkoutLogInModal(workoutLog) {
+    const exerciseListContainer = document.getElementById("viewEventExercises");
+    exerciseListContainer.innerHTML = '';  // 기존 내용을 초기화
 
+    workoutLog.workoutLogs.forEach(log => {
+        const exerciseBox = document.createElement('div');
+        exerciseBox.classList.add('exercise-box');
 
+        // 운동 이름과 카테고리 표시
+        const exerciseTitle = document.createElement('div');
+        exerciseTitle.textContent = `운동: ${log.exerciseId.name} (${log.exerciseId.category})`;
+        exerciseBox.appendChild(exerciseTitle);
 
+        // 세트 정보 표시
+        log.sets.forEach(set => {
+            const setRow = document.createElement('div');
+            setRow.classList.add('set-row');
+            setRow.innerHTML = `
+                <div>세트: ${set.setNumber}</div>
+                <div>무게: ${set.weight || 'N/A'}</div>
+                <div>횟수: ${set.reps || 'N/A'}</div>
+                <div>시간: ${set.time || 'N/A'}</div>
+                <div>완료: ${set.isCompleted ? '예' : '아니오'}</div>
+            `;
+            exerciseBox.appendChild(setRow);
+        });
 
+        exerciseListContainer.appendChild(exerciseBox);
+    });
+}
 
-
-
+// 일정 상세 모달을 열 때 운동 기록 불러오기
+document.getElementById('viewEventModal').addEventListener('shown.bs.modal', function () {
+    const eventId = document.getElementById("viewEventTitle").dataset.eventId;  // 이벤트 ID 가져오기
+    fetchWorkoutLog(eventId);  // 운동 기록 불러오기
+});

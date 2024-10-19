@@ -46,3 +46,18 @@ exports.getWorkoutLogsByUser = async (req, res) => {
         return res.status(500).json({ message: '운동 기록 조회 중 오류가 발생했습니다.', error });
     }
 };
+
+// 운동 기록 조회 (이벤트별로)
+exports.getWorkoutLogByEvent = async (req, res) => {
+    const { eventId } = req.params;
+    try {
+        const workoutLog = await WorkoutLog.findOne({ eventId }).populate('workoutLogs.exerciseId', 'name category');
+        if (!workoutLog) {
+            return res.status(404).json({ message: '운동 기록을 찾을 수 없습니다.' });
+        }
+        res.status(200).json(workoutLog);
+    } catch (error) {
+        console.error('운동 기록 조회 중 오류 발생:', error);
+        res.status(500).json({ message: '운동 기록 조회 중 오류가 발생했습니다.' });
+    }
+};
