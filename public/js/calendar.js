@@ -679,13 +679,32 @@ function displayWorkoutLogInModal(workoutLog) {
         log.sets.forEach(set => {
             const setRow = document.createElement('div');
             setRow.classList.add('set-row');
-            setRow.innerHTML = `
-                <div>세트: ${set.setNumber}</div>
-                <div>무게: ${set.weight || 'N/A'}</div>
-                <div>횟수: ${set.reps || 'N/A'}</div>
-                <div>시간: ${set.time || 'N/A'}</div>
-                <div>완료: ${set.isCompleted ? '예' : '아니오'}</div>
-            `;
+
+            // 웨이트 카테고리일 경우 무게와 횟수만 표시
+            if (log.exerciseId.category === '웨이트') {
+                setRow.innerHTML = `
+                    <div>세트: ${set.setNumber}</div>
+                    <div>무게: ${set.weight || 'N/A'} kg</div>
+                    <div>횟수: ${set.reps || 'N/A'} 회</div>
+                    <div>완료: ${set.isCompleted ? '예' : '아니오'}</div>
+                `;
+            }
+            // 유산소 카테고리일 경우 시간만 표시
+            else if (log.exerciseId.category === '유산소') {
+                setRow.innerHTML = `
+                    <div>세트: ${set.setNumber}</div>
+                    <div>시간: ${set.time || 'N/A'} 분</div>
+                    <div>완료: ${set.isCompleted ? '예' : '아니오'}</div>
+                `;
+            }
+            // 맨몸운동일 경우 횟수만 표시
+            else if (log.exerciseId.category === '맨몸운동') {
+                setRow.innerHTML = `
+                    <div>세트: ${set.setNumber}</div>
+                    <div>횟수: ${set.reps || 'N/A'} 회</div>
+                    <div>완료: ${set.isCompleted ? '예' : '아니오'}</div>
+                `;
+            }
             exerciseBox.appendChild(setRow);
         });
 
@@ -699,6 +718,9 @@ document.getElementById('viewEventModal').addEventListener('shown.bs.modal', fun
     console.log(`모달이 열림: eventId = ${eventId}`);
     fetchWorkoutLog(eventId);  // 운동 기록 불러오기
     document.getElementById('deleteWorkoutLogBtn').setAttribute('data-event-id', eventId);  // 삭제 버튼에 이벤트 ID 설정
+
+    // 추가: 운동량 저장 버튼 숨기기
+    document.getElementById('saveWorkoutLogBtn').style.display = 'none';
 });
 
 
