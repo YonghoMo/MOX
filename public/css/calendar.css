@@ -235,6 +235,43 @@ footer p {
     background-color: #0056b3; /* 어두운 파란색으로 전환 */
 }
 
+/* 동적으로 할당되는 체크박스 크기 조정 */
+.set-complete {
+    transform: scale(1.5); /* 1.5배 키우기 */
+    width: 20px;  /* 체크박스 크기 */
+    height: 20px; /* 체크박스 높이 */
+    cursor: pointer; /* 포인터 커서 */
+}
+
+/* 체크박스 주변 여백을 조정해 크기가 키워져도 레이아웃이 깨지지 않도록 */
+.set-complete-label {
+    margin-left: 10px; /* 체크박스와 텍스트 사이 간격 */
+}
+
+/* 세트 추가/삭제 버튼 크기 조정 */
+.add-set-btn, .delete-set-btn {
+    width: 80%; /* 자동으로 버튼 크기를 조정 (내용에 맞게) */
+    padding: 5px 10px; /* 버튼 내부 여백 조정 */
+    font-size: 14px; /* 텍스트 크기 조정 */
+    border-radius: 5px; /* 둥근 모서리 추가 */
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+/* 버튼을 가로로 나란히 배치하고 간격 추가 */
+.exercise-controls {
+    display: flex;
+    width: 95%;
+    gap: 9px; /* 버튼 사이 간격 */
+    margin-left: -1px;
+    margin-top: 4px;
+    justify-content: flex-start; /* 버튼을 왼쪽 정렬 */
+}
+
+.set-row {
+    padding-top: 1px;
+    padding-bottom: 2px;
+}
 
 /* 모바일 환경에 맞춘 스타일 조정 */
 @media (max-width: 768px) {
@@ -269,7 +306,6 @@ footer p {
 
     .add-set-btn, .delete-set-btn {
         padding: 4px 8px;
-        font-size: 13px;
     }
 
     .deleteWorkoutLogBtn, .addWorkoutLogBtn {
