@@ -133,13 +133,79 @@ footer p {
 
 
 
+
+
+
+
+
+
+
+
+/* 모달 내 레이아웃 */
+.modal-body {
+    padding: 20px;
+    background-color: #f9f9f9; /* 약간의 배경색 추가로 구분 */
+    border-radius: 10px;
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: space-between;
+}
+
+.exercise-box {
+    padding: 10px;
+    border: 1px solid #ddd;
+    margin-bottom: 10px;
+    border-radius: 8px;
+}
+
+.exercise-controls {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+/* 세트 추가/삭제 버튼 크기 조정 */
+.add-set-btn, .delete-set-btn {
+    padding: 5px 10px;
+    font-size: 12px;
+}
+
+/* 모바일에서 운동 기록 입력 필드 정렬 */
+.weight-reps-container {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap; /* 모바일에서는 줄 바꿈 */
+}
+
+/* 입력 필드 크기 조정 */
+.weight-value, .reps-value, .time-value {
+    flex: 1;
+    min-width: 45%; /* 모바일에서 필드가 너무 좁아지지 않도록 */
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 /* 모바일 환경에 맞춘 스타일 조정 */
 @media (max-width: 768px) {
     #calendar {
-        grid-template-columns: repeat(
-            7,
-            1fr
-        ); /* 작은 화면에서는 7일씩 표시 */
+        grid-template-columns: repeat(7, 1fr); /* 작은 화면에서는 7일씩 표시 */
     }
                 
     .day {
@@ -153,4 +219,37 @@ footer p {
     .event-title {
         display: none;
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    .modal-dialog {
+        max-width: 95%; /* 모바일에서 모달 크기를 조정 */
+        margin: 20px auto;
+    }
+
+    .modal-body {
+        padding: 15px;
+    }
+
+    .exercise-box {
+        padding: 8px;
+    }
+
+    .add-set-btn, .delete-set-btn {
+        padding: 3px 8px;
+        font-size: 10px;
+    }
+
 }
