@@ -173,8 +173,10 @@
                   <!-- 선택된 운동 종목들이 이곳에 표시됩니다 -->
                   <div class="exercise-box" data-exercise-id="exerciseIdValue"></div>
                 </div>
+                <div id="WorkoutLogBtnDIV">
+                <button id="deleteWorkoutLogBtn" class="btn btn-primary">운동 기록 삭제</button>
                 <button id="saveWorkoutLogBtn" class="btn btn-primary">운동 기록 저장</button>
-                <button id="deleteWorkoutLogBtn">운동 기록 삭제</button>
+                </div>
               </p>
               <div class="mb-3">
                 <label for="event-color-picker" class="form-label"
@@ -257,36 +259,6 @@
         운동 추가
       </button> 
     </footer>
-
-
-
-    <!--
-    <script>
-      // 서버에서 운동 종목을 조회하여 화면에 출력하는 함수
-    // 페이지가 로드되면 운동 종목 조회
-      async function fetchExercises() {
-          try {
-              const response = await fetch('/exercises');  // 운동 종목 조회 API 호출
-              const exercises = await response.json();
-
-              const exerciseList = document.getElementById('exercise-list');
-              exercises.forEach(exercise => {
-                  const row = document.createElement('tr');
-                  row.innerHTML = `
-                      <td>${exercise.name}</td>
-                      <td>${exercise.category}</td>
-                      <td>${exercise.metricType.join(', ')}</td>
-                  `;
-                  exerciseList.appendChild(row);
-              });
-          } catch (error) {
-              console.error('전체 운동 종목 조회 중 오류가 발생했습니다:', error);
-          }
-      }
-      
-      window.onload = fetchExercises;
-    </script>
-  -->
 
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>

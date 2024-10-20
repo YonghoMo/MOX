@@ -285,12 +285,22 @@ function handleColorChange(eventId) {
     const colorPicker = document.getElementById("event-color-picker");
     const selectedColor = colorPicker.value;
 
-    // 로컬 스토리지에 선택한 색상 저장
-    localStorage.setItem(`eventColor_${eventId}`, selectedColor);
+    // 이벤트 제목 요소가 존재하는지 먼저 확인
+    const eventTitleElement = document.getElementById("viewEventTitle");
+    if (eventTitleElement) {
+        const eventId = eventTitleElement.dataset.eventId; // 안전하게 이벤트 ID 가져오기
 
-    // 변경된 색상을 화면에 적용
-    applyEventColor(eventId, selectedColor);
+        // 로컬 스토리지에 선택한 색상 저장
+        localStorage.setItem(`eventColor_${eventId}`, selectedColor);
+
+        // 변경된 색상을 화면에 적용
+        applyEventColor(eventId, selectedColor);
+    } else {
+        console.error("이벤트 제목 요소를 찾을 수 없습니다.");
+    }
 }
+// 색상 선택 시 이벤트 리스너 추가
+document.getElementById("event-color-picker").addEventListener("input", handleColorChange);
 
 // 일정 상세 정보 모달에 표시
 async function showEventDetails(event) {
@@ -380,20 +390,20 @@ async function showEventDetails(event) {
                                 <div class="weight-reps-container">
                                     <input type="number" class="weight-value" placeholder="무게(kg)" />
                                     <input type="number" class="reps-value" placeholder="횟수(회)" />
-                                    <input type="checkbox" class="set-complete" /> 완료
+                                    <input type="checkbox" class="set-complete" />
                                 </div>
                             `;
                         } else if (exercise.category === '유산소') {
                             // 유산소일 경우 시간 입력 추가
                             setRow.innerHTML = `
                                 <input type="text" class="time-value" placeholder="시간(mm:ss)" pattern="\\d{2}:\\d{2}" />
-                                <input type="checkbox" class="set-complete" /> 완료
+                                <input type="checkbox" class="set-complete" />
                             `;
                         } else if (exercise.category === '맨몸운동') {
                             // 맨몸운동일 경우 횟수 입력 추가
                             setRow.innerHTML = `
                                 <input type="number" class="reps-value" placeholder="횟수(회)" />
-                                <input type="checkbox" class="set-complete" /> 완료
+                                <input type="checkbox" class="set-complete" />
                             `;
                         }
                         setsDiv.appendChild(setRow);
