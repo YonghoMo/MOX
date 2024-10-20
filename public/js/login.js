@@ -28,8 +28,9 @@ document
             const data = await response.json();
 
             if (response.ok) {
+                // 로그인 성공 시 alert 후 메인 페이지로 이동
                 alert("로그인 성공! 메인 페이지로 이동합니다.");
-                window.location.href = "/home.html"; // 로그인 성공 시 메인 페이지로 이동
+                window.location.href = "/home.html";
             } else {
                 document.getElementById("alert").innerText =
                     data.message || "로그인에 실패했습니다.";

@@ -17,6 +17,7 @@ const eventRoutes = require('./routes/eventRoutes');
 const commentRoutes = require('./routes/commentRoutes');
 const exerciseRoutes = require('./routes/exerciseRoutes'); // 추가!!!!!!!!!!!!!!!!!!!!
 const workoutLogRoutes = require('./routes/workoutLogRoutes'); // 추가!!!!!!!!!!!!!!!!!
+const exerciseRoutes = require('./routes/exerciseRoutes');
 const User = require('./models/userModel');
 const session = require('express-session');  // express-session 모듈 불러오기
 const bcrypt = require('bcrypt');
@@ -90,11 +91,16 @@ app.use('/api/events', eventRoutes);
 // 댓글 라우트 사용
 app.use('/api', commentRoutes);
 
+// 세션에서 사용자 정보 반환
 app.get('/api/users/me', (req, res) => {
     if (req.session.user) {
-        return res.json({ userId: req.session.user._id }); // 세션에서 사용자 ID 반환
+        // 세션에서 userId와 nickname 모두 반환
+        return res.json({
+            userId: req.session.user._id,
+            nickname: req.session.user.nickname
+        });
     } else {
-        return res.status(401).json({ message: '로그인이 필요합니다.' }); // 로그인이 안 된 경우
+        return res.status(401).json({ message: '로그인이 필요합니다.' });
     }
 });
 
