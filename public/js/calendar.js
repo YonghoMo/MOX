@@ -648,10 +648,14 @@ async function fetchWorkoutLog(eventId) {
         const workoutLog = response.data;
 
         if (workoutLog) {
+            console.log("운동 기록 불러오기 성공: ", workoutLog);  // 추가된 로그
             displayWorkoutLogInModal(workoutLog);  // 운동 기록을 모달에 표시하는 함수 호출
         } else {
             console.error("운동 기록을 찾을 수 없습니다.");
         }
+
+        // 삭제 버튼에 eventId를 동적으로 설정
+        document.getElementById('deleteWorkoutLogBtn').setAttribute('data-event-id', eventId);
     } catch (error) {
         console.error("운동 기록 불러오기 중 오류 발생:", error);
     }
@@ -692,5 +696,44 @@ function displayWorkoutLogInModal(workoutLog) {
 // 일정 상세 모달을 열 때 운동 기록 불러오기
 document.getElementById('viewEventModal').addEventListener('shown.bs.modal', function () {
     const eventId = document.getElementById("viewEventTitle").dataset.eventId;  // 이벤트 ID 가져오기
+    console.log(`모달이 열림: eventId = ${eventId}`);
     fetchWorkoutLog(eventId);  // 운동 기록 불러오기
+    document.getElementById('deleteWorkoutLogBtn').setAttribute('data-event-id', eventId);  // 삭제 버튼에 이벤트 ID 설정
 });
+
+
+
+
+
+
+
+
+
+
+// 운동 기록 삭제
+async function deleteWorkoutLog() {
+    const eventId = document.getElementById('deleteWorkoutLogBtn').getAttribute('data-event-id');  // 버튼의 data-event-id 속성에서 eventId 가져오기
+    console.log(`삭제 요청: eventId = ${eventId}`);  // 삭제 요청 로그 추가
+    
+    try {
+        const response = await axios.delete(`/api/workoutLogs/event/${eventId}`);
+        console.log("삭제 요청 응답: ", response.data);
+        if (response.data.success) {
+            alert('운동 기록이 삭제되었습니다.');
+            // 모달을 업데이트하여 삭제된 내용을 반영
+            document.getElementById("viewEventExercises").innerHTML = '';
+        } else {
+            alert('운동 기록 삭제에 실패했습니다.');
+        }
+    } catch (error) {
+        console.error('운동 기록 삭제 중 오류 발생:', error);
+        alert('운동 기록 삭제 중 오류가 발생했습니다.');
+    }
+}
+
+document.getElementById('deleteWorkoutLogBtn').addEventListener('click', function() {
+    console.log('삭제 버튼 클릭됨');  // 삭제 버튼 클릭 여부 확인
+    deleteWorkoutLog();  // 삭제 요청 함수 호출
+});
+
+

@@ -61,3 +61,26 @@ exports.getWorkoutLogByEvent = async (req, res) => {
         res.status(500).json({ message: '운동 기록 조회 중 오류가 발생했습니다.' });
     }
 };
+
+
+
+
+
+
+
+
+// 운동 기록 삭제 (특정 이벤트에 대한 운동 기록 삭제)
+exports.deleteWorkoutLogByEvent = async (req, res) => {
+    const { eventId } = req.params;
+    console.log(`삭제 요청 받은 eventId: ${eventId}`);
+    try {
+        const deletedLog = await WorkoutLog.findOneAndDelete({ eventId });
+        if (!deletedLog) {
+            return res.status(404).json({ message: '운동 기록을 찾을 수 없습니다.' });
+        }
+        res.status(200).json({ success: true, message: '운동 기록이 삭제되었습니다.' });
+    } catch (error) {
+        console.error('운동 기록 삭제 중 오류 발생:', error);
+        res.status(500).json({ success: false, message: '운동 기록 삭제 중 오류가 발생했습니다.' });
+    }
+};
