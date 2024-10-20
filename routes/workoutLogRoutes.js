@@ -16,6 +16,9 @@ router.get('/event/:eventId', workoutLogController.getWorkoutLogByEvent);
 
 
 
+
+
+
 // 특정 이벤트의 운동 기록 삭제 (DELETE)
 router.delete('/event/:eventId', workoutLogController.deleteWorkoutLogByEvent);
 

@@ -62,13 +62,6 @@ exports.getWorkoutLogByEvent = async (req, res) => {
     }
 };
 
-
-
-
-
-
-
-
 // 운동 기록 삭제 (특정 이벤트에 대한 운동 기록 삭제)
 exports.deleteWorkoutLogByEvent = async (req, res) => {
     const { eventId } = req.params;

@@ -625,13 +625,13 @@ document.getElementById("saveWorkoutLogBtn").addEventListener("click", async fun
         workoutLogs,    // 운동 기록
         date  // 현재 날짜
     };
-    console.log("보낼 데이터: ", workoutLogData);
 
     try {
         const response = await axios.post('/api/workoutLogs/saveWorkoutLog', workoutLogData);
         console.log("서버 응답: ", response.data);
         if (response.data.success) {
             alert('운동 기록이 저장되었습니다.');
+            fetchWorkoutLog(eventId);
         } else {
             alert('운동 기록 저장에 실패했습니다.');
         }
@@ -647,17 +647,21 @@ async function fetchWorkoutLog(eventId) {
         const response = await axios.get(`/api/workoutLogs/event/${eventId}`);
         const workoutLog = response.data;
 
-        if (workoutLog) {
+        if (workoutLog && workoutLog.workoutLogs.length > 0) {
             console.log("운동 기록 불러오기 성공: ", workoutLog);  // 추가된 로그
+            document.getElementById('saveWorkoutLogBtn').style.display = 'none'; // 운동 기록이 존재하면 저장 버튼 숨기기
             displayWorkoutLogInModal(workoutLog);  // 운동 기록을 모달에 표시하는 함수 호출
         } else {
             console.error("운동 기록을 찾을 수 없습니다.");
+            document.getElementById('saveWorkoutLogBtn').style.display = 'block'; // 운동 기록이 없으면 저장 버튼 보이기
+            resetExerciseBoxes();
         }
 
         // 삭제 버튼에 eventId를 동적으로 설정
-        document.getElementById('deleteWorkoutLogBtn').setAttribute('data-event-id', eventId);
+        //document.getElementById('deleteWorkoutLogBtn').setAttribute('data-event-id', eventId);
     } catch (error) {
         console.error("운동 기록 불러오기 중 오류 발생:", error);
+        document.getElementById('saveWorkoutLogBtn').style.display = 'block';
     }
 }
 
@@ -720,17 +724,12 @@ document.getElementById('viewEventModal').addEventListener('shown.bs.modal', fun
     document.getElementById('deleteWorkoutLogBtn').setAttribute('data-event-id', eventId);  // 삭제 버튼에 이벤트 ID 설정
 
     // 추가: 운동량 저장 버튼 숨기기
-    document.getElementById('saveWorkoutLogBtn').style.display = 'none';
+    document.getElementById('saveWorkoutLogBtn').style.display = 'block';
+
+    document.getElementById('deleteEventBtn').addEventListener('click', function() {
+        deleteEvent(eventId); // 삭제 함수 호출
+    });
 });
-
-
-
-
-
-
-
-
-
 
 // 운동 기록 삭제
 async function deleteWorkoutLog() {
@@ -743,7 +742,9 @@ async function deleteWorkoutLog() {
         if (response.data.success) {
             alert('운동 기록이 삭제되었습니다.');
             // 모달을 업데이트하여 삭제된 내용을 반영
-            document.getElementById("viewEventExercises").innerHTML = '';
+            resetExerciseBoxes();
+            fetchWorkoutLog(eventId); 
+            //document.getElementById("viewEventExercises").innerHTML = '';
         } else {
             alert('운동 기록 삭제에 실패했습니다.');
         }
@@ -758,4 +759,75 @@ document.getElementById('deleteWorkoutLogBtn').addEventListener('click', functio
     deleteWorkoutLog();  // 삭제 요청 함수 호출
 });
 
+// 운동량 입력 박스와 세트 추가/삭제 버튼을 초기화하는 함수
+function resetExerciseBoxes() {
+    const exerciseListContainer = document.getElementById("viewEventExercises");
+    exerciseListContainer.innerHTML = ''; // 기존 내용을 초기화
 
+    // 운동량 입력 박스 기본 구조 생성
+    const exerciseBox = document.createElement('div');
+    exerciseBox.classList.add('exercise-box');
+
+    // 운동 이름과 카테고리 표시 (예시로 설정)
+    const exerciseTitle = document.createElement('div');
+    exerciseTitle.textContent = `운동: 이름 (카테고리)`; // 이 부분은 동적으로 변경 가능
+    exerciseBox.appendChild(exerciseTitle);
+
+    // 세트 추가/삭제 버튼
+    const controlsDiv = document.createElement('div');
+    controlsDiv.classList.add('exercise-controls');
+    controlsDiv.innerHTML = `
+        <button class="add-set-btn">세트 추가</button>
+        <button class="delete-set-btn">세트 삭제</button>
+    `;
+    exerciseBox.appendChild(controlsDiv);
+
+    // 운동 종목 박스를 모달에 추가
+    exerciseListContainer.appendChild(exerciseBox);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+// 일정 삭제 함수
+async function deleteEvent(eventId) {
+    if (!eventId) {
+        alert('삭제할 일정을 선택하세요.');
+        return; // eventId가 없으면 함수 종료
+    }
+
+    // 사용자가 삭제를 확인하는 알림창
+    const confirmation = confirm('정말로 이 일정을 삭제하시겠습니까?');
+    if (confirmation) {
+        try {
+            // 서버로 DELETE 요청 보내기
+            const response = await axios.delete(`/api/events/${eventId}`);
+            
+            if (response.data.success) {
+                alert('일정이 삭제되었습니다.');
+                fetchWorkoutLog(eventId);
+                generateCalendar(); // 삭제 후 달력 다시 불러오기
+
+                // 모달 닫기
+                const viewEventModal = bootstrap.Modal.getInstance(document.getElementById('viewEventModal'));
+                viewEventModal.hide(); // 모달을 닫음
+            } else {
+                alert('일정 삭제에 실패했습니다.');
+                fetchWorkoutLog(eventId);
+            }
+        } catch (error) {
+            console.error('일정 삭제 중 오류 발생:', error);
+            alert('일정 삭제 중 오류가 발생했습니다.');
+            fetchWorkoutLog(eventId);
+        }
+    }
+}
