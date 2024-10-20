@@ -1,4 +1,6 @@
 let userId;
+let currentYear = new Date().getFullYear();
+let currentMonth = new Date().getMonth(); // 0: 1월, 11: 12월
 
 // 페이지 로드 시 서버에서 세션을 통해 userId를 받아옴
 window.onload = function () {
@@ -16,16 +18,18 @@ window.onload = function () {
 };
 
 // 달력 생성 함수
-function generateCalendar() {
+function generateCalendar(year = currentYear, month = currentMonth) {
     const calendar = document.getElementById("calendar");
     calendar.innerHTML = ""; // 기존 달력 초기화
 
-    const now = new Date();
-    const year = now.getFullYear();
-    const month = now.getMonth();
+    const today = new Date(); // 오늘 날짜
+    const isCurrentMonth = (year === today.getFullYear() && month === today.getMonth()); // 현재 달인지 확인
 
     const firstDayOfMonth = new Date(year, month, 1).getDay(); // 이번 달 첫 요일
     const daysInMonth = new Date(year, month + 1, 0).getDate(); // 이번 달 마지막 날짜
+
+    // 월/연도 업데이트
+    document.getElementById("month-year").textContent = `${year}년 ${month + 1}월`;
 
     // 빈 셀 추가 (첫 번째 요일 전까지)
     for (let i = 0; i < firstDayOfMonth; i++) {
@@ -44,11 +48,42 @@ function generateCalendar() {
         dayNumber.textContent = day;
         dayCell.appendChild(dayNumber);
 
+        // 오늘 날짜인 경우 배경색을 노란색으로 설정
+        if (isCurrentMonth && day === today.getDate()) {
+            dayCell.style.backgroundColor = '#ffffcc'; // 옅은 노란색
+        }
+
         calendar.appendChild(dayCell);
     }
 
     loadEvents(); // 일정 불러오기
 }
+
+// 이전 달로 이동
+document.getElementById('prevMonthBtn').addEventListener('click', function() {
+    currentMonth--; // 이전 달로 이동
+    if (currentMonth < 0) {
+        currentMonth = 11; // 12월로 변경
+        currentYear--; // 연도 감소
+    }
+    generateCalendar(currentYear, currentMonth); // 달력 다시 생성
+});
+
+// 다음 달로 이동
+document.getElementById('nextMonthBtn').addEventListener('click', function() {
+    currentMonth++; // 다음 달로 이동
+    if (currentMonth > 11) {
+        currentMonth = 0; // 1월로 변경
+        currentYear++; // 연도 증가
+    }
+    generateCalendar(currentYear, currentMonth); // 달력 다시 생성
+});
+
+document.getElementById('todayBtn').addEventListener('click', function() {
+    currentYear = new Date().getFullYear();
+    currentMonth = new Date().getMonth(); // 현재 월로 변경
+    generateCalendar(currentYear, currentMonth); // 오늘 날짜로 달력 다시 생성
+});
 
 // 운동 종목 불러오기
 async function loadExercises() {
