@@ -142,9 +142,13 @@ exports.getFriends = async (req, res) => {
     }
 };
 
-//접속중인 친구 목록 조회
+// 접속중인 친구 목록 조회
 exports.getOnlineFriends = async (req, res) => {
-    const userId = req.session.user._id;
+    const userId = req.session.user ? req.session.user._id : null;  // 세션에서 userId 가져옴
+
+    if (!userId) {
+        return res.status(401).json({ message: '로그인이 필요합니다.' });
+    }
 
     try {
         const friends = await Friend.find({
@@ -152,16 +156,24 @@ exports.getOnlineFriends = async (req, res) => {
                 { requestFrom: userId, status: 'accepted' },
                 { requestTo: userId, status: 'accepted' }
             ]
-        }).populate('requestFrom requestTo', 'nickname isOnline');  // isOnline 필드 추가
+        }).populate('requestFrom requestTo', 'nickname isOnline');  // 친구의 닉네임과 온라인 상태 가져옴
 
         // 접속 중인 친구 필터링
         const onlineFriends = friends.filter(friend =>
-            (friend.requestFrom.isOnline && friend.requestFrom._id !== userId) ||
-            (friend.requestTo.isOnline && friend.requestTo._id !== userId)
+            (friend.requestFrom.isOnline && friend.requestFrom._id.toString() !== userId.toString()) ||
+            (friend.requestTo.isOnline && friend.requestTo._id.toString() !== userId.toString())
         );
 
+        // 캐시 비활성화 (브라우저가 데이터를 캐싱하지 않도록 설정)
+        res.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+        res.set('Pragma', 'no-cache');
+        res.set('Expires', '0');
+        res.set('Surrogate-Control', 'no-store');
+
+        // 결과 반환
         res.status(200).json({ onlineFriends });
     } catch (error) {
+        console.error('친구 목록 불러오는 중 오류 발생:', error);
         res.status(500).json({ message: '접속 중인 친구 목록을 가져오는 중 오류가 발생했습니다.' });
     }
 };

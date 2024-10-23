@@ -67,16 +67,32 @@ async function loadTodaySchedule() {
     }
 }
 
-// 페이지 로딩 시 함수 호출
-loadTodaySchedule();
-
 // 접속 중인 친구 목록 불러오기
 async function loadOnlineFriends() {
+    console.log("loadOnlineFriends 함수가 호출됨");  // 함수 호출 여부 확인
     try {
-        const response = await fetch('/api/friends/online');
+        const response = await fetch('/api/friends/online', {
+            method: 'GET',
+            headers: {
+                'Cache-Control': 'no-cache'  // 캐시 비활성화
+            }
+        });
         if (response.ok) {
-            const { onlineFriends } = await response.json();
-            const friendList = onlineFriends.map(friend => `<p>${friend.nickname}</p>`).join('');
+            const { onlineFriends, userId } = await response.json();  // 서버에서 userId도 반환
+            // 디버그용 로그 추가
+            console.log("서버 응답 데이터:", onlineFriends, "사용자 ID:", userId);
+
+            const friendList = onlineFriends.map(friend => {
+                // 본인의 닉네임은 제외하고 상대방의 닉네임만 표시
+                const fromNickname = friend.requestFrom._id !== userId ? friend.requestFrom.nickname : null;
+                const toNickname = friend.requestTo._id !== userId ? friend.requestTo.nickname : null;
+
+                // 상대방의 닉네임만 표시
+                const nickname = fromNickname || toNickname || '닉네임 없음';
+
+                return `<p>${nickname}</p>`;
+            }).join('');
+
             document.querySelector('.online-friends').innerHTML = friendList;
         } else {
             console.error('접속 중인 친구 목록을 가져오는 데 실패했습니다.');
@@ -85,4 +101,13 @@ async function loadOnlineFriends() {
         console.error('친구 목록을 가져오는 중 오류 발생:', error);
     }
 }
-loadOnlineFriends();
+
+window.onload = function () {
+    loadTodaySchedule();  // 오늘 일정 로드
+    loadOnlineFriends();  // 접속 중인 친구 목록 로드
+
+    // 5초마다 loadOnlineFriends 호출
+    setInterval(function () {
+        loadOnlineFriends();
+    }, 5000);
+};
