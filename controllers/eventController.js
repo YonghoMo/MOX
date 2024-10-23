@@ -76,18 +76,11 @@ exports.getEventExercises = async (req, res) => {
 
 // 오늘의 일정 가져오기 API
 exports.getTodayEvents = async (req, res) => {
-    console.log('getTodayEvents 함수 시작');  // 함수가 실행되었는지 확인
-
     const userId = req.session.user._id;
-    console.log(`사용된 userId: ${userId}`);
 
     // 오늘의 시작 시간과 끝 시간
     const todayStart = moment().startOf('day').format('YYYY-MM-DD');
     const todayEnd = moment().endOf('day').format('YYYY-MM-DD');
-
-    // todayStart와 todayEnd 값 출력
-    console.log('todayStart:', todayStart);
-    console.log('todayEnd:', todayEnd);
 
     try {
         // 문자열 형식으로 저장된 date 필드를 비교

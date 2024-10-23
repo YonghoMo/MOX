@@ -60,6 +60,31 @@ app.use(cors({
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// Socket.IO 연결 처리 (접속 여부 판단)
+io.on('connection', (socket) => {
+    const session = socket.request.session;  // Socket.IO에서 세션 접근
+
+    if (session && session.user && session.user._id) {
+        const userId = session.user._id;
+
+        // 사용자가 접속했을 때
+        User.findByIdAndUpdate(userId, { isOnline: true }, (err) => {
+            if (err) {
+                console.error('사용자 온라인 상태 업데이트 오류:', err);
+            }
+        });
+
+        // 사용자가 접속을 끊었을 때
+        socket.on('disconnect', () => {
+            User.findByIdAndUpdate(userId, { isOnline: false }, (err) => {
+                if (err) {
+                    console.error('사용자 오프라인 상태 업데이트 오류:', err);
+                }
+            });
+        });
+    }
+});
+
 // 정적 자원에 대해서는 캐시 유지 (1일 동안 캐시)
 app.use(express.static('public', {
     maxAge: '1d',  // 1일간 캐시 유지

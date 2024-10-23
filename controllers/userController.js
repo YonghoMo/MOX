@@ -67,10 +67,38 @@ exports.login = async (req, res) => {
             nickname: user.nickname,  // 사용자 닉네임 세션에 저장
             _id: user._id,  // 사용자 고유 ID
         };
+
+        // 로그인 시 온라인 상태를 true로 설정
+        user.isOnline = true;
+        await user.save();  // DB에 온라인 상태 업데이트
+
         console.log('로그인 성공, 세션 정보:', req.session.user);  // 세션에 저장된 정보 출력
         res.status(200).json({ message: '로그인 성공!', user: req.session.user });
     } catch (error) {
         console.error('로그인 오류 발생:', error);
         res.status(500).json({ message: '서버 오류가 발생했습니다.' });
+    }
+};
+
+// 로그아웃 처리
+exports.logout = (req, res) => {
+    if (req.session && req.session.user) {
+        const userId = req.session.user._id;
+
+        User.findByIdAndUpdate(userId, { isOnline: false }, (err) => {
+            if (err) {
+                return res.status(500).json({ message: '로그아웃 중 오류가 발생했습니다.' });
+            }
+
+            // 세션 파기
+            req.session.destroy((err) => {
+                if (err) {
+                    return res.status(500).send('로그아웃 중 문제가 발생했습니다.');
+                }
+                res.redirect('/login.html');  // 로그아웃 후 로그인 페이지로 리디렉션
+            });
+        });
+    } else {
+        res.redirect('/login.html');
     }
 };
