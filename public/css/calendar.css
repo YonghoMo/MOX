@@ -118,16 +118,165 @@ footer p {
     color: #000;
     font-weight: 400;
     font-size: 16px;
+    margin: 0;
+    visibility: visible; /* 텍스트가 보이도록 설정 */
 }
 
+.weight-reps-container {
+    display: flex; /* 가로 배열 */
+    gap: 10px; /* 박스 간격 */
+    align-items: center; /* 박스를 세로 중앙에 맞춤 */
+}
+
+.weight-value, .reps-value {
+    width: 80px; /* 각 박스의 너비 */
+    padding: 5px; /* 패딩 추가 */
+}
+
+/* 모달 내 레이아웃 */
+.modal-body {
+    padding: 20px;
+    background-color: #f9f9f9; /* 약간의 배경색 추가로 구분 */
+    border-radius: 10px;
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px; /* 버튼들 사이의 간격 */
+    width: 95%;
+    margin-left: 2.5%;
+}
+
+/* 버튼의 너비를 동일하게 100%로 맞춤 */
+.modal-footer button {
+    flex: 1; /* 각 버튼이 동일한 비율로 크기를 가짐 */
+    padding: 10px;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.exercise-box {
+    padding: 10px;
+    border: 1px solid #ddd;
+    margin-bottom: 10px;
+    border-radius: 8px;
+}
+
+.exercise-controls {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+/* 세트 추가/삭제 버튼 크기 조정 */
+.add-set-btn, .delete-set-btn {
+    padding: 5px 10px;
+}
+
+/* 모바일에서 운동 기록 입력 필드 정렬 */
+.weight-reps-container {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap; /* 모바일에서는 줄 바꿈 */
+}
+
+/* 입력 필드 크기 조정 */
+.weight-value, .reps-value, .time-value {
+    flex: 1;
+    min-width: 40%; /* 모바일에서 필드가 너무 좁아지지 않도록 */
+}
+
+/* 세트 추가/삭제 버튼 스타일 */
+.add-set-btn, .delete-set-btn {
+    flex: 1;
+    background-color: #007bff; /* 기본 파란색 배경 */
+    color: white; /* 흰색 텍스트 */
+    border: none;
+    border-radius: 5px; /* 모서리를 둥글게 */
+    cursor: pointer;
+    text-align: center;
+    transition: background-color 0.3s ease; /* 호버 시 부드러운 색상 전환 */
+    margin-right: 0; /* 버튼들 사이 간격을 없앰 */
+    width: 80%;
+    padding: 10px;
+    font-size: 16px;
+}
+
+/* 버튼에 마우스 호버 시 효과 */
+.add-set-btn:hover, .delete-set-btn:hover {
+    background-color: #0056b3; /* 어두운 파란색으로 전환 */
+}
+
+#WorkoutLogBtnDIV {
+    display: flex;
+    justify-content: space-between; /* 버튼들을 양 끝에 배치 */
+    flex: 1;
+    color: white; /* 흰색 텍스트 */
+    border: none;
+    border-radius: 5px; /* 모서리를 둥글게 */
+    text-align: center;
+    margin-right: 0; /* 버튼들 사이 간격을 없앰 */
+    width: 80%;
+    padding-left: 20%;
+    font-size: 16px;
+}
+
+.deleteWorkoutLogBtn, .addWorkoutLogBtn {
+    padding: 5px 10px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.deleteWorkoutLogBtn:hover, .addWorkoutLogBtn:hover {
+    background-color: #0056b3; /* 어두운 파란색으로 전환 */
+}
+
+/* 동적으로 할당되는 체크박스 크기 조정 */
+.set-complete {
+    transform: scale(1.5); /* 1.5배 키우기 */
+    width: 20px;  /* 체크박스 크기 */
+    height: 20px; /* 체크박스 높이 */
+    cursor: pointer; /* 포인터 커서 */
+}
+
+/* 체크박스 주변 여백을 조정해 크기가 키워져도 레이아웃이 깨지지 않도록 */
+.set-complete-label {
+    margin-left: 10px; /* 체크박스와 텍스트 사이 간격 */
+}
+
+/* 세트 추가/삭제 버튼 크기 조정 */
+.add-set-btn, .delete-set-btn {
+    width: 80%; /* 자동으로 버튼 크기를 조정 (내용에 맞게) */
+    padding: 5px 10px; /* 버튼 내부 여백 조정 */
+    font-size: 14px; /* 텍스트 크기 조정 */
+    border-radius: 5px; /* 둥근 모서리 추가 */
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+/* 버튼을 가로로 나란히 배치하고 간격 추가 */
+.exercise-controls {
+    display: flex;
+    width: 95%;
+    gap: 9px; /* 버튼 사이 간격 */
+    margin-left: -1px;
+    margin-top: 4px;
+    justify-content: flex-start; /* 버튼을 왼쪽 정렬 */
+}
+
+.set-row {
+    padding-top: 1px;
+    padding-bottom: 2px;
+}
 
 /* 모바일 환경에 맞춘 스타일 조정 */
 @media (max-width: 768px) {
     #calendar {
-        grid-template-columns: repeat(
-            7,
-            1fr
-        ); /* 작은 화면에서는 7일씩 표시 */
+        grid-template-columns: repeat(7, 1fr); /* 작은 화면에서는 7일씩 표시 */
     }
                 
     .day {
@@ -141,4 +290,27 @@ footer p {
     .event-title {
         display: none;
     }
+
+    .modal-dialog {
+        max-width: 95%; /* 모바일에서 모달 크기를 조정 */
+        margin: 20px auto;
+    }
+
+    .modal-body {
+        padding: 15px;
+    }
+
+    .exercise-box {
+        padding: 8px;
+    }
+
+    .add-set-btn, .delete-set-btn {
+        padding: 4px 8px;
+    }
+
+    .deleteWorkoutLogBtn, .addWorkoutLogBtn {
+        padding: 4px 8px;
+        font-size: 13px;
+    }
+
 }

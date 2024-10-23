@@ -15,6 +15,8 @@ const recruitRoutes = require('./routes/recruitRoutes');
 const friendRoutes = require('./routes/friendRoutes');
 const eventRoutes = require('./routes/eventRoutes');
 const commentRoutes = require('./routes/commentRoutes');
+//const exerciseRoutes = require('./routes/exerciseRoutes'); // 추가!!!!!!!!!!!!!!!!!!!!
+const workoutLogRoutes = require('./routes/workoutLogRoutes'); // 추가!!!!!!!!!!!!!!!!!
 const exerciseRoutes = require('./routes/exerciseRoutes');
 const User = require('./models/userModel');
 const session = require('express-session');  // express-session 모듈 불러오기
@@ -58,8 +60,10 @@ app.use(cors({
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// 모든 정적 파일 제공
-app.use(express.static(path.join(__dirname, 'public')));
+// 정적 자원에 대해서는 캐시 유지 (1일 동안 캐시)
+app.use(express.static('public', {
+    maxAge: '1d',  // 1일간 캐시 유지
+}));
 
 // Socket.IO 연결 처리 (socketController.js의 handleSocketConnection 호출)
 handleSocketConnection(io);
@@ -68,6 +72,11 @@ handleSocketConnection(io);
 app.get('/', (req, res) => {
     res.redirect('/login.html');  // '/login.html'로 리디렉션
 });
+
+// 운동 종목 관련 라우팅 
+app.use('/api/exercises', exerciseRoutes);      // 추가!!!!!!!!!!!!!!!!!!!!!!!!!
+// 운동 기록 관련 라우팅                          // 추가!!!!!!!!!!!!!!!!!!!!!!!!!!!
+app.use('/api/workoutLogs', workoutLogRoutes);
 
 // 친구 요청 목록 라우팅
 app.use('/api/friends', friendRoutes);
@@ -109,6 +118,11 @@ app.get('/logout', (req, res) => {
     });
 });
 
+// /api/events/today 경로에만 캐시 비활성화 설정
+app.use('/api/events/today', (req, res, next) => {
+    res.set('Cache-Control', 'no-store');  // 해당 API에 대해 캐시 비활성화
+    next();
+});
 
 // 서버 실행
 const PORT = process.env.PORT || 5000;

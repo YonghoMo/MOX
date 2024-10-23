@@ -141,3 +141,27 @@ exports.getFriends = async (req, res) => {
         res.status(500).json({ message: '서버 오류가 발생했습니다.' });
     }
 };
+
+//접속중인 친구 목록 조회
+exports.getOnlineFriends = async (req, res) => {
+    const userId = req.session.user._id;
+
+    try {
+        const friends = await Friend.find({
+            $or: [
+                { requestFrom: userId, status: 'accepted' },
+                { requestTo: userId, status: 'accepted' }
+            ]
+        }).populate('requestFrom requestTo', 'nickname isOnline');  // isOnline 필드 추가
+
+        // 접속 중인 친구 필터링
+        const onlineFriends = friends.filter(friend =>
+            (friend.requestFrom.isOnline && friend.requestFrom._id !== userId) ||
+            (friend.requestTo.isOnline && friend.requestTo._id !== userId)
+        );
+
+        res.status(200).json({ onlineFriends });
+    } catch (error) {
+        res.status(500).json({ message: '접속 중인 친구 목록을 가져오는 중 오류가 발생했습니다.' });
+    }
+};
