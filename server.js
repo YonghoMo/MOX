@@ -60,8 +60,10 @@ app.use(cors({
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// 모든 정적 파일 제공
-app.use(express.static(path.join(__dirname, 'public')));
+// 정적 자원에 대해서는 캐시 유지 (1일 동안 캐시)
+app.use(express.static('public', {
+    maxAge: '1d',  // 1일간 캐시 유지
+}));
 
 // Socket.IO 연결 처리 (socketController.js의 handleSocketConnection 호출)
 handleSocketConnection(io);
@@ -116,6 +118,11 @@ app.get('/logout', (req, res) => {
     });
 });
 
+// /api/events/today 경로에만 캐시 비활성화 설정
+app.use('/api/events/today', (req, res, next) => {
+    res.set('Cache-Control', 'no-store');  // 해당 API에 대해 캐시 비활성화
+    next();
+});
 
 // 서버 실행
 const PORT = process.env.PORT || 5000;
