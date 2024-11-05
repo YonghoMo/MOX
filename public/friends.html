@@ -8,53 +8,25 @@
       rel="stylesheet"
     />
     <title>친구 모집</title>
+    <!-- 웹 폰트(pretendard) 적용 -->
+    <link
+      rel="stylesheet"
+      as="style"
+      crossorigin
+      href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css"
+    />
   </head>
   <body>
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-      <div class="container-fluid">
-        <a class="navbar-brand" href="home.html">
-          <img src="images/logo.png" alt="" width="40" height="40" />
-        </a>
-        <button
-          class="navbar-toggler"
-          type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#navbarSupportedContent"
-          aria-controls="navbarSupportedContent"
-          aria-expanded="false"
-          aria-label="Toggle navigation"
-        >
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-          <ul class="navbar-nav ms-auto mb-2 mb-lg-0 text-end">
-            <li class="nav-item">
-              <a class="nav-link active" aria-current="page" href="home.html"
-                >홈</a
-              >
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="calendar.html">캘린더</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="challenge.html">챌린지</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="ex_library.html">라이브러리</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="mypage.html">마이페이지</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="friends.html">친구</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="/logout">로그아웃</a>
-            </li>
-          </ul>
-        </div>
-      </div>
-    </nav>
+    <div id="navbar"></div>
+    <script>
+      // 네비게이션 바 로드
+      fetch("navbar.html")
+        .then((response) => response.text())
+        .then((data) => {
+          document.getElementById("navbar").innerHTML = data;
+        });
+    </script>
+
     <div class="container mt-5">
       <h2 class="text-center">친구 모집</h2>
 

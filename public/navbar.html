@@ -1,0 +1,100 @@
+<!-- navbar.html -->
+<head>
+  <!-- Pretendard 웹 폰트 로드 -->
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css"
+    crossorigin="anonymous"
+  />
+</head>
+
+<style>
+  /* 네비게이션 바 스타일 */
+  .navbar,
+  .navbar .nav-link {
+    font-family: "Pretendard", sans-serif !important;
+  }
+
+  .navbar {
+    background-color: #ffffff !important;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1) !important;
+  }
+
+  .navbar-brand img {
+    width: 40px !important;
+    height: 40px !important;
+  }
+
+  .nav-link {
+    font-size: 1rem !important;
+    font-weight: 500 !important;
+    color: #333333 !important;
+    padding: 10px 15px !important;
+    transition: color 0.2s ease, background-color 0.2s ease !important;
+  }
+
+  .nav-link:hover {
+    color: #ffffff !important;
+    background-color: #0056b3 !important;
+    border-radius: 5px !important;
+  }
+
+  .nav-link.active {
+    color: #ffffff !important;
+    background-color: #007bff !important;
+    border-radius: 5px !important;
+  }
+
+  @media (max-width: 767px) {
+    .navbar-nav {
+      margin-top: 15px !important;
+      text-align: center !important;
+    }
+  }
+</style>
+
+<div id="navbar">
+  <nav class="navbar navbar-expand-lg navbar-light">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="home.html">
+        <img src="images/logo.png" alt="MOX Logo" />
+      </a>
+      <button
+        class="navbar-toggler"
+        type="button"
+        data-bs-toggle="collapse"
+        data-bs-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent"
+        aria-expanded="false"
+        aria-label="Toggle navigation"
+      >
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav ms-auto mb-2 mb-lg-0 text-end">
+          <li class="nav-item">
+            <a class="nav-link" href="home.html">홈</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="calendar.html">캘린더</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="challenge.html">챌린지</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="ex_library.html">라이브러리</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="mypage.html">마이페이지</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="friends.html">친구</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/logout">로그아웃</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+</div>

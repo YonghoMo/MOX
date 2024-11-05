@@ -1,0 +1,133 @@
+html,
+body {
+  background-image: url("../images/background_image.png");
+  background-size: cover;
+  background-attachment: fixed;
+  font-family: "Pretendard", sans-serif;
+}
+
+/* 기본 배경 및 텍스트 색상 */
+body {
+  background-color: #fff; /* 주 배경 색을 흰색으로 설정 */
+  color: #000; /* 기본 텍스트 색은 검정 */
+}
+
+/* 포인트 색상 (버튼, 링크 등) */
+.btn-primary,
+.accordion-button,
+.list-group-item-action:hover {
+  background-color: #007bff; /* 포인트 색상 */
+  border-color: #007bff; /* 포인트 색상 */
+}
+
+.btn-primary:hover,
+.accordion-button:hover {
+  background-color: #0056b3; /* 호버 시 약간 어두운 파란색 */
+  border-color: #0056b3;
+}
+
+a {
+  color: #007bff; /* 링크 색상 */
+}
+
+a:hover {
+  color: #0056b3; /* 링크 호버 색상 */
+}
+
+/* 모든 컨텐츠를 가운데 정렬 */
+.container,
+.lib_header,
+.accordion {
+  text-align: center;
+  margin: 0 auto;
+}
+
+/* 검색창 가운데 정렬 */
+.lib_header form {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+/* 검색창 스타일 */
+#search_input {
+  width: 50%; /* 검색창 너비 */
+  border: 2px solid #007bff; /* 테두리 색상 */
+  padding: 10px;
+  border-radius: 25px 0 0 25px; /* 좌측만 둥글게 설정 */
+  margin-top: 30px;
+}
+
+/* 검색 버튼 스타일 */
+#searchForm input[type="submit"] {
+  background-color: #007bff;
+  color: white;
+  border: 2px solid #007bff; /* 검색창과 같은 테두리 색상 */
+  padding: 10px 20px;
+  border-radius: 0 25px 25px 0; /* 우측만 둥글게 설정 */
+  margin-top: 30px;
+}
+
+.accordion {
+  width: 80%; /* 아코디언의 너비를 80%로 설정 (원하는 값으로 조정 가능) */
+  margin: 0 auto; /* 가운데 정렬 */
+  margin-top: 20px;
+}
+
+.accordion-item {
+  border: 1px solid #007bff; /* 테두리 색상 설정 */
+  overflow: hidden; /* 내용이 넘치지 않도록 처리 */
+}
+
+/* 아코디언 스타일 */
+.accordion-button {
+  background-color: #007bff; /* 포인트 색상 */
+  color: white;
+}
+
+.accordion-body {
+  text-align: left;
+}
+
+/* 유사 항목 리스트 가운데 정렬 및 포인트 색상 */
+#searchSuggestions {
+  width: 50%;
+  margin: 0 auto;
+}
+
+.list-group-item-action {
+  background-color: #f8f9fa;
+  border: 1px solid #007bff;
+  color: #007bff;
+}
+
+.list-group-item-action:hover {
+  background-color: #007bff;
+  color: #fff;
+}
+
+/* 비디오를 가운데 정렬 */
+.video-container {
+  text-align: center;
+}
+
+/* 반응형을 유지한 비디오 */
+.video-container iframe {
+  max-width: 100%;
+  height: auto;
+}
+
+/* 모바일 환경에서 레이아웃 조정 */
+@media (max-width: 768px) {
+  #search_input {
+    width: 80%;
+  }
+
+  #searchSuggestions {
+    width: 80%;
+  }
+
+  .accordion {
+    width: 100%; /* 모바일에서는 너비를 100%로 설정 */
+  }
+}
