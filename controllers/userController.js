@@ -79,26 +79,3 @@ exports.login = async (req, res) => {
         res.status(500).json({ message: '서버 오류가 발생했습니다.' });
     }
 };
-
-// 로그아웃 처리
-exports.logout = (req, res) => {
-    if (req.session && req.session.user) {
-        const userId = req.session.user._id;
-
-        User.findByIdAndUpdate(userId, { isOnline: false }, (err) => {
-            if (err) {
-                return res.status(500).json({ message: '로그아웃 중 오류가 발생했습니다.' });
-            }
-
-            // 세션 파기
-            req.session.destroy((err) => {
-                if (err) {
-                    return res.status(500).send('로그아웃 중 문제가 발생했습니다.');
-                }
-                res.redirect('/login.html');  // 로그아웃 후 로그인 페이지로 리디렉션
-            });
-        });
-    } else {
-        res.redirect('/login.html');
-    }
-};

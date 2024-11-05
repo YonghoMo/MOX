@@ -1,3 +1,16 @@
+// Socket.IO로 서버와 연결
+const socket = io();
+
+// 접속 상태 변경 이벤트 수신
+socket.on('userStatusChange', (data) => {
+    // data.userId와 data.isOnline를 이용해 화면의 친구 목록 업데이트
+    if (data.isOnline) {
+        // 친구 목록에 추가 또는 업데이트
+    } else {
+        // 친구 목록에서 제거 또는 상태 비활성화
+    }
+});
+
 async function loadUserInfo() {
     try {
         const userResponse = await fetch("/api/users/me", { method: "GET" });
@@ -79,18 +92,25 @@ async function loadOnlineFriends() {
         });
         if (response.ok) {
             const { onlineFriends, userId } = await response.json();  // 서버에서 userId도 반환
-            // 디버그용 로그 추가
             console.log("서버 응답 데이터:", onlineFriends, "사용자 ID:", userId);
 
             const friendList = onlineFriends.map(friend => {
-                // 본인의 닉네임은 제외하고 상대방의 닉네임만 표시
-                const fromNickname = friend.requestFrom._id !== userId ? friend.requestFrom.nickname : null;
-                const toNickname = friend.requestTo._id !== userId ? friend.requestTo.nickname : null;
+                let friendNickname;
 
-                // 상대방의 닉네임만 표시
-                const nickname = fromNickname || toNickname || '닉네임 없음';
+                // 디버깅: 각 friend 객체에서 requestFrom 및 requestTo 확인
+                console.log("friend 데이터:", friend);
 
-                return `<p>${nickname}</p>`;
+                if (friend.requestFrom._id.toString() === userId.toString()) {
+                    friendNickname = friend.requestTo.nickname; // 내가 requestFrom일 때 상대방 닉네임
+                    console.log("친구 요청을 보낸 사람입니다. 상대방 닉네임:", friendNickname);
+                } else if (friend.requestTo._id.toString() === userId.toString()) {
+                    friendNickname = friend.requestFrom.nickname; // 내가 requestTo일 때 상대방 닉네임
+                    console.log("친구 요청을 받은 사람입니다. 상대방 닉네임:", friendNickname);
+                } else {
+                    console.log("현재 사용자와 일치하지 않는 친구 관계입니다.");
+                }
+
+                return friendNickname ? `<p>${friendNickname}</p>` : '';  // 닉네임이 있을 때만 추가
             }).join('');
 
             document.querySelector('.online-friends').innerHTML = friendList;
@@ -101,6 +121,7 @@ async function loadOnlineFriends() {
         console.error('친구 목록을 가져오는 중 오류 발생:', error);
     }
 }
+
 
 window.onload = function () {
     loadTodaySchedule();  // 오늘 일정 로드

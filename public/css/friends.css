@@ -1,0 +1,6 @@
+body {
+  background-image: url("../images/background_image.png");
+  background-size: cover;
+  background-attachment: fixed;
+  font-family: "Pretendard", sans-serif;
+}

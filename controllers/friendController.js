@@ -170,8 +170,8 @@ exports.getOnlineFriends = async (req, res) => {
         res.set('Expires', '0');
         res.set('Surrogate-Control', 'no-store');
 
-        // 결과 반환
-        res.status(200).json({ onlineFriends });
+        // 결과 반환: userId를 함께 반환
+        res.status(200).json({ onlineFriends, userId: userId.toString() });
     } catch (error) {
         console.error('친구 목록 불러오는 중 오류 발생:', error);
         res.status(500).json({ message: '접속 중인 친구 목록을 가져오는 중 오류가 발생했습니다.' });

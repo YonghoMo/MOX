@@ -1,0 +1,95 @@
+body {
+  background-image: url("../images/background_image.png");
+  background-size: cover;
+  background-attachment: fixed;
+  font-family: "Pretendard", sans-serif;
+}
+
+h1 {
+  color: #007bff;
+  margin-bottom: 70px;
+}
+.container {
+  max-width: 600px;
+  margin-top: 50px;
+}
+button,
+input {
+  font-size: 18px;
+  margin: 10px;
+}
+#status {
+  font-size: 24px;
+  margin: 20px 0;
+}
+/* 처음에는 로비 화면을 보이도록 설정 */
+#lobby {
+  display: block;
+}
+/* 처음에는 게임 화면은 숨김 */
+#game {
+  display: none;
+}
+#leaveRoomButton {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  background: none;
+  border: none;
+  font-size: 30px;
+  color: #007bff;
+  cursor: pointer;
+}
+#leaveRoomButton:hover {
+  color: #202632;
+}
+.room-list-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 10px 0;
+  padding: 10px;
+  background-color: #f8f9fa;
+  border-radius: 5px;
+  border: 1px solid #e0e0e0;
+}
+.join-btn {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 5px 10px;
+}
+.join-btn:hover {
+  background-color: #202632;
+}
+.full-btn {
+  background-color: gray;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 5px 10px;
+  cursor: not-allowed;
+}
+#refreshRoomsButton {
+  font-size: 25px;
+  background: none;
+  border: none;
+  color: #007bff;
+  cursor: pointer;
+}
+#refreshRoomsButton:hover {
+  color: #202632;
+}
+/* Flexbox를 사용하여 버튼을 가운데 정렬 */
+#turnSection {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column; /* 수직 방향으로 정렬 */
+  height: 100px; /* 높이 지정 */
+}
+
+#turnButton {
+  width: 150px; /* 버튼의 너비 설정 */
+}
