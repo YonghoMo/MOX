@@ -41,6 +41,7 @@ connectDB();
 
 // 세션 설정
 app.use(session({
+    name: 'connect.sid',  // 세션 쿠키 이름
     secret: process.env.SECRET_KEY,  // 세션을 암호화하는 키
     resave: false,
     saveUninitialized: false,
@@ -60,26 +61,30 @@ app.use(cors({
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Socket.IO 연결 처리 (접속 여부 판단)
+// Socket.IO 연결 처리
 io.on('connection', (socket) => {
-    const session = socket.request.session;  // Socket.IO에서 세션 접근
+    const session = socket.request.session;
 
     if (session && session.user && session.user._id) {
         const userId = session.user._id;
 
-        // 사용자가 접속했을 때
-        User.findByIdAndUpdate(userId, { isOnline: true }, (err) => {
+        // 사용자가 접속했을 때 isOnline 상태를 true로 설정
+        User.findByIdAndUpdate(userId, { isOnline: true }, (err, updatedUser) => {
             if (err) {
-                console.error('사용자 온라인 상태 업데이트 오류:', err);
+                return console.error('사용자 온라인 상태 업데이트 오류:', err);
             }
+            console.log(`User ${userId} connected and is now online`);
+            io.emit('userStatusChange', { userId: updatedUser._id, isOnline: true });
         });
 
-        // 사용자가 접속을 끊었을 때
+        // 사용자가 접속을 끊었을 때 (창을 닫거나 네트워크가 끊길 때)
         socket.on('disconnect', () => {
-            User.findByIdAndUpdate(userId, { isOnline: false }, (err) => {
+            User.findByIdAndUpdate(userId, { isOnline: false }, (err, updatedUser) => {
                 if (err) {
-                    console.error('사용자 오프라인 상태 업데이트 오류:', err);
+                    return console.error('사용자 오프라인 상태 업데이트 오류:', err);
                 }
+                console.log(`User ${userId} disconnected and is now offline`);
+                io.emit('userStatusChange', { userId: updatedUser._id, isOnline: false });
             });
         });
     }
@@ -132,20 +137,38 @@ app.get('/api/users/me', (req, res) => {
 });
 
 // 로그아웃 처리
-app.get('/logout', (req, res) => {
-    // 세션을 파기하여 로그아웃 처리
-    req.session.destroy((err) => {
-        if (err) {
-            return res.status(500).send('로그아웃 중 문제가 발생했습니다.');
+app.get('/logout', async (req, res) => {
+    if (req.session && req.session.user) {
+        const userId = req.session.user._id;
+
+        try {
+            // isOnline 상태를 false로 업데이트
+            await User.findByIdAndUpdate(userId, { isOnline: false });
+            console.log(`User ${userId} is now offline`);
+
+            // 세션 파기
+            req.session.destroy((err) => {
+                if (err) {
+                    return res.status(500).send('로그아웃 중 문제가 발생했습니다.');
+                }
+                // 로그아웃 후 로그인 페이지로 리디렉션
+                res.redirect('/login.html');
+            });
+        } catch (error) {
+            console.error('로그아웃 중 오류 발생:', error);
+            res.status(500).json({ message: '로그아웃 중 오류가 발생했습니다.' });
         }
-        // 로그아웃 후 로그인 페이지로 리디렉션
+    } else {
+        console.log('세션이 존재하지 않거나 이미 로그아웃 상태입니다.');
         res.redirect('/login.html');
-    });
+    }
 });
 
-// /api/events/today 경로에만 캐시 비활성화 설정
-app.use('/api/events/today', (req, res, next) => {
-    res.set('Cache-Control', 'no-store');  // 해당 API에 대해 캐시 비활성화
+// 모든 요청에 대해 캐시 비활성화 설정
+app.use((req, res, next) => {
+    res.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+    res.set('Pragma', 'no-cache');
+    res.set('Expires', '0');
     next();
 });
 
