@@ -20,7 +20,6 @@ async function loadFriendRequests() {
         data.requests.forEach((request) => {
             requestsDiv.innerHTML += `
                   <div>
-                      <img src="images/default_profile.PNG" width="35px" height="35px" alt="프로필 사진">
                       ${request.requestFrom.nickname}님의 친구 요청
                       <button onclick="acceptFriendRequest('${request._id}')">수락</button>
                       <button onclick="rejectFriendRequest('${request._id}')">거절</button>
@@ -30,6 +29,29 @@ async function loadFriendRequests() {
         console.error("친구 요청 목록 불러오기 오류:", error);
     }
 }
+// 유저 닉네임 표시
+async function loadUserInfo() {
+    try {
+        const userResponse = await fetch("/api/users/me", { method: "GET" });
+        if (userResponse.ok) {
+            const userData = await userResponse.json();
+            const nickname = userData.nickname; // 서버에서 로그인한 사용자 닉네임 받아오기
+
+            // 닉네임을 화면에 표시
+            document.getElementById(
+                "welcome-message"
+            ).textContent = `${nickname}님`;
+        } else {
+            document.getElementById("welcome-message").textContent =
+                "로그인이 필요합니다";
+            console.error("사용자 정보를 가져오는 데 실패했습니다.");
+        }
+    } catch (error) {
+        console.error("사용자 정보를 가져오는 중 오류 발생:", error);
+    }
+}
+
+loadUserInfo();
 
 // 친구 요청 수락
 async function acceptFriendRequest(requestId) {
@@ -94,7 +116,6 @@ async function loadFriends() {
             // 4. 친구 목록에 친구의 닉네임 표시
             friendsDiv.innerHTML += `
                   <div>
-                      <img src="images/default_profile.PNG" width="35px" height="35px" alt="프로필 사진">
                       ${friendNickname}
                       <button onclick="deleteFriend('${friend._id}')">삭제</button>
                   </div>`;
