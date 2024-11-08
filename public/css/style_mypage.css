@@ -16,6 +16,13 @@ body {
   padding-bottom: 80px;
 }
 
+#friend-requests .card {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
 .profile {
   max-width: 480px;
   background-color: #fff;
