@@ -32,7 +32,7 @@ input {
 }
 #leaveRoomButton {
   position: absolute;
-  top: 20px;
+  top: 100px;
   left: 20px;
   background: none;
   border: none;
