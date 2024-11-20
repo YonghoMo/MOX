@@ -65,17 +65,6 @@ header {
   max-width: calc(100% - 10px); /* 일정이 칸 안에 맞게 표시 */
 }
 
-
-#calendar-top-buttons .btn {
-  font-size: 12px !important; /* 텍스트 크기 강제 줄임 */
-  padding: 3px 5px !important; /* 내부 여백 강제 축소 */
-  height: 28px !important; /* 버튼 높이 강제 줄임 */
-  line-height: 1 !important; /* 텍스트 줄 높이 조정 */
-  border-radius: 5px; /* 둥근 모서리 */
-  min-width: 60px !important; /* 최소 너비 */
-  max-width: 80px !important; /* 최대 너비 */
-}
-
 .day {
   border: 1px solid #ddd;
   padding: 10px;
@@ -280,31 +269,7 @@ footer p {
 
 /* 모바일 환경에 맞춘 스타일 조정 */
 @media (max-width: 768px) {
-  
-  /* 버튼 배치 */
-  .d-flex {
-    justify-content: space-around;
-    gap: 5px; /* 버튼 사이 간격 */
-  }
 
-  #month-year {
-    font-size: 16px; /* 텍스트 크기 축소 */
-  }
-
-  #calendar-top-buttons .btn {
-    font-size: 10px !important; /* 더 작은 텍스트 크기 */
-    padding: 3px 5px !important; /* 내부 여백 축소 */
-    height: 28px !important; /* 버튼 높이 줄임 */
-  }
-
-  #prevMonthBtn,
-  #nextMonthBtn,
-  #todayBtn,
-  .btn-primary {
-    padding: 5px 10px; /* 내부 여백 축소 */
-    font-size: 12px; /* 텍스트 크기 축소 */
-    height: 30px; /* 높이 축소 */
-  }
 
   /* 캘린더 크기 최적화 */
   #calendar {
@@ -313,13 +278,6 @@ footer p {
     padding: 10px; /* 캘린더 내부 여백 축소 */
   }
 
-  /* 월/연도 텍스트 크기 조정 */
-  #month-year {
-    font-size: 14px; /* 글자 크기를 줄임 */
-    font-weight: 600; /* 굵기를 적당히 유지 */
-    margin-bottom: 10px; /* 버튼과의 간격 추가 */
-    text-align: center; /* 가운데 정렬 */
-  }
 
   .day {
     height: 60px;
