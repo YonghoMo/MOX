@@ -13,7 +13,7 @@ async function loadFriendRequests() {
 
         // 예외 처리: data.requests가 undefined일 경우 처리
         if (!data.requests || data.requests.length === 0) {
-            requestsDiv.innerHTML = "<p>받은 친구 요청이 없습니다.</p>";
+            requestsDiv.innerHTML = "<p>친구 요청이 없습니다.</p>";
             return;
         }
 

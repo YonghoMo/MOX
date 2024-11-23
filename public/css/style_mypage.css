@@ -75,7 +75,7 @@ body {
   margin-bottom: 20px;
 }
 
-.settings {
+.logout {
   max-width: 480px;
   background-color: #fff;
   border-radius: 8px;
@@ -84,13 +84,13 @@ body {
   margin: 0 auto;
 }
 
-.settings a {
+.logout a {
   color: #007bff;
   text-decoration: none;
   font-weight: bold;
 }
 
-.settings a:hover {
+.logout a:hover {
   text-decoration: underline;
 }
 
@@ -147,24 +147,6 @@ body {
 .card:hover {
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
   transform: scale(1.02);
-}
-
-#friend-button {
-  background-color: #007bff;
-  color: #fff;
-  border: none;
-  font-size: 14px;
-  padding-top: 2px;
-  padding-bottom: 2px;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-  text-align: center;
-  display: inline-block;
-}
-
-#friend-button:hover {
-  background-color: #0056b3;
 }
 
 #alert {
