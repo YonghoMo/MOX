@@ -1,6 +1,7 @@
 // controllers/eventController.js
 const Event = require('../models/eventModel');
 const Exercise = require('../models/exerciseModel');
+const Friend = require('../models/friendModel'); // 친구 관계 모델 불러오기
 const moment = require('moment');  // moment.js를 사용하여 날짜 처리를 쉽게 처리
 
 
@@ -9,15 +10,42 @@ exports.getEvents = async (req, res) => {
     const { userId } = req.query;
 
     try {
-        const events = await Event.find({ userId });
-        if (!events || events.length === 0) {
-            return res.status(200).json({ success: true, events: [] }); // 빈 배열 반환
-        }
-        res.status(200).json({ success: true, events });
+        console.log("전달된 userId:", userId);
+
+        // 사용자 본인의 일정 조회
+        const userEvents = await Event.find({ userId });
+        console.log("사용자 일정:", userEvents);
+
+        // 친구 관계 조회
+        const friends = await Friend.find({
+            status: 'accepted',
+            $or: [{ requestFrom: userId }, { requestTo: userId }]
+        });
+
+        const friendIds = friends.map(friend =>
+            friend.requestFrom.toString() === userId ? friend.requestTo : friend.requestFrom
+        );
+        console.log("친구 ID 목록:", friendIds);
+
+        // 친구 일정 조회
+        const friendEvents = await Event.find({ userId: { $in: friendIds } });
+        console.log("친구 일정:", friendEvents);
+
+        // 본인 일정과 친구 일정 병합
+        const allEvents = [
+            ...userEvents.map(event => ({ ...event.toObject(), isFriendEvent: false })),
+            ...friendEvents.map(event => ({ ...event.toObject(), isFriendEvent: true }))
+        ];
+
+        console.log("병합된 전체 일정:", allEvents);
+
+        res.status(200).json({ success: true, events: allEvents });
     } catch (error) {
-        res.status(500).json({ success: false, message: error.message });
+        console.error("일정 불러오기 오류:", error);
+        res.status(500).json({ success: false, message: '일정을 불러오지 못했습니다.' });
     }
 };
+
 
 // 일정 등록
 exports.createEvent = async (req, res) => {
@@ -37,6 +65,25 @@ exports.createEvent = async (req, res) => {
         res.status(201).json({ success: true, message: '일정이 등록되었습니다.' });
     } catch (error) {
         res.status(500).json({ success: false, message: error.message });
+    }
+};
+
+//임시 일정 저장 함수
+exports.createEventsBulk = async (req, res) => {
+    const { events } = req.body;
+
+    try {
+        const savedEvents = [];
+        for (const eventData of events) {
+            const newEvent = new Event(eventData);
+            const savedEvent = await newEvent.save();
+            savedEvents.push(savedEvent);
+        }
+
+        res.status(201).json({ success: true, message: '일정들이 저장되었습니다.', events: savedEvents });
+    } catch (error) {
+        console.error("일정 저장 중 오류:", error);
+        res.status(500).json({ success: false, message: '일정을 저장하는 데 실패했습니다.' });
     }
 };
 

@@ -23,15 +23,14 @@ function generateCalendar(year = currentYear, month = currentMonth) {
     calendar.innerHTML = ""; // 기존 달력 초기화
 
     const today = new Date(); // 오늘 날짜
-    const isCurrentMonth = (year === today.getFullYear() && month === today.getMonth()); // 현재 달인지 확인
+    const isCurrentMonth = (year === today.getFullYear() && month === today.getMonth());
 
-    const firstDayOfMonth = new Date(year, month, 1).getDay(); // 이번 달 첫 요일
-    const daysInMonth = new Date(year, month + 1, 0).getDate(); // 이번 달 마지막 날짜
+    const firstDayOfMonth = new Date(year, month, 1).getDay();
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
 
-    // 월/연도 업데이트
     document.getElementById("month-year").textContent = `${year}년 ${month + 1}월`;
 
-    // 빈 셀 추가 (첫 번째 요일 전까지)
+    // 빈 셀 추가
     for (let i = 0; i < firstDayOfMonth; i++) {
         const emptyCell = document.createElement("div");
         emptyCell.classList.add("day");
@@ -46,9 +45,15 @@ function generateCalendar(year = currentYear, month = currentMonth) {
         const dayNumber = document.createElement("div");
         dayNumber.classList.add("day-number");
         dayNumber.textContent = day;
-        dayCell.appendChild(dayNumber);
 
-        // 오늘 날짜인 경우 배경색을 노란색으로 설정
+        // 일정 컨테이너 추가
+        const eventsContainer = document.createElement("div");
+        eventsContainer.classList.add("events-container");
+
+        dayCell.appendChild(dayNumber);
+        dayCell.appendChild(eventsContainer);
+
+        // 오늘 날짜 강조
         if (isCurrentMonth && day === today.getDate()) {
             dayCell.style.backgroundColor = '#ffffcc'; // 옅은 노란색
         }
@@ -56,7 +61,7 @@ function generateCalendar(year = currentYear, month = currentMonth) {
         calendar.appendChild(dayCell);
     }
 
-    loadEvents(); // 일정 불러오기
+    loadEvents(); // 일정 데이터 불러오기
 }
 
 // 이전 달로 이동
@@ -121,41 +126,45 @@ async function loadExercises() {
 document.getElementById('addEventModal').addEventListener('shown.bs.modal', loadExercises);
 
 // 일정 저장
-function saveEvent() {
+function saveEvents() {
     const title = document.getElementById("event-title").value;
     const date = document.getElementById("event-date").value;
     const startTime = document.getElementById("start-time").value;
     const endTime = document.getElementById("end-time").value;
 
-    // 운동 선택을 체크박스로 변경
+    // 사용자가 선택한 운동 종목
     const checkedExercises = document.querySelectorAll('input[name="exercises"]:checked');
-    const exercises = Array.from(checkedExercises).map(checkbox => checkbox.value); // 체크된 운동의 value 값을 배열로 변환
-
+    const exercises = Array.from(checkedExercises).map(checkbox => checkbox.value);
 
     if (title && date && startTime && endTime) {
-        axios
-            .post("/api/events", {
+        const events = [
+            {
                 title,
                 date,
                 startTime,
                 endTime,
                 exercises,
                 userId,
-            })
+            },
+            // 필요시 여러 일정을 여기에 추가 가능
+        ];
+
+        axios
+            .post("/api/events/bulk", { events })
             .then((response) => {
                 if (response.data.success) {
                     alert("일정이 저장되었습니다.");
-                    generateCalendar(); // 저장 후 일정 새로고침
+                    generateCalendar(); // 저장 후 달력 새로고침
 
-                    // 모달 창 닫기
+                    // 모달 닫기
                     const addEventModal = bootstrap.Modal.getInstance(document.getElementById("addEventModal"));
-                    addEventModal.hide(); // 모달 닫기
+                    addEventModal.hide();
                 } else {
                     alert("일정 저장에 실패했습니다.");
                 }
             })
             .catch((error) => {
-                console.error(error);
+                console.error("일정 저장 중 오류 발생:", error);
                 alert("일정 저장 중 오류가 발생했습니다.");
             });
     } else {
@@ -196,39 +205,44 @@ function loadEvents() {
 
 // 일정 달력에 표시 및 클릭 시 모달로 상세 정보 보기
 function displayEvents(events) {
+    const dayCells = document.querySelectorAll(".day");
+
     events.forEach((event) => {
         const eventDate = new Date(event.date);
         const day = eventDate.getDate();
-        const dayCells = document.querySelectorAll(".day");
 
         dayCells.forEach((cell) => {
             const dayNumber = cell.querySelector(".day-number");
+
+            // 날짜가 일치하는 셀 찾기
             if (dayNumber && parseInt(dayNumber.textContent) === day) {
-                // PC/태블릿용 일정 제목 추가
+                let eventsContainer = cell.querySelector(".events-container");
+                if (!eventsContainer) {
+                    eventsContainer = document.createElement("div");
+                    eventsContainer.classList.add("events-container");
+                    cell.appendChild(eventsContainer);
+                }
+
+                // PC용 제목 추가
                 const eventTitle = document.createElement("div");
                 eventTitle.classList.add("event-title");
+                if (event.isFriendEvent) {
+                    eventTitle.classList.add("friend-event");
+                }
                 eventTitle.textContent = event.title;
-                eventTitle.dataset.eventId = event._id;
+                eventTitle.onclick = () => showEventDetails(event);
 
-                // 기본 색상 파란색 설정
-                const savedColor = localStorage.getItem(`eventColor_${event._id}`) || "#007bff";
-                eventTitle.style.backgroundColor = savedColor;
-
-                eventTitle.onclick = function () {
-                    showEventDetails(event); // 제목 클릭 시 상세 정보 모달 표시
-                };
-
-                // 모바일용 일정 동그라미 추가
+                // 모바일용 동그라미 추가
                 const eventCircle = document.createElement("div");
                 eventCircle.classList.add("event-circle");
-                eventCircle.style.backgroundColor = savedColor; // 저장된 색상이 있으면 적용
-                eventCircle.onclick = function () {
-                    showEventDetails(event); // 동그라미 클릭 시 상세 정보 모달 표시
-                };
+                if (event.isFriendEvent) {
+                    eventCircle.classList.add("friend-event-circle");
+                }
+                eventCircle.onclick = () => showEventDetails(event);
 
-                // PC/태블릿에서는 제목, 모바일에서는 동그라미 추가
-                cell.appendChild(eventTitle);
-                cell.appendChild(eventCircle);
+                // 두 가지 UI 요소를 모두 추가
+                eventsContainer.appendChild(eventTitle);
+                eventsContainer.appendChild(eventCircle);
             }
         });
     });
@@ -563,7 +577,7 @@ document.querySelector("[data-bs-target='#addExerciseModal']").addEventListener(
     document.getElementById("exercise-type").value = '';
 });
 
-document.getElementById("saveEventBtn").addEventListener("click", saveEvent);
+document.getElementById("saveEventBtn").addEventListener("click", saveEvents);
 
 // 세부 일정 모달을 열 때 선택된 운동 종목 정보 가져오기
 async function fetchAndDisplayExercises(eventId) {
@@ -830,18 +844,6 @@ function resetExerciseBoxes() {
     // 운동 종목 박스를 모달에 추가
     exerciseListContainer.appendChild(exerciseBox);
 }
-
-
-
-
-
-
-
-
-
-
-
-
 
 // 일정 삭제 함수
 async function deleteEvent(eventId) {
