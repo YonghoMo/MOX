@@ -417,7 +417,7 @@ async function showEventDetails(event) {
                     } else if (exercise.category === '유산소') {
                         // 유산소일 경우 시간 입력 추가
                         setRow.innerHTML = `
-                                <input type="text" class="time-value" placeholder="시간(mm:ss)" pattern="\\d{2}:\\d{2}" />
+                                <input type="text" class="time-value" placeholder="시간(mm)" pattern="\\d{2}:\\d{2}" />
                                 <input type="checkbox" class="set-complete" />
                             `;
                     } else if (exercise.category === '맨몸운동') {
@@ -759,26 +759,26 @@ function displayWorkoutLogInModal(workoutLog) {
             // 웨이트 카테고리일 경우 무게와 횟수만 표시
             if (log.exerciseId.category === '웨이트') {
                 setRow.innerHTML = `
-                    <div>세트: ${set.setNumber}</div>
-                    <div>무게: ${set.weight || 'N/A'} kg</div>
-                    <div>횟수: ${set.reps || 'N/A'} 회</div>
-                    <div>완료: ${set.isCompleted ? '예' : '아니오'}</div>
+                    <div>${set.setNumber}</div>
+                    <div>${set.weight || 'N/A'} kg</div>
+                    <div>${set.reps || 'N/A'} 회</div>
+                    <div>${set.isCompleted ? 'V' : 'X'}</div>
                 `;
             }
             // 유산소 카테고리일 경우 시간만 표시
             else if (log.exerciseId.category === '유산소') {
                 setRow.innerHTML = `
-                    <div>세트: ${set.setNumber}</div>
-                    <div>시간: ${set.time || 'N/A'} 분</div>
-                    <div>완료: ${set.isCompleted ? '예' : '아니오'}</div>
+                    <div>${set.setNumber}</div>
+                    <div>${set.time || 'N/A'} 분</div>
+                    <div>${set.isCompleted ? 'V' : 'X'}</div>
                 `;
             }
             // 맨몸운동일 경우 횟수만 표시
             else if (log.exerciseId.category === '맨몸운동') {
                 setRow.innerHTML = `
-                    <div>세트: ${set.setNumber}</div>
-                    <div>횟수: ${set.reps || 'N/A'} 회</div>
-                    <div>완료: ${set.isCompleted ? '예' : '아니오'}</div>
+                    <div>${set.setNumber}</div>
+                    <div>${set.reps || 'N/A'} 회</div>
+                    <div>${set.isCompleted ? 'V' : 'X'}</div>
                 `;
             }
             exerciseBox.appendChild(setRow);
