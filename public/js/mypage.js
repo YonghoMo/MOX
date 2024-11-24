@@ -102,7 +102,20 @@ async function loadFriends() {
 
         friendsDiv.innerHTML = "";
 
-        // 3. 친구 목록을 돌면서 친구의 닉네임을 결정
+        // 3. 예외 처리: 친구가 없는 경우 메시지와 버튼 표시
+        if (!data.friends || data.friends.length === 0) {
+            friendsDiv.innerHTML = `
+                <p>현재 친구가 없습니다.</p>
+                <button id="recruit-friends-btn">친구 모집 하러가기</button>
+            `;
+            // 버튼 클릭 이벤트 추가
+            document.getElementById("recruit-friends-btn").addEventListener("click", () => {
+                window.location.href = "friends.html"; // friends.html로 이동
+            });
+            return;
+        }
+
+        // 4. 친구 목록을 돌면서 친구의 닉네임을 결정
         data.friends.forEach((friend) => {
             let friendNickname;
 
@@ -113,17 +126,18 @@ async function loadFriends() {
                 friendNickname = friend.requestFrom.nickname; // 내가 requestTo일 때 상대방 닉네임
             }
 
-            // 4. 친구 목록에 친구의 닉네임 표시
+            // 5. 친구 목록에 친구의 닉네임 표시
             friendsDiv.innerHTML += `
-                  <div>
-                      ${friendNickname}
-                      <button onclick="deleteFriend('${friend._id}')">삭제</button>
-                  </div>`;
+                <div>
+                    ${friendNickname}
+                    <button onclick="deleteFriend('${friend._id}')">삭제</button>
+                </div>`;
         });
     } else {
         console.error("사용자 ID를 가져오는 데 실패했습니다.");
     }
 }
+
 
 // 친구 삭제
 async function deleteFriend(friendId) {

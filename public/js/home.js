@@ -93,6 +93,12 @@ async function loadOnlineFriends() {
         if (response.ok) {
             const { onlineFriends, userId } = await response.json();  // 서버에서 userId도 반환
             console.log("서버 응답 데이터:", onlineFriends, "사용자 ID:", userId);
+            
+            if (!onlineFriends || onlineFriends.length === 0) {
+                // 접속 중인 친구가 없을 경우 메시지 표시
+                document.querySelector('.online-friends').innerHTML = '<p>접속 중인 친구가 없습니다.</p>';
+                return;
+            }
 
             const friendList = onlineFriends.map(friend => {
                 let friendNickname;

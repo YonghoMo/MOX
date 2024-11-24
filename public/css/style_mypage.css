@@ -23,6 +23,12 @@ body {
   text-align: center;
 }
 
+#friend-requests p,
+#friend-list p {
+  white-space: nowrap; /* 텍스트 줄바꿈 방지 */
+}
+
+
 .profile {
   max-width: 480px;
   background-color: #fff;
