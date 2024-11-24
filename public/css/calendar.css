@@ -40,7 +40,6 @@ header {
   min-height: 400px;
   grid-template-columns: repeat(7, 1fr); /* 7일의 열 생성 */
   gap: 3px;
-  
 }
 
 #event-color-picker {
@@ -50,19 +49,33 @@ header {
 }
 
 .event-title {
-  display: block;
-  cursor: pointer; /* 클릭 가능하도록 커서 변경 */
-  background-color: #f0f8ff; /* 일정 배경색 지정 */
+  display: block; /* 기본적으로 보이도록 설정 */
+  font-size: 12px;
+  background-color: #1a8ff5; /* 기본 일정 배경색 */
   padding: 5px;
   border-radius: 5px;
+  text-align: center;
+  cursor: pointer;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: fit-content;
+}
+
+.event-title.friend-event {
+  background-color: #ffa500; /* 친구 일정 배경색 */
+}
+
+/* 일정들을 담는 컨테이너 */
+.events-container {
   position: absolute;
-  bottom: 5px; /* 칸의 오른쪽 아래에 위치 */
+  bottom: 5px;
   right: 5px;
-  font-size: 12px; /* 폰트 크기를 작게 */
-  white-space: nowrap; /* 한 줄로 표시 */
-  overflow: hidden; /* 넘치는 텍스트 숨김 */
-  text-overflow: ellipsis; /* 넘치는 텍스트는 ...으로 표시 */
-  max-width: calc(100% - 10px); /* 일정이 칸 안에 맞게 표시 */
+  display: flex;
+  flex-direction: column-reverse; /* 세로로 나열 */
+  gap: 4px; /* 일정 간 간격 */
+  max-height: 80%; /* 일정이 많으면 스크롤 */
+  overflow-y: auto; /* 스크롤 활성화 */
 }
 
 .day {
@@ -80,14 +93,17 @@ header {
 }
 
 .event-circle {
-  width: 12px;
-  height: 12px;
-  border-radius: 50%; /* 동그라미 모양을 만들기 위해 사용 */
-  background-color: #007bff; /* 이 부분이 동그라미의 색상 (파란색) */
-  position: absolute;
-  bottom: 5px;
-  right: 5px; /* 위치 지정 */
-  display: none;
+  display: none; /* 기본적으로 숨김 */
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #007bff; /* 기본 동그라미 색 */
+  margin: 2px; /* 간격 조정 */
+  cursor: pointer;
+}
+
+.event-circle.friend-event {
+  background-color: #ffa500; /* 친구 일정 점 색 */
 }
 
 footer {
@@ -269,15 +285,12 @@ footer p {
 
 /* 모바일 환경에 맞춘 스타일 조정 */
 @media (max-width: 768px) {
-
-
   /* 캘린더 크기 최적화 */
   #calendar {
     grid-template-columns: repeat(7, 1fr); /* 7열 유지 */
     gap: 5px; /* 칸 간 간격 축소 */
     padding: 10px; /* 캘린더 내부 여백 축소 */
   }
-
 
   .day {
     height: 60px;
@@ -291,11 +304,28 @@ footer p {
   }
 
   .event-circle {
-    display: block; /* 모바일에서는 동그라미 표시 */
+    display: block !important; /* 모바일에서 동그라미 표시 */
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: #007bff; /* 기본 동그라미 색 */
+    margin: 2px; /* 간격 조정 */
+    cursor: pointer;
+  }
+
+  .friend-event-circle {
+    background-color: #ffa500; /* 친구 일정 동그라미 색 */
   }
 
   .event-title {
     display: none;
+  }
+
+  .events-container {
+    flex-direction: row-reverse; /* 오른쪽부터 가로 정렬 */
+    flex-wrap: wrap; /* 여러 줄 가능 */
+    justify-content: flex-end; /* 오른쪽 정렬 */
+    gap: 4px;
   }
 
   .modal-dialog {
