@@ -5,39 +5,57 @@ const mongoose = require('mongoose');
 
 exports.sendFriendRequest = async (req, res) => {
     const { friendName } = req.body;
-    const userId = req.session.user ? req.session.user._id : null;  // 세션에서 사용자 ID 가져오기
+    const userId = req.session.user ? req.session.user._id : null;
 
-    // 사용자 ID가 없으면 로그인 오류 반환
     if (!userId) {
         return res.status(401).json({ message: '로그인이 필요합니다.' });
     }
 
-    console.log('현재 사용자 ID:', userId);  // 사용자 ID 로그 출력
-    console.log('전달된 친구 이름:', friendName);  // friendName 로그 출력
-
     try {
-        // friendName으로 사용자 조회 (예시로, 친구 이름으로 검색 후 ID를 얻음)
         const friendUser = await User.findById(friendName);
         if (!friendUser) {
             return res.status(404).json({ message: '친구를 찾을 수 없습니다.' });
         }
 
-        // 새로운 친구 요청 생성
-        const newFriendRequest = new Friend({
-            requestFrom: userId,  // 사용자 ID를 requestFrom에 설정
-            requestTo: friendUser._id,  // 친구의 ID
+        if (friendUser._id.toString() === userId.toString()) {
+            return res.status(400).json({ message: '자신에게 친구 요청을 보낼 수 없습니다.' });
+        }
+
+        const existingRequest = await Friend.findOne({
+            requestFrom: userId,
+            requestTo: friendUser._id,
             status: 'pending'
         });
 
-        // DB에 친구 요청 저장
-        await newFriendRequest.save();
+        if (existingRequest) {
+            return res.status(400).json({ message: '이미 친구 요청이 전송되었습니다.' });
+        }
 
+        const isAlreadyFriend = await Friend.findOne({
+            $or: [
+                { requestFrom: userId, requestTo: friendUser._id, status: 'accepted' },
+                { requestFrom: friendUser._id, requestTo: userId, status: 'accepted' }
+            ]
+        });
+
+        if (isAlreadyFriend) {
+            return res.status(400).json({ message: '이미 친구 상태입니다.' });
+        }
+
+        const newFriendRequest = new Friend({
+            requestFrom: userId,
+            requestTo: friendUser._id,
+            status: 'pending'
+        });
+
+        await newFriendRequest.save();
         res.status(200).json({ success: true, message: '친구 요청이 성공적으로 전송되었습니다.' });
     } catch (error) {
-        console.error('친구 요청 전송 중 오류 발생:', error);  // 오류 로그 출력
+        console.error('친구 요청 전송 중 오류 발생:', error);
         res.status(500).json({ message: '서버 오류가 발생했습니다.' });
     }
 };
+
 
 // 받은 친구 요청 목록 조회
 exports.getFriendRequests = async (req, res) => {

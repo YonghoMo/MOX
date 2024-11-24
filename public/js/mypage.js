@@ -13,23 +13,46 @@ async function loadFriendRequests() {
 
         // 예외 처리: data.requests가 undefined일 경우 처리
         if (!data.requests || data.requests.length === 0) {
-            requestsDiv.innerHTML = "<p>받은 친구 요청이 없습니다.</p>";
+            requestsDiv.innerHTML = "<p class='mt-2'>친구 요청이 없습니다.</p>";
             return;
         }
 
         data.requests.forEach((request) => {
             requestsDiv.innerHTML += `
-                  <div>
-                      <img src="images/default_profile.PNG" width="35px" height="35px" alt="프로필 사진">
-                      ${request.requestFrom.nickname}님의 친구 요청
-                      <button onclick="acceptFriendRequest('${request._id}')">수락</button>
-                      <button onclick="rejectFriendRequest('${request._id}')">거절</button>
+                  <div style="font-size:120%; border-bottom: 1px solid #e0e0e0;">
+                      ${request.requestFrom.nickname}<br>
+                      <button style="font-size:80%;" onclick="acceptFriendRequest('${request._id}')">수락</button>
+                      <button style="font-size:80%;" onclick="rejectFriendRequest('${request._id}')" class="mb-2">거절</button>
                   </div>`;
         });
+
     } catch (error) {
         console.error("친구 요청 목록 불러오기 오류:", error);
     }
 }
+// 유저 닉네임 표시
+async function loadUserInfo() {
+    try {
+        const userResponse = await fetch("/api/users/me", { method: "GET" });
+        if (userResponse.ok) {
+            const userData = await userResponse.json();
+            const nickname = userData.nickname; // 서버에서 로그인한 사용자 닉네임 받아오기
+
+            // 닉네임을 화면에 표시
+            document.getElementById(
+                "welcome-message"
+            ).textContent = `${nickname}님`;
+        } else {
+            document.getElementById("welcome-message").textContent =
+                "로그인이 필요합니다";
+            console.error("사용자 정보를 가져오는 데 실패했습니다.");
+        }
+    } catch (error) {
+        console.error("사용자 정보를 가져오는 중 오류 발생:", error);
+    }
+}
+
+loadUserInfo();
 
 // 친구 요청 수락
 async function acceptFriendRequest(requestId) {
@@ -80,7 +103,20 @@ async function loadFriends() {
 
         friendsDiv.innerHTML = "";
 
-        // 3. 친구 목록을 돌면서 친구의 닉네임을 결정
+        // 3. 예외 처리: 친구가 없는 경우 메시지와 버튼 표시
+        if (!data.friends || data.friends.length === 0) {
+            friendsDiv.innerHTML = `
+                <p>현재 친구가 없습니다.</p>
+                <button id="recruit-friends-btn">친구 모집 하러가기</button>
+            `;
+            // 버튼 클릭 이벤트 추가
+            document.getElementById("recruit-friends-btn").addEventListener("click", () => {
+                window.location.href = "friends.html"; // friends.html로 이동
+            });
+            return;
+        }
+
+        // 4. 친구 목록을 돌면서 친구의 닉네임을 결정
         data.friends.forEach((friend) => {
             let friendNickname;
 
@@ -91,18 +127,20 @@ async function loadFriends() {
                 friendNickname = friend.requestFrom.nickname; // 내가 requestTo일 때 상대방 닉네임
             }
 
-            // 4. 친구 목록에 친구의 닉네임 표시
+            // 5. 친구 목록에 친구의 닉네임 표시
             friendsDiv.innerHTML += `
-                  <div>
-                      <img src="images/default_profile.PNG" width="35px" height="35px" alt="프로필 사진">
-                      ${friendNickname}
-                      <button onclick="deleteFriend('${friend._id}')">삭제</button>
-                  </div>`;
+                <div style="font-size:120%; border-bottom: 1px solid #e0e0e0;">
+                    ${friendNickname}
+                    <button onclick="deleteFriend('${friend._id}')" class="mb-2 mt-2">
+                    삭제
+                    </button>
+                </div>`;
         });
     } else {
         console.error("사용자 ID를 가져오는 데 실패했습니다.");
     }
 }
+
 
 // 친구 삭제
 async function deleteFriend(friendId) {

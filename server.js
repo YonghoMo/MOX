@@ -22,6 +22,7 @@ const User = require('./models/userModel');
 const session = require('express-session');  // express-session 모듈 불러오기
 const bcrypt = require('bcrypt');
 const cors = require('cors');
+const changeinfoRoutes = require('./routes/changeinfoRoutes');
 
 // Express 앱 생성
 const app = express();
@@ -122,6 +123,9 @@ app.use('/api/events', eventRoutes);
 
 // 댓글 라우트 사용
 app.use('/api', commentRoutes);
+
+//회원정보 변경 라우트
+app.use('/api/user', changeinfoRoutes); // /api/user/change-password로 연결
 
 // 세션에서 사용자 정보 반환
 app.get('/api/users/me', (req, res) => {
