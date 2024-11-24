@@ -33,11 +33,11 @@
     <div class="container mt-5">
       <div class="profile">
         <div class="container-fluid text-center mt-3">
-          <p id="welcome-message" class="fs-4"></p>
+          <p id="welcome-message" class="fs-2"></p>
         </div>
         <p>
           <button
-            class="btn btn-primary"
+            class="btn btn-primary fs-4"
             onClick="location.href='change_info.html'"
           >
             회원정보 변경
@@ -46,24 +46,29 @@
       </div>
 
       <div class="friend-management profile mt-4">
-        <h3>친구 관리</h3>
-        <h4>받은 친구 요청</h4>
-        <!-- 친구 요청 카드 -->
-        <div class="card mb-3" style="max-width: 540px">
-          <div class="row g-0">
-            <div class="col-md-4 mx-auto">
-              <p id="friend-requests"></p>
-            </div>
-          </div>
-        </div>
+        <h3 style="text-align: left;">친구 관리</h3>
 
-        <h4>현재 친구 목록</h4>
           <!-- 친구 목록 카드 -->
           <div class="card mb-3" style="max-width: 540px">
-            <div class="row g-0">
-                <p id="friend-list"></p>
+            <div class="card-header text-white bg-primary fs-5">
+              친구 목록
             </div>
+              <div class="row g-0 mt-2">
+                  <p id="friend-list"></p>
+              </div>
           </div>
+
+          <!-- 친구 요청 카드 -->
+        <div class="card mb-3" style="max-width: 540px">
+          <div class="card-header text-white bg-primary fs-5">
+            친구 요청
+          </div>
+            <div class="row g-0">
+              <div id="friend-list" class="col-md-4 mx-auto mt-2">
+                <p id="friend-requests"></p>
+              </div>
+            </div>
+        </div>
       </div>
 
       <div class="logout mt-4 text-end">
