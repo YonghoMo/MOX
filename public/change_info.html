@@ -74,44 +74,7 @@
         </div>
       </form>
     </div>
-
-    <script>
-      document
-        .querySelector("form")
-        .addEventListener("submit", async function (event) {
-          event.preventDefault();
-
-          const currentPassword =
-            document.getElementById("currentPassword").value;
-          const newPassword = document.getElementById("newPassword").value;
-          const confirmPassword =
-            document.getElementById("confirmPassword").value;
-
-          if (newPassword !== confirmPassword) {
-            alert("새 비밀번호와 확인 비밀번호가 일치하지 않습니다.");
-            return;
-          }
-
-          try {
-            const response = await fetch("/api/user/change-password", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ currentPassword, newPassword }),
-            });
-
-            const result = await response.json();
-            if (response.ok) {
-              alert(result.message);
-              window.location.href = "/mypage.html";
-            } else {
-              alert(result.error || "비밀번호 변경 실패");
-            }
-          } catch (error) {
-            console.error(error);
-            alert("서버 오류가 발생했습니다.");
-          }
-        });
-    </script>
+    <script src="js/change_info.js"></script>
     <script
       src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
       integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
