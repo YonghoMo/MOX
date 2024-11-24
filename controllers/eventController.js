@@ -91,15 +91,33 @@ exports.createEventsBulk = async (req, res) => {
 exports.deleteEvent = async (req, res) => {
     try {
         const eventId = req.params.id;
-        const event = await Event.findByIdAndDelete(eventId);
 
-        if (!event) {
-            return res.status(404).json({ message: '일정을 찾을 수 없습니다.' });
+        // 세션에서 현재 사용자 ID 가져오기
+        const userId = req.session.user?._id;
+
+        if (!userId) {
+            return res.status(401).json({ success: false, message: '로그인이 필요합니다.' });
         }
 
-        res.status(200).json({ message: '일정이 성공적으로 삭제되었습니다.' });
+        // 삭제할 일정 찾기
+        const event = await Event.findById(eventId);
+
+        if (!event) {
+            return res.status(404).json({ success: false, message: '일정을 찾을 수 없습니다.' });
+        }
+
+        // 본인의 일정인지 검증
+        if (event.userId.toString() !== userId) {
+            return res.status(403).json({ success: false, message: '삭제 권한이 없습니다.' });
+        }
+
+        // 일정 삭제
+        await Event.findByIdAndDelete(eventId);
+
+        res.status(200).json({ success: true, message: '일정이 성공적으로 삭제되었습니다.' });
     } catch (error) {
-        res.status(500).json({ message: '일정 삭제 중 오류가 발생했습니다.' });
+        console.error("일정 삭제 중 오류 발생:", error);
+        res.status(500).json({ success: false, message: '일정 삭제 중 오류가 발생했습니다.' });
     }
 };
 

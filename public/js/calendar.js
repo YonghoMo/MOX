@@ -459,6 +459,9 @@ async function showEventDetails(event) {
     // 댓글 불러오기
     loadComments(event._id);
 
+    // 삭제 버튼에 리스너 연결
+    attachDeleteEventListener(event._id);
+
     // 모달을 띄우는 코드
     const viewEventModal = new bootstrap.Modal(document.getElementById("viewEventModal"));
     viewEventModal.show();
@@ -787,10 +790,6 @@ document.getElementById('viewEventModal').addEventListener('shown.bs.modal', fun
 
     // 추가: 운동량 저장 버튼 숨기기
     document.getElementById('saveWorkoutLogBtn').style.display = 'block';
-
-    document.getElementById('deleteEventBtn').addEventListener('click', function () {
-        deleteEvent(eventId); // 삭제 함수 호출
-    });
 });
 
 // 운동 기록 삭제
@@ -852,32 +851,69 @@ function resetExerciseBoxes() {
 async function deleteEvent(eventId) {
     if (!eventId) {
         alert('삭제할 일정을 선택하세요.');
-        return; // eventId가 없으면 함수 종료
+        return;
     }
 
-    // 사용자가 삭제를 확인하는 알림창
     const confirmation = confirm('정말로 이 일정을 삭제하시겠습니까?');
     if (confirmation) {
         try {
-            // 서버로 DELETE 요청 보내기
-            const response = await axios.delete(`/api/events/${eventId}`);
+            const response = await axios.delete(`/api/events/${eventId}`); // userId 제거
 
             if (response.data.success) {
                 alert('일정이 삭제되었습니다.');
-                fetchWorkoutLog(eventId);
-                generateCalendar(); // 삭제 후 달력 다시 불러오기
-
-                // 모달 닫기
+                removeEventFromCalendar(eventId); // UI에서 일정 제거
                 const viewEventModal = bootstrap.Modal.getInstance(document.getElementById('viewEventModal'));
-                viewEventModal.hide(); // 모달을 닫음
+                viewEventModal.hide(); // 모달 닫기
             } else {
-                alert('일정 삭제에 실패했습니다.');
-                fetchWorkoutLog(eventId);
+                alert(response.data.message); // 서버에서 받은 오류 메시지 표시
             }
         } catch (error) {
             console.error('일정 삭제 중 오류 발생:', error);
             alert('일정 삭제 중 오류가 발생했습니다.');
-            fetchWorkoutLog(eventId);
         }
     }
+}
+
+// 삭제된 일정만 제거
+function removeEventFromCalendar(eventId) {
+    const dayCells = document.querySelectorAll(".day");
+
+    dayCells.forEach((cell) => {
+        const eventTitles = cell.querySelectorAll(".event-title");
+        const eventCircles = cell.querySelectorAll(".event-circle");
+
+        // 해당 eventId를 가진 요소를 삭제
+        eventTitles.forEach((title) => {
+            if (title.getAttribute("data-event-id") === eventId) {
+                title.remove();
+            }
+        });
+
+        eventCircles.forEach((circle) => {
+            if (circle.getAttribute("data-event-id") === eventId) {
+                circle.remove();
+            }
+        });
+    });
+}
+
+// 삭제 버튼 이벤트 리스너 관리 함수
+function attachDeleteEventListener(eventId) {
+    const deleteButton = document.getElementById('deleteEventBtn');
+
+    // 기존 이벤트 리스너 제거
+    if (deleteButton._deleteHandler) {
+        deleteButton.removeEventListener('click', deleteButton._deleteHandler);
+    }
+
+    // 새로운 이벤트 리스너 정의
+    const newDeleteHandler = function () {
+        deleteEvent(eventId);
+    };
+
+    // 새로운 이벤트 리스너 추가
+    deleteButton.addEventListener('click', newDeleteHandler);
+
+    // 핸들러를 저장해 다음에 제거 가능하도록 설정
+    deleteButton._deleteHandler = newDeleteHandler;
 }
