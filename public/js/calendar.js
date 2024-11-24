@@ -209,13 +209,20 @@ function displayEvents(events) {
 
     events.forEach((event) => {
         const eventDate = new Date(event.date);
-        const day = eventDate.getDate();
+        const eventYear = eventDate.getFullYear();
+        const eventMonth = eventDate.getMonth();
+        const eventDay = eventDate.getDate();
 
         dayCells.forEach((cell) => {
             const dayNumber = cell.querySelector(".day-number");
 
-            // 날짜가 일치하는 셀 찾기
-            if (dayNumber && parseInt(dayNumber.textContent) === day) {
+            // 날짜와 연도, 월이 모두 일치하는 셀에만 일정 추가
+            if (
+                dayNumber &&
+                parseInt(dayNumber.textContent) === eventDay &&
+                eventYear === currentYear &&
+                eventMonth === currentMonth
+            ) {
                 let eventsContainer = cell.querySelector(".events-container");
                 if (!eventsContainer) {
                     eventsContainer = document.createElement("div");
