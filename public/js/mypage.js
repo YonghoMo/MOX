@@ -19,13 +19,12 @@ async function loadFriendRequests() {
 
         data.requests.forEach((request) => {
             requestsDiv.innerHTML += `
-                  <div style="font-size:120%; border-bottom: 1px solid #e0e0e0;">
+                  <div style="font-size:120%;">
                       ${request.requestFrom.nickname}<br>
                       <button style="font-size:80%;" onclick="acceptFriendRequest('${request._id}')">수락</button>
-                      <button style="font-size:80%;" onclick="rejectFriendRequest('${request._id}')" class="mb-2">거절</button>
+                      <button style="font-size:80%;" onclick="rejectFriendRequest('${request._id}')">거절</button>
                   </div>`;
         });
-
     } catch (error) {
         console.error("친구 요청 목록 불러오기 오류:", error);
     }
@@ -129,11 +128,9 @@ async function loadFriends() {
 
             // 5. 친구 목록에 친구의 닉네임 표시
             friendsDiv.innerHTML += `
-                <div style="font-size:120%; border-bottom: 1px solid #e0e0e0;">
+                <div>
                     ${friendNickname}
-                    <button onclick="deleteFriend('${friend._id}')" class="mb-2 mt-2">
-                    삭제
-                    </button>
+                    <button onclick="deleteFriend('${friend._id}')">삭제</button>
                 </div>`;
         });
     } else {

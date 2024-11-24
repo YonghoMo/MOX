@@ -40,6 +40,12 @@ body {
   margin: 0 auto;
 }
 
+.profile img {
+  width: 100px;
+  border-radius: 50%;
+  margin-bottom: 10px;
+}
+
 .profile p {
   font-size: 18px;
   font-weight: bold;
@@ -78,8 +84,7 @@ body {
 .logout {
   max-width: 480px;
   background-color: #fff;
-  border-top-left-radius: 8px;
-  border-top-right-radius: 8px;
+  border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   padding: 20px;
   margin: 0 auto;
@@ -144,7 +149,6 @@ body {
 
 .card {
   transition: box-shadow 0.3s ease, transform 0.3s ease;
-  width: 100%;
 }
 
 .card:hover {
@@ -179,3 +183,4 @@ body {
     height: auto;
   }
 }
+
