@@ -1,5 +1,4 @@
 <!--주간 운동량 통계 페이지-->
-<!--추후에 DB와 연결하려면 server.js에 API 연결해야함!!!-->
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -9,31 +8,94 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.js"></script>
   </head>
   <body>
-    <canvas id="bar-chart" width="100%" height="100%"></canvas>
+    <!-- 차트를 표시할 canvas 요소 -->
+    <div style="width: 90%; max-width: 600px; margin: auto;">
+      <canvas id="weight-chart" width="100%" height="170%"></canvas>
+    </div>
+    <div style="width: 90%; max-width: 600px; margin: auto;">
+      <canvas id="cardio-chart" width="100%" height="170%"></canvas>
+    </div>
+    <div style="width: 90%; max-width: 600px; margin: auto;">
+      <canvas id="bodyweight-chart" width="100%" height="170%"></canvas>
+    </div>
+
     <script>
-      new Chart(document.getElementById("bar-chart"), {
-        type: "bar",
-        data: {
-          labels: ["월", "화", "수", "목", "금", "토", "일"],
-          datasets: [
-            {
-              label: "운동량 (kcal)",
-              backgroundColor: ["#007bff"],
-              data: [
-                2478, 5267, 734, 784, 433, 844, 2000,
-              ] /*데이터는 나중에 연결*/,
+      async function fetchWeeklyCalories() {
+        try {
+            const response = await fetch('/api/workoutLogs/calories', {
+                method: 'GET',
+                credentials: 'include', // 세션 쿠키 포함
+            });
+
+            if (!response.ok) {
+                if (response.status === 401) {
+                    console.error('로그인이 필요합니다.');
+                    window.location.href = '/login'; // 로그인 페이지로 리다이렉트
+                }
+                throw new Error(`HTTP 오류: ${response.status}`);
+            }
+
+            const { days, calorieDataByDate } = await response.json();
+            console.log('1주일 칼로리 데이터:', days, calorieDataByDate);
+
+            // 날짜별 데이터를 차트로 업데이트
+            const weightData = days.map((day) => calorieDataByDate[day]?.웨이트 || 0);
+            const cardioData = days.map((day) => calorieDataByDate[day]?.유산소 || 0);
+            const bodyweightData = days.map((day) => calorieDataByDate[day]?.맨몸운동 || 0);
+
+            // 각 차트 업데이트
+            updateWeeklyChart('weight-chart', '웨이트 운동량', days, weightData);
+            updateWeeklyChart('cardio-chart', '유산소 운동량', days, cardioData);
+            updateWeeklyChart('bodyweight-chart', '맨몸 운동량', days, bodyweightData);
+        } catch (error) {
+            console.error('API 요청 중 오류 발생:', error);
+        }
+      }
+
+      function updateWeeklyChart(canvasId, label, days, values) {
+        const ctx = document.getElementById(canvasId).getContext('2d');
+
+        new Chart(ctx, {
+            type: 'bar', // 막대형 차트
+            data: {
+                labels: days, // X축 레이블
+                datasets: [
+                    {
+                        label: label, // 데이터 레이블
+                        data: values, // 데이터 배열
+                        backgroundColor: ['#007bff'], // 막대 색상
+                    },
+                ],
             },
-          ],
-        },
-        options: {
-          plugins: {
-            title: {
-              display: true,
-              text: "주간 운동량",
+            options: {
+                plugins: {
+                    title: {
+                        display: true,
+                        text: `${label} (kcal)`, // 차트 상단 타이틀
+                    },
+                },
+                responsive: true,                // 반응형 크기 지원
+                maintainAspectRatio: false,      // 비율 유지 설정
+                scales: {
+                    x: {
+                        title: {
+                            display: false,
+                            text: '날짜',
+                        },
+                    },
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: false,
+                            text: '칼로리 (kcal)',
+                        },
+                    },
+                },
             },
-          },
-        },
-      });
+        });
+      }
+
+      fetchWeeklyCalories();
     </script>
   </body>
 </html>

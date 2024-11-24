@@ -1,34 +1,48 @@
+const mongoose = require('mongoose');
+const { ObjectId } = mongoose.Types;
 const WorkoutLog = require('../models/workoutLogModel');
+const User = require('../models/userModel');
 
 // 운동 기록 생성
 exports.saveWorkoutLog = async (req, res) => {
     console.log("서버로 받은 workoutLogs 데이터: ", JSON.stringify(req.body.workoutLogs, null, 2)); // 추가된 로그
 
     try {
-        const logs = req.body.workoutLogs.map(log => ({
+        const { userId, eventId, workoutLogs } = req.body;
+
+        // 관련 Event 조회
+        const event = await Event.findById(eventId);
+        if (!event) {
+            return res.status(404).json({ success: false, message: '해당 일정(Event)을 찾을 수 없습니다.' });
+        }
+
+        // Event의 날짜를 가져옴
+        const eventDate = new Date(event.date); // Event의 date 필드 사용
+        console.log('Event 날짜:', eventDate);
+
+        const logs = workoutLogs.map(log => ({
             exerciseId: log.exerciseId,
-            sets: log.sets.map(set => {
-                console.log("세트 데이터: ", set);  // 세트 데이터 확인
-                return {
-                    setNumber: set.setNumber,
-                    weight: set.weight,  // weight 값 확인
-                    reps: set.reps,
-                    time: set.time,
-                    isCompleted: set.isCompleted
-                };
-            })
+            sets: log.sets.map(set => ({
+                setNumber: set.setNumber,
+                weight: set.weight,  // weight 값 확인
+                reps: set.reps,
+                time: set.time,
+                isCompleted: set.isCompleted,
+            }))
         }));
 
-        const newworkoutLog = new WorkoutLog({
-            userId: req.body.userId,
-            eventId: req.body.eventId,
+        // workoutLog에 저장
+        const newWorkoutLog = new WorkoutLog({
+            userId,
+            eventId,
             workoutLogs: logs,
-            date: req.body.date
+            date: eventDate // Event의 날짜 사용
         });
 
         // 데이터베이스에 저장
-        await newworkoutLog.save();
-        return res.status(201).json({ success: true, message: '운동 기록이 저장되었습니다.' });
+        await newWorkoutLog.save();
+
+        res.status(201).json({ success: true, message: '운동 기록이 저장되었습니다.' });
     } catch (error) {
         console.error('운동 기록 저장 중 오류 발생:', error);
         res.status(500).json({ success: false, message: '운동 기록 저장 중 오류가 발생했습니다.' });
@@ -75,5 +89,90 @@ exports.deleteWorkoutLogByEvent = async (req, res) => {
     } catch (error) {
         console.error('운동 기록 삭제 중 오류 발생:', error);
         res.status(500).json({ success: false, message: '운동 기록 삭제 중 오류가 발생했습니다.' });
+    }
+};
+
+
+// 운동 종목 별 칼로리 계산
+exports.getWeeklyCalories = async (req, res) => {
+    try {
+        const userId = req.session.user?._id;
+        if (!userId) {
+            return res.status(401).json({ message: '로그인이 필요합니다.' });
+        }
+
+        const user = await User.findById(userId);
+        if (!user || !user.weight) {
+            return res.status(404).json({ message: '사용자 정보를 찾을 수 없습니다.' });
+        }
+
+        const weight = user.weight;
+
+        // 최근 1주일 데이터 필터링
+        const sevenDaysAgo = new Date();
+        sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+
+        const workoutLogs = await WorkoutLog.find({
+            userId,
+            date: { $gte: sevenDaysAgo },
+        }).populate('workoutLogs.exerciseId');
+
+        // 디버깅: 모든 로그 출력
+        console.log('운동 로그 데이터:', workoutLogs);
+
+        // 날짜별 데이터를 저장할 객체 초기화
+        const calorieDataByDate = {};
+        const days = Array(7).fill(null).map((_, i) => {
+            const date = new Date();
+            date.setDate(date.getDate() - (6 - i));
+            const formattedDate = date.toLocaleDateString('en-CA'); // YYYY-MM-DD 형식
+            calorieDataByDate[formattedDate] = { 웨이트: 0, 유산소: 0, 맨몸운동: 0 };
+            return formattedDate;
+        });
+
+        // 날짜 별 칼로리 데이터 계산
+        workoutLogs.forEach((log) => {
+            const logDate = new Date(log.date).toLocaleDateString('en-CA'); // 로컬 시간대로 변환
+            console.log(`로그 ${index + 1} 날짜:`, log.date); // 원본 date 출력
+            console.log(`변환된 로그 ${index + 1} 날짜:`, logDate); // 변환된 logDate 출력
+
+            // 기존 데이터에 누적
+            if (!calorieDataByDate[logDate]) {
+                calorieDataByDate[logDate] = { 웨이트: 0, 유산소: 0, 맨몸운동: 0 };
+                console.log(`새로운 날짜 추가: ${logDate}`);
+            } else {
+                console.log(`기존 날짜에 데이터 추가: ${logDate}`);
+            }
+
+            log.workoutLogs.forEach((workout) => {
+                const exercise = workout.exerciseId;
+                if (!exercise) {
+                    console.log(`로그 ${index + 1}, 운동 ${workoutIndex + 1}: exerciseId가 없음`);
+                    return;
+                }
+
+                workout.sets.forEach((set) => {
+                    if (exercise.category === '웨이트') {
+                        calorieDataByDate[logDate]['웨이트'] += set.weight * set.reps * set.setNumber * 0.08;
+                    } else if (exercise.category === '유산소') {
+                        const timeInMinutes = parseFloat(set.time) || 0;
+                        calorieDataByDate[logDate]['유산소'] += 10 * (1 / 60) * weight * timeInMinutes;
+                    } else if (exercise.category === '맨몸운동') {
+                        calorieDataByDate[logDate]['맨몸운동'] += weight * set.reps * set.setNumber * 0.05;
+                    }
+
+                    console.log(
+                        `로그 ${index + 1}, 운동 ${workoutIndex + 1}, 세트 ${setIndex + 1}: 카테고리 ${exercise.category}, 현재 데이터:`, calorieDataByDate[logDate]
+                    );
+                });
+            });
+        });
+
+        console.log('최종 계산된 날짜별 칼로리 데이터:', calorieDataByDate);
+
+        res.status(200).json({ days, calorieDataByDate });
+    } catch (error) {
+        console.error('오류 발생:', error);
+        res.status(500).json({ message: '서버 오류가 발생했습니다.' });
     }
 };
