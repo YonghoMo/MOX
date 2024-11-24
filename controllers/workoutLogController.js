@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const { ObjectId } = mongoose.Types;
 const WorkoutLog = require('../models/workoutLogModel');
 const User = require('../models/userModel');
+const Event = require('../models/eventModel');
 
 // 운동 기록 생성
 exports.saveWorkoutLog = async (req, res) => {
@@ -41,6 +42,9 @@ exports.saveWorkoutLog = async (req, res) => {
 
         // 데이터베이스에 저장
         await newWorkoutLog.save();
+
+        // 디버깅용 메세지
+        console.log('Event 모델:', Event);
 
         res.status(201).json({ success: true, message: '운동 기록이 저장되었습니다.' });
     } catch (error) {
@@ -125,31 +129,20 @@ exports.getWeeklyCalories = async (req, res) => {
         const days = Array(7).fill(null).map((_, i) => {
             const date = new Date();
             date.setDate(date.getDate() - (6 - i));
-            const formattedDate = date.toLocaleDateString('en-CA'); // YYYY-MM-DD 형식
+            const formattedDate = date.toISOString().split('T')[0]; // YYYY-MM-DD 형식
             calorieDataByDate[formattedDate] = { 웨이트: 0, 유산소: 0, 맨몸운동: 0 };
             return formattedDate;
         });
 
         // 날짜 별 칼로리 데이터 계산
         workoutLogs.forEach((log) => {
-            const logDate = new Date(log.date).toLocaleDateString('en-CA'); // 로컬 시간대로 변환
-            console.log(`로그 ${index + 1} 날짜:`, log.date); // 원본 date 출력
-            console.log(`변환된 로그 ${index + 1} 날짜:`, logDate); // 변환된 logDate 출력
-
-            // 기존 데이터에 누적
-            if (!calorieDataByDate[logDate]) {
-                calorieDataByDate[logDate] = { 웨이트: 0, 유산소: 0, 맨몸운동: 0 };
-                console.log(`새로운 날짜 추가: ${logDate}`);
-            } else {
-                console.log(`기존 날짜에 데이터 추가: ${logDate}`);
-            }
+            const logDate = new Date(log.date).toISOString().split('T')[0]; // 로그 날짜
+            
+            if (!calorieDataByDate[logDate]) return;
 
             log.workoutLogs.forEach((workout) => {
                 const exercise = workout.exerciseId;
-                if (!exercise) {
-                    console.log(`로그 ${index + 1}, 운동 ${workoutIndex + 1}: exerciseId가 없음`);
-                    return;
-                }
+                if (!exercise) return;
 
                 workout.sets.forEach((set) => {
                     if (exercise.category === '웨이트') {
@@ -160,10 +153,6 @@ exports.getWeeklyCalories = async (req, res) => {
                     } else if (exercise.category === '맨몸운동') {
                         calorieDataByDate[logDate]['맨몸운동'] += weight * set.reps * set.setNumber * 0.05;
                     }
-
-                    console.log(
-                        `로그 ${index + 1}, 운동 ${workoutIndex + 1}, 세트 ${setIndex + 1}: 카테고리 ${exercise.category}, 현재 데이터:`, calorieDataByDate[logDate]
-                    );
                 });
             });
         });

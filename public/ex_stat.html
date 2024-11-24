@@ -38,15 +38,21 @@
             const { days, calorieDataByDate } = await response.json();
             console.log('1주일 칼로리 데이터:', days, calorieDataByDate);
 
+            // 날짜 형식 변경 (YYYY-MM-DD -> MM-DD)
+            const formattedDays = days.map((day) => {
+              const [year, month, date] = day.split('-'); // "YYYY-MM-DD" 분리
+              return `${month}/${date}`; // "MM-DD" 형식으로 변환
+            });
+            
             // 날짜별 데이터를 차트로 업데이트
             const weightData = days.map((day) => calorieDataByDate[day]?.웨이트 || 0);
             const cardioData = days.map((day) => calorieDataByDate[day]?.유산소 || 0);
             const bodyweightData = days.map((day) => calorieDataByDate[day]?.맨몸운동 || 0);
 
             // 각 차트 업데이트
-            updateWeeklyChart('weight-chart', '웨이트 운동량', days, weightData);
-            updateWeeklyChart('cardio-chart', '유산소 운동량', days, cardioData);
-            updateWeeklyChart('bodyweight-chart', '맨몸 운동량', days, bodyweightData);
+            updateWeeklyChart('weight-chart', '웨이트 운동량', formattedDays, weightData);
+            updateWeeklyChart('cardio-chart', '유산소 운동량', formattedDays, cardioData);
+            updateWeeklyChart('bodyweight-chart', '맨몸 운동량', formattedDays, bodyweightData);
         } catch (error) {
             console.error('API 요청 중 오류 발생:', error);
         }
@@ -61,21 +67,22 @@
                 labels: days, // X축 레이블
                 datasets: [
                     {
-                        label: label, // 데이터 레이블
+                        label, // 데이터 레이블
                         data: values, // 데이터 배열
                         backgroundColor: ['#007bff'], // 막대 색상
                     },
                 ],
             },
             options: {
+                responsive: true,                // 반응형 크기 지원
+                maintainAspectRatio: false,      // 비율 유지 설정
                 plugins: {
+                    legend: { display: false },  // 범례 숨기기
                     title: {
                         display: true,
                         text: `${label} (kcal)`, // 차트 상단 타이틀
                     },
                 },
-                responsive: true,                // 반응형 크기 지원
-                maintainAspectRatio: false,      // 비율 유지 설정
                 scales: {
                     x: {
                         title: {

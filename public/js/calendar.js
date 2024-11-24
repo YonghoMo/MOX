@@ -601,10 +601,11 @@ async function fetchAndDisplayExercises(eventId) {
 // 운동 기록 저장 버튼 클릭 시 서버로 데이터 전송
 document.getElementById("saveWorkoutLogBtn").addEventListener("click", async function () {
     const eventId = document.getElementById("viewEventTitle").dataset.eventId;  // 이벤트 ID
-    const date = new Date().toISOString();  // 현재 날짜 저장
+    //const date = new Date().toISOString();  // 현재 날짜 저장
 
     const workoutLogs = [];  // 전체 운동 기록 배열 초기화
 
+    // 각 운동 종목 데이터 수집
     document.querySelectorAll('.exercise-box').forEach((exerciseBox) => {
         const exerciseId = exerciseBox.dataset.exerciseId;  // 운동 종목 ID 배열
         const measurementTypes = exerciseBox.querySelector('.exercise-measure span').textContent;  // 운동량 타입
@@ -687,8 +688,7 @@ document.getElementById("saveWorkoutLogBtn").addEventListener("click", async fun
     const workoutLogData = {
         userId,  // 로그인한 사용자 ID
         eventId,  // 이벤트 ID
-        workoutLogs,    // 운동 기록
-        date  // 현재 날짜
+        workoutLogs    // 운동 기록
     };
 
     try {
