@@ -1,14 +1,12 @@
 const express = require('express');
 const router = express.Router();
-const { getEvents, createEvent, createEventsBulk, deleteEvent, getEventExercises, getTodayEvents } = require('../controllers/eventController');
+const { getEvents, createEvent, deleteEvent, getEventExercises, getTodayEvents } = require('../controllers/eventController');
+
 // 사용자별 일정 조회
 router.get('/', getEvents); // /api/events로 GET 요청이 들어올 경우 getEvents 실행
 
 // 일정 등록
 router.post('/', createEvent);
-
-// 여러 일정 등록
-router.post('/bulk', createEventsBulk);
 
 // 일정 삭제
 router.delete('/:id', deleteEvent);
