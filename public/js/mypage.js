@@ -19,10 +19,10 @@ async function loadFriendRequests() {
 
         data.requests.forEach((request) => {
             requestsDiv.innerHTML += `
-                  <div>
-                      ${request.requestFrom.nickname}님의 친구 요청
-                      <button onclick="acceptFriendRequest('${request._id}')">수락</button>
-                      <button onclick="rejectFriendRequest('${request._id}')">거절</button>
+                  <div style="font-size:120%;">
+                      ${request.requestFrom.nickname}<br>
+                      <button style="font-size:80%;" onclick="acceptFriendRequest('${request._id}')">수락</button>
+                      <button style="font-size:80%;" onclick="rejectFriendRequest('${request._id}')">거절</button>
                   </div>`;
         });
     } catch (error) {
