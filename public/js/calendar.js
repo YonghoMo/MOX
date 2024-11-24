@@ -456,6 +456,9 @@ async function showEventDetails(event) {
         exerciseListContainer.textContent = '운동 종목 정보가 없습니다.';
     }
 
+    // 댓글 불러오기
+    loadComments(event._id);
+
     // 모달을 띄우는 코드
     const viewEventModal = new bootstrap.Modal(document.getElementById("viewEventModal"));
     viewEventModal.show();
