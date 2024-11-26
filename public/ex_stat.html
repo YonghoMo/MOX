@@ -9,14 +9,14 @@
   </head>
   <body>
     <!-- 차트를 표시할 canvas 요소 -->
-    <div style="width: 90%; max-width: 600px; margin: auto;">
-      <canvas id="weight-chart" width="100%" height="170%"></canvas>
+    <div style="width: 100%; max-width: 600px; margin: auto;">
+      <canvas id="weight-chart" width="80%" height="170%"></canvas>
     </div>
-    <div style="width: 90%; max-width: 600px; margin: auto;">
-      <canvas id="cardio-chart" width="100%" height="170%"></canvas>
+    <div style="width: 100%; max-width: 600px; margin: auto;">
+      <canvas id="cardio-chart" width="80%" height="170%"></canvas>
     </div>
-    <div style="width: 90%; max-width: 600px; margin: auto;">
-      <canvas id="bodyweight-chart" width="100%" height="170%"></canvas>
+    <div style="width: 100%; max-width: 600px; margin: auto;">
+      <canvas id="bodyweight-chart" width="80%" height="170%"></canvas>
     </div>
 
     <script>
@@ -41,7 +41,7 @@
             // 날짜 형식 변경 (YYYY-MM-DD -> MM-DD)
             const formattedDays = days.map((day) => {
               const [year, month, date] = day.split('-'); // "YYYY-MM-DD" 분리
-              return `${month}/${date}`; // "MM-DD" 형식으로 변환
+              return `${month}.${date}`; // "MM-DD" 형식으로 변환
             });
             
             // 날짜별 데이터를 차트로 업데이트
@@ -69,7 +69,14 @@
                     {
                         label, // 데이터 레이블
                         data: values, // 데이터 배열
-                        backgroundColor: ['#007bff'], // 막대 색상
+                        backgroundColor: values.map(() => {
+                            // 부드러운 그라데이션
+                            const gradient = ctx.createLinearGradient(0, 0, 0, 300);
+                            gradient.addColorStop(0, '#007bff'); // 파란색
+                            gradient.addColorStop(1, '#80d0ff'); // 연한 파란색
+                            return gradient;
+                        }),
+                        borderRadius: 3, // 막대 모서리를 둥글게
                     },
                 ],
             },
@@ -81,27 +88,31 @@
                     title: {
                         display: true,
                         text: `${label} (kcal)`, // 차트 상단 타이틀
+                        color: '#333',           // 제목 색상
+                        font: {
+                            size: 18,           // 제목 폰트 크기
+                            family: 'Arial',    // 제목 폰트
+                        },
                     },
                 },
                 scales: {
                     x: {
-                        title: {
-                            display: false,
-                            text: '날짜',
-                        },
+                        grid: { display: false }, // X축 격자 숨기기
+                        title: { display: false },
                     },
                     y: {
+                        grid: { display: false }, // Y축 격자 숨기기
                         beginAtZero: true,
-                        title: {
-                            display: false,
-                            text: '칼로리 (kcal)',
+                        title: { display: false },
+                        ticks: {
+                            stepSize: 50,       // Y축 눈금 간격
+                            font: { size: 12 },
                         },
                     },
                 },
             },
         });
       }
-
       fetchWeeklyCalories();
     </script>
   </body>

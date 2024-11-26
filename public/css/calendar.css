@@ -257,17 +257,6 @@ footer p {
   margin-left: 10px; /* 체크박스와 텍스트 사이 간격 */
 }
 
-/* 세트 추가/삭제 버튼 크기 조정 */
-.add-set-btn,
-.delete-set-btn {
-  width: 80%; /* 자동으로 버튼 크기를 조정 (내용에 맞게) */
-  padding: 5px 10px; /* 버튼 내부 여백 조정 */
-  font-size: 14px; /* 텍스트 크기 조정 */
-  border-radius: 5px; /* 둥근 모서리 추가 */
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
 /* 버튼을 가로로 나란히 배치하고 간격 추가 */
 .exercise-controls {
   display: flex;
