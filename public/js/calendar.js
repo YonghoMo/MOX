@@ -762,7 +762,7 @@ function displayWorkoutLogInModal(workoutLog) {
                     <div>${set.setNumber}</div>
                     <div>${set.weight || 'N/A'} kg</div>
                     <div>${set.reps || 'N/A'} 회</div>
-                    <div>${set.isCompleted ? 'V' : 'X'}</div>
+                    <div>${set.isCompleted ? '🔵' : '●'}</div>
                 `;
             }
             // 유산소 카테고리일 경우 시간만 표시
@@ -770,7 +770,7 @@ function displayWorkoutLogInModal(workoutLog) {
                 setRow.innerHTML = `
                     <div>${set.setNumber}</div>
                     <div>${set.time || 'N/A'} 분</div>
-                    <div>${set.isCompleted ? 'V' : 'X'}</div>
+                    <div>${set.isCompleted ? '🔵' : '●'}</div>
                 `;
             }
             // 맨몸운동일 경우 횟수만 표시
@@ -778,7 +778,7 @@ function displayWorkoutLogInModal(workoutLog) {
                 setRow.innerHTML = `
                     <div>${set.setNumber}</div>
                     <div>${set.reps || 'N/A'} 회</div>
-                    <div>${set.isCompleted ? 'V' : 'X'}</div>
+                    <div>${set.isCompleted ? '🔵' : '●'}</div>
                 `;
             }
             exerciseBox.appendChild(setRow);
