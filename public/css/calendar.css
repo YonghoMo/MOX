@@ -218,29 +218,36 @@ footer p {
   background-color: #0056b3; /* 어두운 파란색으로 전환 */
 }
 
+/* 버튼 컨테이너 스타일 */
 #WorkoutLogBtnDIV {
-  display: flex;
-  justify-content: space-between; /* 버튼들을 양 끝에 배치 */
-  flex: 1;
-  color: white; /* 흰색 텍스트 */
-  border: none;
-  border-radius: 5px; /* 모서리를 둥글게 */
-  text-align: center;
-  margin-right: 0; /* 버튼들 사이 간격을 없앰 */
-  width: 80%;
-  padding-left: 20%;
-  font-size: 16px;
+  display: flex; /* 버튼을 가로로 배치 */
+  gap: 8px; /* 버튼 간 간격 줄이기 */
+  width: 100%; /* 부모 컨테이너 폭에 맞춤 */
+  justify-content: space-between; /* 버튼을 양쪽 끝에 배치 */
 }
 
-.deleteWorkoutLogBtn,
-.addWorkoutLogBtn {
+/* 삭제 버튼과 저장 버튼 스타일 */
+#WorkoutLogBtnDIV button {
+  flex: 1; /* 버튼을 동일한 크기로 분배 */
+  padding: 8px; /* 내부 여백 줄이기 */
+  font-size: 14px; /* 글자 크기 줄이기 */
+  border-radius: 4px; /* 모서리를 덜 둥글게 */
+  background-color: #007bff; /* 기본 파란색 */
+  color: white; /* 흰색 텍스트 */
+  text-align: center; /* 텍스트 중앙 정렬 */
+  border: none; /* 테두리 제거 */
+  cursor: pointer; /* 클릭 가능 커서 */
+}
+
+#deleteWorkoutLogBtn,
+#addWorkoutLogBtn {
   padding: 5px 10px;
   cursor: pointer;
   transition: background-color 0.3s ease;
 }
 
-.deleteWorkoutLogBtn:hover,
-.addWorkoutLogBtn:hover {
+#deleteWorkoutLogBtn:hover,
+#addWorkoutLogBtn:hover {
   background-color: #0056b3; /* 어두운 파란색으로 전환 */
 }
 
@@ -257,17 +264,6 @@ footer p {
   margin-left: 10px; /* 체크박스와 텍스트 사이 간격 */
 }
 
-/* 세트 추가/삭제 버튼 크기 조정 */
-.add-set-btn,
-.delete-set-btn {
-  width: 80%; /* 자동으로 버튼 크기를 조정 (내용에 맞게) */
-  padding: 5px 10px; /* 버튼 내부 여백 조정 */
-  font-size: 14px; /* 텍스트 크기 조정 */
-  border-radius: 5px; /* 둥근 모서리 추가 */
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
 /* 버튼을 가로로 나란히 배치하고 간격 추가 */
 .exercise-controls {
   display: flex;
@@ -278,9 +274,36 @@ footer p {
   justify-content: flex-start; /* 버튼을 왼쪽 정렬 */
 }
 
+/* 세트 컨테이너 스타일 */
+.set-container {
+  display: flex;
+  flex-wrap: wrap; /* 여러 줄 배치 가능 */
+  gap: 10px; /* 세트 간 간격 */
+  justify-content: flex-start; /* 왼쪽 정렬 */
+  padding: 10px;
+}
+
+/* 각 세트를 카드 형태로 스타일링 */
 .set-row {
-  padding-top: 1px;
-  padding-bottom: 2px;
+  display: flex; /* 가로로 배치 */
+  align-items: center; /* 세로 중앙 정렬 */
+  justify-content: space-between; /* 항목 간 간격 유지 */
+  gap: 10px; /* 내부 요소 간 간격 */
+  padding: 10px; /* 내부 여백 */
+  margin-bottom: 10px; /* 세트 간 간격 */
+  border: 1px solid #ddd; /* 테두리 추가 */
+  border-radius: 8px; /* 둥근 모서리 */
+  background-color: #f9f9f9; /* 연한 배경색 */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* 그림자 효과 */
+  font-size: 14px;
+}
+
+/* 세트 번호 */
+.set-row .set-number {
+  font-weight: bold; /* 굵은 글씨 */
+  text-align: center; /* 가운데 정렬 */
+  color: #333; /* 텍스트 색상 */
+  min-width: 40px; /* 고정된 최소 폭 */
 }
 
 /* 모바일 환경에 맞춘 스타일 조정 */

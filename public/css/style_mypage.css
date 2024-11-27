@@ -156,26 +156,4 @@ body {
   border-color: transparent;
 }
 
-@media screen and (max-width: 768px) {
-  .navbar {
-    flex-direction: column;
-    align-items: flex-start;
-    padding: 8px 24px;
-    height: auto;
-  }
-  .nav_menu {
-    display: none;
-    flex-direction: column;
-    align-items: center;
-    width: 100%;
-  }
-  .navbar_toggleBtn {
-    display: block;
-    right: 35px;
-    top: 40px;
-  }
-  .nav_logo img {
-    width: 60px;
-    height: auto;
-  }
-}
+
