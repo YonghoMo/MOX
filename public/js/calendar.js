@@ -614,9 +614,12 @@ document.getElementById("saveWorkoutLogBtn").addEventListener("click", async fun
 
     // 각 운동 종목 데이터 수집
     document.querySelectorAll('.exercise-box').forEach((exerciseBox) => {
-        const exerciseId = exerciseBox.dataset.exerciseId;  // 운동 종목 ID 배열
-        const measurementTypes = exerciseBox.querySelector('.exercise-measure span').textContent;  // 운동량 타입
-        const setRows = exerciseBox.querySelectorAll('.set-row');  // 세트 행
+        // 운동 종목 ID 배열
+        const exerciseId = exerciseBox.dataset.exerciseId;  
+        // 운동량 타입
+        const measurementTypes = exerciseBox.querySelector('.exercise-measure span').textContent;  
+        // 세트
+        const setRows = exerciseBox.querySelectorAll('.set-row');  
 
         if (!exerciseId) {
             console.error("exerciseId가 없습니다:", exerciseBox);
@@ -645,10 +648,10 @@ document.getElementById("saveWorkoutLogBtn").addEventListener("click", async fun
                     // setData 객체에 weight와 reps 값을 포함하여 선언
                     let setData = {
                         exerciseId: exerciseId,
-                        setNumber,      // 세트 번호
-                        isCompleted,    // 완료 여부
+                        setNumber,                // 세트 번호
+                        isCompleted,              // 완료 여부
                         weight: Number(weight),   // 무게 값 추가
-                        reps: Number(reps)       // 횟수 값 추가
+                        reps: Number(reps)        // 횟수 값 추가
                     };
                     sets.push(setData);  // 최종 데이터 배열에 추가
                 }
